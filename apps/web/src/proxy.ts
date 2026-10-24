@@ -11,6 +11,14 @@ import { monitoringOrigin } from "@/lib/monitoring";
  * can only be made per request. The price is that pages are rendered per request instead of served
  * as static files; for a handful of public pages that is the right trade (ADR 0003).
  */
+/**
+ * The one style element a library writes at run time: Paper Shaders' layout block for its canvas
+ * (@paper-design/shaders 0.0.81, shader-mount.js). It cannot take our nonce, so it is allowed by its
+ * hash. A new version of the library may change the text; then the shaders lose their sizing and
+ * this hash has to be computed again from the new block.
+ */
+const PAPER_SHADERS_STYLE = "'sha256-bcX2M6hOeEgeI9Ttj3KtXWZuoRsKenyQAlXswSnLakA='";
+
 export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const dev = process.env.NODE_ENV !== "production";
@@ -19,8 +27,9 @@ export function proxy(request: NextRequest) {
     "default-src 'self'",
     // 'strict-dynamic' lets the nonced bootstrap load the chunks it needs and nothing else.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
-    // Inline style ATTRIBUTES are allowed (React `style=` props); style ELEMENTS need the nonce.
-    `style-src 'self' ${dev ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
+    // Inline style ATTRIBUTES are allowed (React `style=` props); style ELEMENTS need the nonce,
+    // or, for the shaders' own block, its hash.
+    `style-src 'self' ${dev ? "'unsafe-inline'" : `'nonce-${nonce}' ${PAPER_SHADERS_STYLE}`}`,
     "style-src-attr 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
