@@ -318,7 +318,7 @@ function HomePage({ members }: { members: number }) {
   const party = members > 1;
   return (
     <Panel className="h-full" title="riley" subtitle="Online">
-      <AnimatePresence initial={false} mode="popLayout">
+      <AnimatePresence initial={false} mode="wait">
         {party ? (
           <m.div key="party" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={settle}>
             <Caption>Party</Caption>
