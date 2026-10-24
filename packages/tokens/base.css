@@ -1,0 +1,66 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+   The base layer both surfaces share. Nothing here assumes the page is an app: the landing scrolls
+   as a whole, the signed-in app adds app.css on top. */
+
+html {
+  background: var(--ap-bg);
+  color: var(--ap-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased; /* macOS renders light-on-dark heavier than designed */
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+  scroll-padding-top: 5rem; /* anchored headings stay clear of the header */
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--ap-bg);
+}
+
+::selection {
+  background: var(--ap-brand);
+  color: var(--ap-brand-ink);
+}
+
+/* The browser's own ring is kept in shape and replaced in colour: 2px, offset 2px, a token that
+   is measured against the page (check-contrast.mjs), visible in forced-colors as well. */
+/* In the base layer, so a component's own radius (rounded-full on a pill) and its own focus style
+   win over this default instead of being flattened to the inner radius on focus. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--ap-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-inner);
+  }
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}
+
+/* Numbers that change must not move the layout. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Headlines: the same family, expanded. Width is the brand's voice (broad and sure), weight carries
+   the hierarchy, tracking pulls large sizes in. Body text never uses this. */
+.display {
+  font-family: var(--font-display);
+  font-stretch: 118%;
+  font-weight: 680;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}

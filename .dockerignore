@@ -1,0 +1,12 @@
+# Only the sources go into the build; dependencies are installed inside it.
+.git
+**/node_modules
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+**/*.log
+**/.env
+**/.env.*
+coverage
+test-results
+playwright-report

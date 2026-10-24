@@ -1,0 +1,14 @@
+{
+  "name": "@anyplay/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "exports": { ".": "./index.mjs" },
+  "dependencies": {
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "typescript-eslint": "8.71.2"
+  },
+  "peerDependencies": { "eslint": "^9.0.0" }
+}

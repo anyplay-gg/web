@@ -1,0 +1,110 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+   @anyplay/tokens: THE tokens, and nothing else.
+
+   One decision per value, and the reason next to it. A value that has no reason here does not
+   belong here. Colour roles are generated (directions.css, from scripts/gen-ramps.mjs); everything
+   else is written by hand and guarded: scripts/check-contrast.mjs measures every text pair, the lint
+   rules in tooling/eslint refuse literals that bypass these names.
+
+   Imported AFTER `@import "tailwindcss"`, because @theme creates the utilities that follow.
+   Surfaces: the marketing site imports this file and base.css. The signed-in app adds app.css. */
+
+@theme inline {
+  /* ── Colour ──
+     Roles, not scales: a component asks for "ink-2", never for "grey-600". The values come from
+     directions.css as --ap-* variables so a direction can swap the whole palette with one
+     attribute; Tailwind only ever sees the role names. */
+  --color-bg: var(--ap-bg);
+  --color-surface: var(--ap-surface);
+  --color-surface-2: var(--ap-surface-2);
+  --color-line: var(--ap-line);
+  --color-line-strong: var(--ap-line-strong);
+  --color-ink: var(--ap-ink);
+  --color-ink-2: var(--ap-ink-2);
+  --color-ink-3: var(--ap-ink-3);
+  --color-brand: var(--ap-brand);
+  --color-brand-hover: var(--ap-brand-hover);
+  --color-brand-wash: var(--ap-brand-wash);
+  --color-brand-ink: var(--ap-brand-ink);
+  --color-brand-text: var(--ap-brand-text);
+  --color-focus: var(--ap-focus);
+  /* The primary action is ink, like the launcher's focused tile: a white fill with the page colour
+     as its label (18:1). The brand colour is kept for the mark and the moments that matter. */
+  --color-primary: var(--ap-ink);
+  --color-primary-ink: var(--ap-bg);
+  --color-critical: var(--ap-critical);
+  --color-critical-text: var(--ap-critical-text);
+}
+
+/* Everything that is not colour is emitted as real variables (`static`): components and plain CSS
+   refer to --duration-quick or --ease-out directly. Colours stay `inline` above because they must be
+   re-resolved per element: a direction swaps --ap-* on a wrapper, and a variable that was resolved
+   once at :root would ignore it. Raw CSS and SVG therefore use --ap-* for colour, utilities use the
+   role names. */
+@theme static {
+  /* ── Type ──
+     One family, two widths: Mona Sans at 100% for the UI and body, expanded for headlines (see
+     .display in base.css). Covers German and Turkish. Mono: Geist Mono for codes and IDs only. */
+  --font-sans: "Mona Sans Variable", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-display: "Mona Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* The scale is named by job. Seven steps are enough for a product that is mostly one column of
+     text; a step is added when a surface cannot work without it. */
+  --text-micro: 0.75rem; /* 12px: captions and tags, never below this */
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.02em; /* small text needs air */
+  --text-small: 0.875rem; /* 14px: controls, menus, secondary lines */
+  --text-small--line-height: 1.5;
+  --text-body: 1rem; /* 16px: reading size, and the floor for inputs on iOS */
+  --text-body--line-height: 1.6;
+  --text-lead: 1.1875rem; /* 19px: the sentence under a headline */
+  --text-lead--line-height: 1.5;
+  --text-title: 1.5rem; /* 24px */
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.012em;
+  --text-headline: clamp(2rem, 1.3rem + 2.6vw, 3.25rem); /* 32 to 52px */
+  --text-headline--line-height: 1.08;
+  --text-headline--letter-spacing: -0.025em;
+  --text-poster: clamp(2.5rem, 1rem + 4.8vw, 5rem); /* 40 to 80px: wide display faces carry the same weight at less size */
+  --text-poster--line-height: 1;
+  --text-poster--letter-spacing: -0.03em;
+  --text-display: clamp(2.75rem, 1.4rem + 6vw, 6.25rem); /* 44 to 100px: one per page */
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.04em; /* large type reads loose; tracking pulls it in */
+
+  /* ── Shape ──
+     Concentric: a surface's radius is its control's radius plus the padding between them.
+     control 10 + padding 6 = surface 16. inner 6 sits inside a control that has 4px padding. */
+  --radius-inner: 6px;
+  --radius-control: 10px;
+  --radius-surface: 16px;
+  --radius-pill: 999px;
+
+  /* ── Depth ──
+     Two layers: a 1px contact shadow and a soft ambient one, both transparent ink so they work on
+     every surface. Borders carry structure, shadows only carry elevation. */
+  --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.16), 0 8px 24px -8px rgb(0 0 0 / 0.28);
+  --shadow-float: 0 2px 4px rgb(0 0 0 / 0.18), 0 24px 56px -16px rgb(0 0 0 / 0.4);
+
+  /* ── Motion ──
+     Durations by what is moving. Leaving is always shorter than arriving: the system is answering,
+     not performing. */
+  --duration-press: 100ms; /* scale(0.97) on a pressed control */
+  --duration-quick: 160ms; /* hover, colour, small popovers */
+  --duration-enter: 220ms; /* dialogs, sheets, menus arriving */
+  --duration-leave: 140ms; /* the same things leaving */
+  --duration-reveal: 700ms; /* hero entrance only, once per visit */
+  /* The built-in CSS curves are too weak: they start slow. These start fast and settle. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:root {
+  /* Space between two controls that can be tapped: 12px, so a thumb never hits the neighbour. */
+  --gap-control: 0.75rem;
+  /* The page gutter: 16px on a phone, growing with the viewport, capped by the content width. */
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3rem);
+  --content-max: 80rem;
+}

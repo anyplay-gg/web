@@ -1,0 +1,16 @@
+packages:
+  - apps/*
+  - packages/*
+  - tooling/*
+
+# Supply chain: a release has to be 7 days old before it can be installed. The Next.js advisories of
+# 2025-26 were fixed within days, so security releases are taken by hand (Renovate opens the PR
+# with the exclusion), not by waiting.
+minimumReleaseAge: 10080
+blockExoticSubdeps: true
+
+# Install scripts run for nothing by default; sharp is not used (the image optimizer is off) and
+# unrs-resolver ships prebuilt binaries.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
