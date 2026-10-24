@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type PublicUser, describeError, isApiError } from "@anyplay/api-client";
+import { type PublicLink, type PublicUser, describeError, isApiError } from "@anyplay/api-client";
 import Link from "next/link";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { FormError } from "../auth/fields";
@@ -9,6 +9,7 @@ import { Wordmark } from "../landing/header";
 import { LandingProviders } from "../landing/providers";
 import { Failed, useAction } from "./pages";
 import { loadApi } from "@/lib/api";
+import { BRAND, BrandLogo } from "./brand-logos";
 import { GradeTiles, totalOf } from "./social";
 import { Initial } from "./shell";
 import { Badge, Card, Empty, Notice, Row, Rows, smallButton, smallPrimary } from "./ui";
@@ -115,6 +116,7 @@ function Profile({ user }: { user: PublicUser }) {
           <div className="min-w-0 flex-1">
             <h1 className="display truncate text-[clamp(1.9rem,1.4rem+1.6vw,2.6rem)] leading-[1.05]">{handle}</h1>
             {user.about && <p className="mt-2 max-w-[34rem] text-[16px] leading-[1.6] text-ink-2 text-pretty">{user.about}</p>}
+            {user.links && user.links.length > 0 && <Links links={user.links} />}
           </div>
         </div>
         <Relation user={user} />
@@ -150,6 +152,38 @@ function Profile({ user }: { user: PublicUser }) {
 
       {!hasAny && <Notice>{handle} keeps the rest of their profile private.</Notice>}
     </div>
+  );
+}
+
+/** The player's linked accounts: the name on the other service, a link where it has a profile page. */
+function Links({ links }: { links: PublicLink[] }) {
+  return (
+    <ul aria-label="Linked accounts" className="mt-4 flex flex-wrap gap-2">
+      {links.map((l) => {
+        const brand = BRAND[l.provider];
+        const inner = (
+          <>
+            <BrandLogo provider={l.provider} className="size-4" />
+            <span className="sr-only">{brand.name}: </span>
+            {l.displayName ?? brand.name}
+          </>
+        );
+        const chip =
+          "inline-flex h-8 items-center gap-2 rounded-full bg-white/[0.05] px-3 text-[13px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]";
+        return (
+          <li key={l.provider}>
+            {l.profileUrl ? (
+              <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={`${chip} transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:bg-white/[0.09]`}>
+                {inner}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : (
+              <span className={chip}>{inner}</span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 

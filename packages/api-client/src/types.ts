@@ -193,6 +193,17 @@ export interface PublicUser {
 	trophies: GradeCounts | null;
 	/** Null for a visitor who is not signed in. */
 	viewer: Viewer | null;
+	/** The linked accounts this visitor may see; the cloud applies each link's visibility. */
+	links?: PublicLink[];
+}
+
+/** A linked account as a profile shows it. */
+export interface PublicLink {
+	provider: LinkProvider;
+	externalId: string;
+	displayName: string | null;
+	avatarUrl: string | null;
+	profileUrl: string | null;
 }
 
 export type Appeal =
