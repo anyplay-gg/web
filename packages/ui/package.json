@@ -1,0 +1,39 @@
+{
+  "name": "@anyplay/ui",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "description": "Base UI components on the AnyPlay tokens. Source, not a build: the app compiles it.",
+  "exports": {
+    "./button": "./src/button.tsx",
+    "./icon": "./src/icon.tsx",
+    "./motion": "./src/motion.ts",
+    "./cn": "./src/cn.ts",
+    "./menu": "./src/menu.ts"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.9.0",
+    "@hugeicons/core-free-icons": "4.3.5",
+    "@hugeicons/react": "1.1.10",
+    "clsx": "2.1.1",
+    "motion": "14.3.0",
+    "tailwind-merge": "3.7.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "6.0.3",
+    "react": "19.3.1",
+    "@anyplay/eslint-config": "workspace:*",
+    "eslint": "9.39.5",
+    "vitest": "5.0.5"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run --passWithNoTests"
+  }
+}

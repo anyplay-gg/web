@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+   Only the signed-in app imports this, after base.css. The app is a tool, not a page: its shell
+   fills the screen and keeps its own scrollers, and there is no animated background in it.
+
+   Scoped to `.app-shell` on purpose. Next.js keeps a route group's CSS loaded after a client
+   navigation, so a bare `body { overflow: hidden }` here would follow the visitor back to the
+   landing page and freeze it. (athaus split tokens.css from app.css for the same reason.) */
+
+.app-shell {
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.app-shell__scroll {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

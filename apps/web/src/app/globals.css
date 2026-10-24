@@ -1,0 +1,169 @@
+@import "tailwindcss";
+@import "@anyplay/tokens/fonts.css";
+@import "@anyplay/tokens/directions.css";
+@import "@anyplay/tokens/tokens.css";
+@import "@anyplay/tokens/base.css";
+
+/* Tailwind only scans this app by default; the UI package is source, so name it. */
+@source "../../../../packages/ui/src";
+
+/* ── Paper: the public site's palette ──
+   The site is light and warm like the calmest product sites (Dia #fbfaf6, Cursor #f7f7f4), with
+   near-black ink and the ember brand colour used in small doses. It re-points the same roles the app
+   uses, so every component reads correctly on it. Contrast, measured on bg: ink 16.7:1, ink-2 6.9:1,
+   ink-3 4.9:1, the label on an ink pill 16.7:1. Brand is a dot and an accent, never body text. */
+.paper {
+  color-scheme: light;
+  --ap-bg: #f6f5f1;
+  --ap-surface: #ffffff;
+  --ap-surface-2: #ebe9e4;
+  --ap-line: #e2dfd8;
+  --ap-line-strong: #8d8a83;
+  --ap-ink: #161513;
+  --ap-ink-2: #57544e;
+  --ap-ink-3: #6c6962;
+  --ap-brand: #e8501c;
+  --ap-brand-text: #b73c0c;
+  --ap-focus: #b73c0c;
+}
+/* The page behind the page: overscroll and the moment before the first paint show paper, not the
+   app's dark ground. */
+html:has(.paper),
+body:has(.paper) {
+  background: #f6f5f1;
+}
+
+/* ── Night: the landing's palette ──
+   The launcher's black, warmed a little so the ember shaders sit in it instead of on it. Contrast on
+   bg: ink 18.0:1, ink-2 9.6:1, ink-3 5.9:1. */
+.night {
+  color-scheme: dark;
+  --ap-bg: #0b0a09;
+  --ap-surface: #141312;
+  --ap-surface-2: #1d1b19;
+  --ap-line: #2a2825;
+  --ap-line-strong: #6f6b64;
+  --ap-ink: #f6f5f1;
+  --ap-ink-2: #bdb9b1;
+  --ap-ink-3: #8f8b84;
+  --ap-brand: #ff5a1f;
+  --ap-brand-text: #ff9a6b;
+  --ap-focus: #ff7a3d;
+}
+html:has(.night),
+body:has(.night) {
+  color-scheme: dark;
+  background: #0b0a09;
+}
+.paper ::selection {
+  background: var(--ap-ink);
+  color: var(--ap-bg);
+}
+
+/* ── Headline: words arrive out of a slight blur, 55ms apart, once ──
+   Blur bridges the step from nothing to crisp text better than opacity alone; 8px keeps it cheap. */
+.word {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .word {
+    animation: word-in 820ms var(--ease-out) both;
+    animation-delay: calc(80ms + var(--i, 0) * 55ms);
+  }
+}
+@keyframes word-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px);
+  }
+}
+
+/* ── Live cards on the stage ── */
+.voice-bar {
+  height: 100%;
+  transform: scaleY(0.22);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* A loop with a different phase per bar reads as a voice, not a metronome. */
+  .voice-bar {
+    animation: talk 1150ms ease-in-out infinite;
+    animation-delay: calc(var(--i) * -97ms);
+  }
+}
+@keyframes talk {
+  0%,
+  100% {
+    transform: scaleY(0.22);
+  }
+  18% {
+    transform: scaleY(0.95);
+  }
+  40% {
+    transform: scaleY(0.4);
+  }
+  66% {
+    transform: scaleY(0.78);
+  }
+}
+
+/* ── Launcher demo, story and terminal ── */
+@media (prefers-reduced-motion: no-preference) {
+  /* A caret blinks in steps, never fades: that is how terminals do it. */
+  .caret {
+    animation: caret 1060ms steps(1) infinite;
+  }
+  /* Packets crossing between two players: constant motion, so linear. */
+  .packet {
+    animation: packet 1400ms linear infinite;
+  }
+  .packet-back {
+    animation-direction: reverse;
+    animation-delay: -700ms;
+  }
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes packet {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+/* ── Entrance ──
+   Once, on arrival, in reading order, 60ms apart. Transform and opacity only. It is opt-in: a visitor
+   who asked for less motion gets the page already in place. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal 640ms var(--ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ── The launcher's artwork drift (DESIGN.md 5.2): 1.01 to 1.07 about the top right, 24 s each way ── */
+@media (prefers-reduced-motion: no-preference) {
+  .artwork-drift {
+    transform-origin: top right;
+    animation: artwork-drift 24s ease-in-out infinite alternate;
+  }
+}
+@keyframes artwork-drift {
+  from {
+    transform: scale(1.01);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}

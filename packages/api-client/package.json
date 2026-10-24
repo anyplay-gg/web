@@ -1,0 +1,23 @@
+{
+  "name": "@anyplay/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mock": "./src/mock/adapter.ts"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vitest": "5.0.5",
+    "@anyplay/eslint-config": "workspace:*",
+    "eslint": "9.39.5",
+    "@types/node": "24.19.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run --passWithNoTests"
+  }
+}

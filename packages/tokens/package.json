@@ -1,0 +1,16 @@
+{
+  "name": "@anyplay/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "description": "The design decisions of AnyPlay: CSS and fonts only, no code, no dependencies.",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./directions.css": "./directions.css",
+    "./fonts.css": "./fonts.css",
+    "./base.css": "./base.css",
+    "./app.css": "./app.css",
+    "./fonts/*": "./fonts/*"
+  },
+  "files": ["*.css", "fonts"]
+}

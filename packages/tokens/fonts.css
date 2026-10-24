@@ -1,0 +1,77 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+   Fonts, both SIL OFL 1.1 (licence texts next to the files in ./fonts). Latin and Latin Extended are
+   separate files with unicode-range, so a German or English page downloads the Latin file only and a
+   Turkish page (ğ ı İ ş) adds the Extended one.
+
+   Mona Sans carries two axes: weight 200 to 900 and width 75% to 125%. One family does the whole
+   voice: the UI at normal width, headlines expanded (font-stretch 112 to 125%), which gives the brand
+   its broad, sporting stance without a second display face to load. It stands in until a licensed
+   brand face is chosen; the tokens name roles, so swapping it is one change here.
+   Geist Mono is for codes, IDs and tickets only. */
+
+@font-face {
+  font-family: "Mona Sans Variable";
+  font-style: normal;
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  src: url("./fonts/mona-sans-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Mona Sans Variable";
+  font-style: normal;
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  src: url("./fonts/mona-sans-latin-ext.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Geist Mono Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./fonts/geist-mono-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Geist Mono Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./fonts/geist-mono-latin-ext.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Inter (OFL, OFL-inter.txt): the launcher's typeface, used on the landing only where it draws the
+   launcher, so the copy there looks like the app it shows. */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./fonts/inter-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Anybody and Bricolage Grotesque (OFL, licence texts in ./fonts): only for the title lettering of the
+   invented games on the landing's launcher covers, so the library reads as many games, not one brand. */
+@font-face {
+  font-family: "Anybody Variable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 50% 150%;
+  font-display: swap;
+  src: url("./fonts/anybody-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+2000-206F;
+}
+@font-face {
+  font-family: "Bricolage Grotesque Variable";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("./fonts/bricolage-grotesque-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+2000-206F;
+}
