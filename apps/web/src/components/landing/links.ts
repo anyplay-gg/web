@@ -6,6 +6,6 @@ export const LINKS = {
   github: "https://github.com/anyplay-gg",
   discord: "https://discord.gg/nSHbHBRdS",
   selfHost: "https://github.com/anyplay-gg/cloud",
-  signIn: "/web/sign-in",
-  createAccount: "/web/create",
+  signIn: "/sign-in",
+  createAccount: "/create",
 } as const;

@@ -12,7 +12,7 @@ export default defineConfig([
     rules: anyplayRules,
   },
   {
-    files: ["src/components/landing/**/*.{ts,tsx}"],
+    files: ["src/components/landing/**/*.{ts,tsx}", "src/components/auth/**/*.{ts,tsx}"],
     rules: marketingRules,
   },
 ]);
