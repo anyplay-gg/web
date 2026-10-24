@@ -690,6 +690,13 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 					playtime: part("playtime", p.playtime, p.playtime.length === 0),
 					trophies: part("trophies", p.trophies, false),
 					viewer,
+					// Every seeded player shows the same two links, so the profile's link row can be seen.
+					links: isBlocked
+						? []
+						: [
+								{ provider: "discord", externalId: "301928374655", displayName: p.handle, avatarUrl: null, profileUrl: null },
+								{ provider: "steam", externalId: "76561198000000000", displayName: p.handle, avatarUrl: null, profileUrl: "https://steamcommunity.com/profiles/76561198000000000" },
+							],
 				};
 			},
 		},
