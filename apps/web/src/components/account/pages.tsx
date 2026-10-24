@@ -40,7 +40,7 @@ import {
 } from "./ui";
 
 /** Loads once and on demand; the page shows a skeleton until the first answer. */
-function useLoad<T>(load: () => Promise<T>) {
+export function useLoad<T>(load: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reload = useCallback(async () => {
@@ -68,7 +68,7 @@ function useLoad<T>(load: () => Promise<T>) {
   return { data, error, reload, setData };
 }
 
-function Loading() {
+export function Loading() {
   return (
     <div aria-busy role="status" className="grid gap-4">
       <span className="sr-only">Loading</span>
@@ -78,7 +78,7 @@ function Loading() {
   );
 }
 
-function Failed({ message, retry }: { message: string; retry: () => void }) {
+export function Failed({ message, retry }: { message: string; retry: () => void }) {
   return (
     <div role="alert" className="grid justify-items-start gap-3 text-[15px] text-ink-2">
       {message}
@@ -90,7 +90,7 @@ function Failed({ message, retry }: { message: string; retry: () => void }) {
 }
 
 /** A write that shows its own problem under the control, and none when the person closed the step-up. */
-function useAction() {
+export function useAction() {
   const stepUp = useStepUp();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

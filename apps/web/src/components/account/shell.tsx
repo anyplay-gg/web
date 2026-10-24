@@ -9,7 +9,9 @@ import {
   HomeIcon,
   LinkIcon,
   ShieldCheckIcon,
+  TrophyIcon,
   UserCircleIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -37,6 +39,8 @@ export function useAccount(): Account {
 const NAV = [
   { href: "/account", label: "Overview", icon: HomeIcon },
   { href: "/account/profile", label: "Profile", icon: UserCircleIcon },
+  { href: "/account/friends", label: "Friends", icon: UsersIcon },
+  { href: "/account/trophies", label: "Trophies", icon: TrophyIcon },
   { href: "/account/security", label: "Security", icon: ShieldCheckIcon },
   { href: "/account/privacy", label: "Privacy", icon: EyeIcon },
   { href: "/account/connections", label: "Connections", icon: LinkIcon },
