@@ -189,6 +189,11 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 			},
 		},
 
+		link: {
+			peek: (code) => json<{ handle: string }>("GET", `/link/${encodeURIComponent(code)}`),
+			open: (code) => step(`/link/${encodeURIComponent(code)}`),
+		},
+
 		account: {
 			get: async () => {
 				const view = await json<AccountView>("GET", "/account");
