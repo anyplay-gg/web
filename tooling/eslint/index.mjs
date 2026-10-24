@@ -63,7 +63,7 @@ export const anyplayRules = {
 };
 
 /**
- * The art-directed marketing surfaces (the landing and the sign-in pages, which share its look). They set type in fluid clamps, draw glass with
+ * The art-directed marketing surfaces (the landing, the sign-in pages and the account pages, which share its look). They set type in fluid clamps, draw glass with
  * white at low alpha and copy the launcher's own radii, so the three token bans (pure black or white,
  * radius, font size) do not hold there; every other ban does. The app's screens stay on the tokens.
  */

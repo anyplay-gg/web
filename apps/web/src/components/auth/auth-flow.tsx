@@ -6,6 +6,7 @@ import { AnimatePresence, m } from "@anyplay/ui/motion";
 import { ArrowRightIcon, ComputerDesktopIcon, KeyIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { loadApi } from "@/lib/api";
 import { CheckField, CodeField, FormError, TextField, primaryButton, secondaryButton, textButton } from "./fields";
 
 /**
@@ -15,16 +16,7 @@ import { CheckField, CodeField, FormError, TextField, primaryButton, secondaryBu
  * screens run without one (`?mock=handoff`, `?mock=banned` show those paths).
  */
 
-const ACCOUNT = "/web/account";
-
-async function loadApi(): Promise<PortalApi> {
-  if (process.env.NODE_ENV === "development") {
-    const { createMockApi, parseScenario } = await import("@anyplay/api-client/mock");
-    return createMockApi({ scenario: parseScenario(window.location.search) });
-  }
-  const { createHttpApi } = await import("@anyplay/api-client");
-  return createHttpApi();
-}
+const ACCOUNT = "/account";
 
 function fieldError(e: unknown, field: string): string {
   return (isApiError(e) && e.fields[field]) || describeError(e);

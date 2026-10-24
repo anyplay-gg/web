@@ -10,7 +10,8 @@
     "./icon": "./src/icon.tsx",
     "./motion": "./src/motion.ts",
     "./cn": "./src/cn.ts",
-    "./menu": "./src/menu.ts"
+    "./menu": "./src/menu.ts",
+    "./dialog": "./src/dialog.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",

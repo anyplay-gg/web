@@ -38,6 +38,19 @@ interface ErrorBody {
 
 const JSON_TYPE = "application/json";
 
+/** GET /me/links answers this per provider, camelized. */
+interface LinkView {
+	provider: LinkedAccount["provider"];
+	available: boolean;
+	linked: boolean;
+	externalId: string | null;
+	displayName: string | null;
+	avatarUrl: string | null;
+	profileUrl: string | null;
+	linkedAt: number | null;
+	visibility: LinkedAccount["audience"] | null;
+}
+
 export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 	const base = `${options.baseUrl ?? ""}/web/api/v1`;
 	const doFetch: typeof fetch = options.fetch ?? ((...a) => fetch(...a));
@@ -288,14 +301,29 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 		},
 
 		links: {
-			list: () => json<{ links: LinkedAccount[] }>("GET", "/me/links").then((r) => r.links),
+			// The cloud's LinkView (spec/portal-api.md, "Connections"): the name on the other
+			// service is `display_name` and who sees it is `visibility`.
+			list: () =>
+				json<{ links: LinkView[] }>("GET", "/me/links").then((r) =>
+					r.links.map((l) => ({
+						provider: l.provider,
+						available: l.available,
+						linked: l.linked,
+						externalId: l.externalId,
+						name: l.displayName,
+						avatarUrl: l.avatarUrl,
+						profileUrl: l.profileUrl,
+						linkedAt: l.linkedAt,
+						audience: l.visibility ?? "friends",
+					})),
+				),
 			start: (provider) =>
-				json<{ url: string }>("POST", `/me/links/${provider}/start`).then((r) => r.url),
+				json<{ url: string }>("POST", `/me/links/${provider}/start`, {}).then((r) => r.url),
 			unlink: async (provider) => {
-				await json("DELETE", `/me/links/${provider}`);
+				await json("DELETE", `/me/links/${provider}`, {});
 			},
 			setAudience: async (provider, audience) => {
-				await json("PUT", `/me/links/${provider}/audience`, { audience });
+				await json("PATCH", `/me/links/${provider}`, { visibility: audience });
 			},
 		},
 
