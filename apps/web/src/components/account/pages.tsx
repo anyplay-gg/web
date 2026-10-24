@@ -706,6 +706,12 @@ export function ConnectionsPage() {
   );
 }
 
+/**
+ * The services a player can link today. Discord and Steam are built (cloud#38) but switched off
+ * until AnyPlay's own Discord app and Steam key are set up; until then they show as coming soon.
+ */
+const LINKING_OPEN = new Set<LinkProvider>([]);
+
 function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l: LinkedAccount) => void }) {
   const { api } = useAccount();
   const stepUp = useStepUp();
@@ -738,7 +744,7 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
         </span>
       </div>
     );
-  } else if (link.available) {
+  } else if (link.available && LINKING_OPEN.has(link.provider)) {
     body = (
       <button
         type="button"
@@ -754,7 +760,7 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
       </button>
     );
   } else {
-    body = <Badge>Coming later</Badge>;
+    body = <Badge>Soon</Badge>;
   }
   return (
     <section aria-label={brand.name} className="flex flex-wrap items-center gap-5 rounded-[22px] bg-[#141312] p-5 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)]">
@@ -763,7 +769,7 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
       </span>
       <div className="min-w-0 flex-1">
         <h2 className="text-[16px] font-semibold">{brand.name}</h2>
-        {!link.linked && <p className="text-[13px] text-ink-3">{link.available ? "Not linked" : "Not available on this cloud yet"}</p>}
+        {!link.linked && <p className="text-[13px] text-ink-3">{LINKING_OPEN.has(link.provider) && link.available ? "Not linked" : "Linking arrives soon"}</p>}
         {link.linked && <div className="mt-3">{body}</div>}
         {error && (
           <div className="mt-3">
