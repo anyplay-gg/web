@@ -25,6 +25,8 @@ export interface LinkedAccount {
 	/** The name on the other service, as it was when linked. */
 	name: string | null;
 	avatarUrl: string | null;
+	/** The profile page on the other service, when it has one. */
+	profileUrl?: string | null;
 	linkedAt: number | null;
 	/** Who sees the link on the public profile. */
 	audience: Audience;
