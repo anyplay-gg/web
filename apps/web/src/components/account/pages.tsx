@@ -198,7 +198,8 @@ function Tile({ href, title, value, detail, tone }: { href: string; title: strin
 
 /* ───────────────────────────── Profile ───────────────────────────── */
 
-const ABOUT_MAX = 200;
+/** The cloud keeps 160 characters of it (cloud README, Profiles). */
+const ABOUT_MAX = 160;
 
 export function ProfilePage() {
   const { api, session } = useAccount();
@@ -222,7 +223,7 @@ function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: s
   const { busy, error, run } = useAction();
   const input = useRef<HTMLInputElement>(null);
   return (
-    <Card title="Picture" description="PNG, JPEG or WebP. It shows round, so keep the face in the middle.">
+    <Card title="Picture" description="PNG or JPEG, up to 1 MB. It shows round, so keep the face in the middle.">
       <div className="flex flex-wrap items-center gap-5">
         {profile.avatar ? (
           // eslint-disable-next-line @next/next/no-img-element -- the image optimizer is off on purpose
@@ -234,7 +235,7 @@ function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: s
           <input
             ref={input}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
+            accept="image/png,image/jpeg"
             className="sr-only"
             tabIndex={-1}
             aria-hidden
