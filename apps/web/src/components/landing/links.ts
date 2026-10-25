@@ -4,7 +4,7 @@ export const LINKS = {
   download: "https://github.com/anyplaynet/launcher/releases/latest",
   releases: "https://github.com/anyplaynet/launcher/releases",
   github: "https://github.com/anyplaynet",
-  discord: "https://discord.gg/nSHbHBRdS",
+  discord: "https://discord.gg/9zYqf8fEsh",
   selfHost: "https://github.com/anyplaynet/cloud",
   compatibility: "/compatibility",
   signIn: "/sign-in",
