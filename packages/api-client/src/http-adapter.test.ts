@@ -66,6 +66,23 @@ describe("http adapter", () => {
 		expect(call(1).init.body).toBe("{}");
 	});
 
+	it("asks about a link with a read and uses it up with a write that takes the new token", async () => {
+		const { api, call } = setup((url, init) => {
+			if (url.endsWith("/session")) return json(view({ csrf: "tok-1", signed_in: false, account: null }));
+			if (init.method === "GET") return json({ handle: "riley" });
+			return json(view({ csrf: "tok-2" }));
+		});
+		expect(await api.link.peek("a/b")).toEqual({ handle: "riley" });
+		expect(call(0).url).toBe("/web/api/v1/link/a%2Fb");
+		expect(call(0).init.method).toBe("GET");
+		const opened = await api.link.open("abc");
+		expect(opened.csrf).toBe("tok-2");
+		const write = call(2);
+		expect(write.url).toBe("/web/api/v1/link/abc");
+		expect(headersOf(write.init)["X-CSRF-Token"]).toBe("tok-1");
+		expect(call(1).url).toBe("/web/api/v1/session"); // the write asked for a token first
+	});
+
 	it("takes the new token a sign-in step hands back", async () => {
 		const { api, call } = setup((url) => {
 			if (url.endsWith("/session"))

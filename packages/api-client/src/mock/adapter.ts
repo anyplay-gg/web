@@ -353,6 +353,34 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 				),
 		},
 
+		link: {
+			// `?c=expired` stands for a link that ran out or was used, `?c=banned` for one of a banned
+			// account; any other code opens the mock's own account.
+			peek: (code) =>
+				call(
+					() => {
+						if (code === "expired") throw new ApiError("not_found", "There is nothing like that here.", { status: 404 });
+						return { handle: me.handle };
+					},
+					{ auth: false },
+				),
+			open: (code) =>
+				call(
+					() => {
+						if (code === "expired") throw new ApiError("not_found", "There is nothing like that here.", { status: 404 });
+						if (code === "banned") {
+							flow = { step: "banned" };
+							throw new ApiError("banned", "This account is banned.", { status: 403 });
+						}
+						signedIn = true;
+						markFresh();
+						flow = { step: "done" };
+						return view();
+					},
+					{ auth: false },
+				),
+		},
+
 		account: {
 			get: () =>
 				call(

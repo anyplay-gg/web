@@ -65,6 +65,17 @@ export interface PortalApi {
 		appeal(text: string): Promise<void>;
 	};
 
+	/** The link the launcher's account button opens: `/link?c=<code>`. */
+	link: {
+		/** Whose account the link opens. Changes nothing; rejects with `not_found` when it ran out. */
+		peek(code: string): Promise<{ handle: string }>;
+		/**
+		 * Uses the link up and signs this browser in as that account. Rejects with `not_found` when it
+		 * ran out, or `banned`: the session then shows the statement (`flow.step` is `banned`).
+		 */
+		open(code: string): Promise<SessionView>;
+	};
+
 	account: {
 		get(): Promise<AccountView>;
 		/** Sends a code to the new address. Needs a recent sign-in. */

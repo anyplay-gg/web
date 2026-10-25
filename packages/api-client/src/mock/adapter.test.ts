@@ -56,6 +56,20 @@ describe("mock adapter", () => {
 		expect(done.account?.handle).toBe("newbie");
 	});
 
+	it("opens an account link once for a look and signs in on the press", async () => {
+		const api = make({ scenario: "signedout" });
+		expect(await api.link.peek("abc")).toEqual({ handle: expect.any(String) });
+		expect((await api.session()).signedIn).toBe(false);
+		const opened = await api.link.open("abc");
+		expect(opened.signedIn).toBe(true);
+		expect(opened.flow.step).toBe("done");
+		const expired = await api.link.peek("expired").catch((e) => e);
+		expect(expired.code).toBe("not_found");
+		const banned = await api.link.open("banned").catch((e) => e);
+		expect(banned.code).toBe("banned");
+		expect((await api.session()).flow.step).toBe("banned");
+	});
+
 	it("hands a launcher sign-in off with a redirect", async () => {
 		const api = make({ scenario: "handoff" });
 		expect((await api.session()).authorize).not.toBeNull();

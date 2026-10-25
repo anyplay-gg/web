@@ -86,7 +86,7 @@ export function AuthFlow({ intent }: { intent: SignInIntent }) {
 }
 
 /** The heading of a step takes the focus when the step changes, so a screen reader hears where it is. */
-function Step({ title, lead, children }: { title: string; lead?: ReactNode; children: ReactNode }) {
+export function Step({ title, lead, children }: { title: string; lead?: ReactNode; children: ReactNode }) {
   const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (document.activeElement === document.body || document.activeElement === null) return;
@@ -103,7 +103,7 @@ function Step({ title, lead, children }: { title: string; lead?: ReactNode; chil
   );
 }
 
-function Loading() {
+export function Loading() {
   return (
     <div aria-busy className="grid gap-4" role="status">
       <span className="sr-only">Loading</span>
@@ -416,7 +416,7 @@ function TermsStep({ api, view, onView }: StepProps) {
   );
 }
 
-function BannedStep({ api }: { api: PortalApi }) {
+export function BannedStep({ api }: { api: PortalApi }) {
   const [ban, setBan] = useState<BanStatement | null>(null);
   useEffect(() => {
     api.auth.ban().then(setBan, () => {});
