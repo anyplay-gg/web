@@ -2,11 +2,23 @@
 // Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
 import { describe, expect, it } from "vitest";
 import { isStepUp } from "../errors";
-import { createMockApi, parseScenario } from "./adapter";
+import { MOCK_JOIN_CODES, createMockApi, parseScenario } from "./adapter";
 
 const make = (o = {}) => createMockApi({ latency: 0, ...o });
 
 describe("mock adapter", () => {
+	it("answers a join page for a game and for a party, to a visitor with no session", async () => {
+		const api = make({ scenario: "signedout" });
+		expect(await api.join.get(MOCK_JOIN_CODES.session)).toMatchObject({ kind: "session", title: "Into the Ember", members: 2, maxMembers: 4 });
+		expect(await api.join.get(MOCK_JOIN_CODES.party)).toMatchObject({ kind: "party", title: null });
+	});
+
+	it("answers not_found for every other join code, and fails in the error scenario", async () => {
+		expect((await make().join.get(MOCK_JOIN_CODES.expired).catch((e) => e)).code).toBe("not_found");
+		expect((await make().join.get("zzzzzzzzzz").catch((e) => e)).code).toBe("not_found");
+		expect((await make({ scenario: "error" }).join.get(MOCK_JOIN_CODES.session).catch((e) => e)).code).toBe("internal");
+	});
+
 	it("starts signed in, and signed out for the signedout scenario", async () => {
 		const a = await make().session();
 		expect(a.signedIn).toBe(true);
