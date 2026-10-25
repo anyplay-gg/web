@@ -194,6 +194,10 @@ function EmailStep({ api, view, intent, onView }: StepProps & { intent: SignInIn
           name="email"
           autoComplete={passkey?.conditional ? "email webauthn" : "email"}
           inputMode="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="send"
           placeholder="name@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -333,7 +337,9 @@ function DetailsStep({ api, view, onView }: StepProps) {
           name="handle"
           autoComplete="nickname"
           autoCapitalize="none"
+          autoCorrect="off"
           spellCheck={false}
+          enterKeyHint="next"
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
           error={errors.handle}

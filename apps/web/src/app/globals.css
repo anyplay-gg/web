@@ -167,3 +167,15 @@ body:has(.night) {
     transform: scale(1.07);
   }
 }
+
+/* ── Phones ──
+   A tap acts at once (no 300 ms wait for a double-tap zoom on a control) and shows the control's own
+   pressed state instead of the browser's grey flash. Pinch zoom on the page stays. */
+a,
+button,
+summary,
+label,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

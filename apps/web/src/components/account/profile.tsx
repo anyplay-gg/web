@@ -60,20 +60,20 @@ export function ProfilePage({ handle }: { handle: string }) {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgb(255_90_31/0.14),transparent)]"
         />
-        <header className="relative mx-auto flex h-20 w-full max-w-[1120px] items-center justify-between px-[var(--gutter)]">
-          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 rounded-full px-2 py-1">
+        <header className="relative mx-auto flex min-h-20 w-full max-w-[1120px] items-center justify-between px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)]">
+          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
             <Wordmark />
           </Link>
           {state.status === "ready" && (
             <Link
               href={state.signedIn ? "/account" : "/sign-in"}
-              className="inline-flex h-9 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+              className="inline-flex h-9 [@media(pointer:coarse)]:h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
             >
               {state.signedIn ? "Your account" : "Sign in"}
             </Link>
           )}
         </header>
-        <main id="main" className="relative mx-auto w-full max-w-[720px] px-[var(--gutter)] pt-4 pb-24">
+        <main id="main" className="relative mx-auto w-full max-w-[720px] px-[max(var(--gutter),env(safe-area-inset-left))] pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
           {state.status === "loading" && (
             <div aria-busy role="status" className="grid gap-4">
               <span className="sr-only">Loading</span>
@@ -173,7 +173,7 @@ function Links({ links }: { links: PublicLink[] }) {
         return (
           <li key={l.provider}>
             {l.profileUrl ? (
-              <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={`${chip} transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:bg-white/[0.09]`}>
+              <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={`${chip} [@media(pointer:coarse)]:h-11 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:bg-white/[0.09]`}>
                 {inner}
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>

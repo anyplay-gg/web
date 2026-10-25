@@ -52,5 +52,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Documents only: not the build's static files, not the poster images.
-  matcher: [{ source: "/((?!_next/static|_next/image|map/|favicon.ico).*)", missing: [{ type: "header", key: "next-router-prefetch" }] }],
+  matcher: [{ source: "/((?!_next/static|_next/image|map/|icons/|sw\\.js|favicon.ico).*)", missing: [{ type: "header", key: "next-router-prefetch" }] }],
 };

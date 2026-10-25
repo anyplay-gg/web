@@ -65,7 +65,7 @@ function Person({ account, detail, online, trailing }: { account: Account; detai
         {online && <span aria-hidden className="absolute -right-0.5 -bottom-0.5 size-3 rounded-full bg-[#3fd38a] ring-2 ring-[#181716]" />}
       </span>
       <span className="min-w-[10rem] flex-1">
-        <Link href={`/u/${encodeURIComponent(account.handle)}`} className="block truncate rounded-[6px] text-[15px] font-medium [@media(hover:hover)]:hover:underline">
+        <Link href={`/u/${encodeURIComponent(account.handle)}`} className="-my-3 block truncate rounded-[6px] py-3 text-[15px] font-medium [@media(hover:hover)]:hover:underline">
           {account.handle}
         </Link>
         {detail && <span className="mt-0.5 block truncate text-[13px] text-ink-3">{detail}</span>}
@@ -266,7 +266,9 @@ function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
           hint="Their handle, with or without the @."
           autoComplete="off"
           autoCapitalize="none"
+          autoCorrect="off"
           spellCheck={false}
+          enterKeyHint="send"
         />
         <div>
           <button type="submit" className={smallPrimary} disabled={busy}>

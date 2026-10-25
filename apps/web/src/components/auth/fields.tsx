@@ -19,7 +19,7 @@ export const secondaryButton =
   "inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/[0.06] px-6 text-[15px] font-semibold text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] [@media(hover:hover)]:hover:bg-white/[0.1]";
 
 export const textButton =
-  "inline-flex min-h-9 items-center rounded-full px-2 text-[14px] font-medium text-brand-text transition-colors duration-[var(--duration-quick)] disabled:text-ink-3 [@media(hover:hover)]:hover:text-ink";
+  "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-2 text-[14px] font-medium text-brand-text transition-colors duration-[var(--duration-quick)] disabled:text-ink-3 [@media(hover:hover)]:hover:text-ink";
 
 export function TextField({
   label,
@@ -122,6 +122,7 @@ export function CodeField({
           value={value}
           onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
           inputMode="numeric"
+          enterKeyHint="go"
           autoComplete="one-time-code"
           pattern="\d{6}"
           maxLength={6}

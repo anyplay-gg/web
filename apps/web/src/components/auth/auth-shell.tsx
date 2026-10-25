@@ -51,14 +51,14 @@ export function AuthShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <div className="flex min-h-dvh flex-col px-[var(--gutter)]">
-          <header className="mx-auto flex h-20 w-full max-w-[400px] items-center justify-between lg:max-w-none">
-            <Link href="/" aria-label="AnyPlay, home" className="-mx-2 rounded-full px-2 py-1">
+        <div className="flex min-h-dvh flex-col px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+          <header className="mx-auto flex min-h-20 w-full max-w-[400px] items-center justify-between lg:max-w-none">
+            <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
               <Wordmark />
             </Link>
             <Link
               href="/"
-              className="inline-flex min-h-9 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+              className="inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
             >
               Back to the start
             </Link>
@@ -68,7 +68,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
           </main>
           <footer className="mx-auto w-full max-w-[400px] pb-8 text-[13px] text-ink-3">
             Need help?{" "}
-            <a href={LINKS.discord} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+            <a href={LINKS.discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
               Ask on Discord
             </a>
             <span aria-hidden> · </span>

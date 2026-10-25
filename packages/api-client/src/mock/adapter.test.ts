@@ -132,6 +132,37 @@ describe("mock adapter", () => {
 		});
 	});
 
+	it("keeps push subscriptions per endpoint, and updates one instead of adding it twice", async () => {
+		const api = make();
+		const sub = { endpoint: "https://push.example.test/a", p256dh: "k", auth: "a" };
+		expect((await api.push.get()).enabled).toBe(true);
+		const first = await api.push.subscribe({ ...sub, label: "Chrome on Android" });
+		expect(first.kinds).toEqual(["friend_request", "party_invite", "message"]);
+		const again = await api.push.subscribe({ ...sub, kinds: ["message"] });
+		expect(again.id).toBe(first.id);
+		expect(again.kinds).toEqual(["message"]);
+		expect((await api.push.get()).subscriptions).toHaveLength(1);
+		await api.push.unsubscribe(sub.endpoint);
+		await api.push.unsubscribe(sub.endpoint);
+		expect((await api.push.get()).subscriptions).toHaveLength(0);
+	});
+
+	it("limits a player to ten push devices", async () => {
+		const api = make();
+		for (let i = 0; i < 10; i++) await api.push.subscribe({ endpoint: `https://push.example.test/${i}`, p256dh: "k", auth: "a" });
+		await expect(api.push.subscribe({ endpoint: "https://push.example.test/11", p256dh: "k", auth: "a" })).rejects.toMatchObject({ code: "limit" });
+	});
+
+	it("lists compatibility to a signed-out visitor, only with a verdict and three reports", async () => {
+		const list = await make({ scenario: "signedout" }).compatibility.list();
+		expect(list.titles.length).toBeGreaterThan(0);
+		for (const t of list.titles) {
+			expect(t.reports).toBeGreaterThanOrEqual(3);
+			expect(t.reports).toBe(t.counts.noStart + t.counts.menus + t.counts.inGame + t.counts.playable);
+		}
+		expect((await make({ scenario: "empty" }).compatibility.list()).titles).toEqual([]);
+	});
+
 	it("parses the scenario from a URL", () => {
 		expect(parseScenario("?mock=empty")).toBe("empty");
 		expect(parseScenario("?mock=banned")).toBe("banned");

@@ -26,7 +26,7 @@ const pill =
 const pillLight = `${pill} bg-[#f6f5f1] text-[#161513] shadow-[inset_0_-1px_0_rgb(0_0_0/0.12),0_1px_2px_rgb(0_0_0/0.4),0_10px_30px_-10px_rgb(255_90_31/0.45)] [@media(hover:hover)]:hover:bg-white`;
 /** The navbar's button: the same light pill, sized for a 56 high bar. */
 const pillSmall =
-  "inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-3.5 text-[14px] font-semibold whitespace-nowrap text-[#161513] select-none transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] [@media(hover:hover)]:hover:bg-white";
+  "inline-flex h-9 [@media(pointer:coarse)]:h-11 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-3.5 text-[14px] font-semibold whitespace-nowrap text-[#161513] select-none transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] [@media(hover:hover)]:hover:bg-white";
 const pillGlass = `${pill} bg-white/[0.06] text-[#f6f5f1] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.1)] backdrop-blur-md [@media(hover:hover)]:hover:bg-white/[0.1]`;
 
 /** The headline, word by word. The last word carries the gradient and is padded below, so the gradient reaches its descender. */
@@ -61,7 +61,7 @@ export async function Landing() {
               />
               <a
                 href={LINKS.releases}
-                className="reveal inline-flex items-center gap-2 rounded-full bg-white/[0.05] py-1.5 pr-3 pl-1.5 text-[13px] text-ink-2 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] backdrop-blur-md transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+                className="reveal inline-flex items-center gap-2 rounded-full bg-white/[0.05] py-1.5 pr-3 pl-1.5 [@media(pointer:coarse)]:min-h-11 text-[13px] text-ink-2 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] backdrop-blur-md transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
               >
                 <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold tracking-[0.03em] text-[#0b0a09] uppercase">Preview</span>
                 See what&rsquo;s new
@@ -172,7 +172,7 @@ export async function Landing() {
           </section>
         </main>
 
-        <footer className="relative border-t border-line bg-bg">
+        <footer className="relative border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]">
           <div className="mx-auto grid w-full max-w-[1160px] gap-10 px-[var(--gutter)] py-14 md:grid-cols-[1fr_auto_auto_auto_auto] md:gap-12 lg:gap-16">
             <div>
               <Wordmark />
@@ -185,6 +185,7 @@ export async function Landing() {
               links={[
                 ["Download", LINKS.download],
                 ["Release notes", LINKS.releases],
+                ["Compatibility", LINKS.compatibility],
                 ["Self-hosting", LINKS.selfHost],
               ]}
             />
@@ -220,12 +221,12 @@ function FooterColumn({ title, links }: { title: string; links: [string, string]
   return (
     <div>
       <p className="text-[13px] font-semibold text-ink">{title}</p>
-      <ul className="mt-3 space-y-2">
+      <ul className="mt-2 md:mt-3">
         {links.map(([label, href]) => (
           <li key={label}>
             <a
               href={href}
-              className="text-[14px] text-ink-3 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+              className="inline-flex min-h-11 items-center text-[14px] text-ink-3 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
             >
               {label}
             </a>

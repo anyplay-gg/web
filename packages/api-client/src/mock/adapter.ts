@@ -8,6 +8,7 @@ import type {
 	AccountView,
 	BanStatement,
 	BrowserSession,
+	CompatList,
 	Device,
 	Flow,
 	Friend,
@@ -17,6 +18,7 @@ import type {
 	Me,
 	Passkey,
 	Privacy,
+	PushDevice,
 	Profile,
 	PublicUser,
 	SessionView,
@@ -32,6 +34,7 @@ import {
 	seedDevices,
 	seedFriends,
 	seedIncoming,
+	seedCompatibility,
 	seedMe,
 	seedOutgoing,
 	seedPasskeys,
@@ -58,6 +61,12 @@ export interface MockOptions {
 	fresh?: boolean;
 	now?: () => number;
 }
+
+/** A well-formed P-256 point, so a browser's subscribe call accepts it. Nothing signs with it. */
+const MOCK_VAPID_KEY =
+	"BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
+
+const pushView = (d: PushDevice): PushDevice => ({ id: d.id, label: d.label, kinds: d.kinds, createdAt: d.createdAt });
 
 const FRESH_FOR = 15 * 60;
 const GRACE = 30 * 86_400;
@@ -102,6 +111,8 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 		{ provider: "twitch", available: false, linked: false, externalId: null, name: null, avatarUrl: null, linkedAt: null, audience: "everyone" },
 		{ provider: "youtube", available: false, linked: false, externalId: null, name: null, avatarUrl: null, linkedAt: null, audience: "everyone" },
 	];
+	let pushDevices: (PushDevice & { endpoint: string })[] = [];
+	let pushNextId = 1;
 	let deletion: { at: number } | null = null;
 	let pendingEmail: string | null = null;
 	let flow: Flow =
@@ -671,6 +682,40 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 				call(() => {
 					links = links.map((x) => (x.provider === provider ? { ...x, audience } : x));
 				}),
+		},
+
+		push: {
+			get: () =>
+				call(() => ({
+					enabled: true,
+					publicKey: MOCK_VAPID_KEY,
+					subscriptions: pushDevices.map(pushView),
+				}), { read: true }),
+			subscribe: (input) =>
+				call((): PushDevice => {
+					const kinds = input.kinds ?? ["friend_request", "party_invite", "message"];
+					const known = pushDevices.find((d) => d.endpoint === input.endpoint);
+					if (known) {
+						known.kinds = kinds;
+						known.label = input.label ?? known.label;
+						return pushView(known);
+					}
+					if (pushDevices.length >= 10)
+						throw new ApiError("limit", "You can receive notifications on 10 devices at most.", { status: 409 });
+					const added = { id: pushNextId++, label: input.label ?? null, kinds, createdAt: now(), endpoint: input.endpoint };
+					pushDevices = [...pushDevices, added];
+					return pushView(added);
+				}),
+			unsubscribe: (endpoint) =>
+				call(() => {
+					pushDevices = pushDevices.filter((d) => d.endpoint !== endpoint);
+				}),
+		},
+
+		compatibility: {
+			// public: no session needed
+			list: () =>
+				call((): CompatList => (empty ? { titles: [] } : seedCompatibility()), { read: true, auth: false }),
 		},
 
 		users: {
