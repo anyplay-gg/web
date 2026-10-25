@@ -778,7 +778,7 @@ export function PrivacyPage() {
             <Row
               title="Activity"
               detail="Friends see it in their feed. Strangers see no feed. Only me hides what is there and stops new items."
-              trailing={<AudiencePicker label="Who sees: Activity" value={data.feed} disabled={saving === "feed"} onChange={(a) => void set("feed", a)} />}
+              trailing={<AudiencePicker label="Who sees: Activity" value={data.feed === "everyone" ? "friends" : data.feed} only={["friends", "nobody"]} disabled={saving === "feed"} onChange={(a) => void set("feed", a)} />}
             />
           </Rows>
           {problem?.part === "feed" && (

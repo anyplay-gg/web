@@ -54,7 +54,9 @@ export type MockScenario =
 	| "banned"
 	| "handoff"
 	/** Reads work, saving privacy fails. */
-	| "nosave";
+	| "nosave"
+	/** The stored feed visibility is "everyone", as older data may have it. */
+	| "oldfeed";
 
 export interface MockOptions {
 	scenario?: MockScenario;
@@ -74,7 +76,7 @@ const pushView = (d: PushDevice): PushDevice => ({ id: d.id, label: d.label, kin
 const FRESH_FOR = 15 * 60;
 const GRACE = 30 * 86_400;
 const TAKEN = new Set(["admin", "root", "anyplay", ...players.map((p) => p.handle)]);
-const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff", "nosave"];
+const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff", "nosave", "oldfeed"];
 
 /** Codes the mock knows: an invitation to a game, one to a party, and one that ran out. Any other code is unknown. */
 export const MOCK_JOIN_CODES = {
@@ -104,7 +106,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 	let passkeys: Passkey[] = empty ? [] : seedPasskeys(t0);
 	let devices: Device[] = empty ? [] : seedDevices(t0);
 	let sessions: BrowserSession[] = empty ? seedSessions(t0).slice(0, 1) : seedSessions(t0);
-	let privacy: Privacy = defaultPrivacy();
+	let privacy: Privacy = { ...defaultPrivacy(), ...(scenario === "oldfeed" ? { feed: "everyone" as const } : {}) };
 	let profile = {
 		about: empty ? "" : "Co-op when I can, solo when I can't. Always up for a rematch.",
 		favourites: empty ? [] : ["GAME01234", "GAME04550"],
