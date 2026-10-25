@@ -238,6 +238,7 @@ function CodeStep({ api, view, onView }: StepProps) {
   }, [wait]);
 
   const verify = async (value: string) => {
+    if (busy) return;
     if (value.length !== 6) {
       setError("Enter the 6 digits from the e-mail.");
       return;
