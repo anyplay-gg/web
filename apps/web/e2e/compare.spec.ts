@@ -75,7 +75,7 @@ test.describe("compare on a profile", () => {
     }
     // The verdict is in words, and so are the three groups of trophies
     await expect(c.getByText(/ahead by [\d,]+ points? in this game\.|level on points/)).toBeVisible();
-    for (const term of ["Both", "Only you", "Only mira"]) await expect(c.getByText(term, { exact: true })).toBeVisible();
+    for (const term of ["Earned by both", "Only you", "Only mira"]) await expect(c.getByText(term, { exact: true })).toBeVisible();
     // The riley side is the trophy page's own counts for that game: 1 + 9 + 14 + 22
     await expect(table.getByRole("row", { name: /^Trophies 46 / })).toBeVisible();
     await shoot(page, "compare-two-games");
@@ -119,7 +119,7 @@ test.describe("compare on a profile", () => {
 
   test("hidden since the page loaded: says it can't be compared", async ({ page }) => {
     await page.goto("/u/mira?mock=hiddennow");
-    await expect(card(page).getByRole("status").filter({ hasText: "can’t be compared" })).toBeVisible();
+    await expect(card(page).getByRole("status").filter({ hasText: "aren’t available to compare" })).toBeVisible();
     await shoot(page, "compare-hidden");
   });
 

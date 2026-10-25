@@ -141,7 +141,7 @@ export function OverviewPage() {
                 <Badge>Appearing offline</Badge>
               </p>
             )}
-            {trophies?.level && <LevelMeter level={trophies.level} className="mt-5 w-[min(18rem,calc(100vw-8rem))]" />}
+            {trophies?.level && <LevelMeter level={trophies.level} className="mt-5 -mx-3 w-[min(19rem,calc(100vw-6rem))] rounded-[16px] bg-[#120f0d]/90 p-3" />}
           </div>
         </div>
       </section>

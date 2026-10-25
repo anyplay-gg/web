@@ -30,7 +30,7 @@ type Result =
   | { status: "hidden" }
   | { status: "failed"; message: string };
 
-const HIDDEN = (handle: string) => `Trophies of ${handle} can’t be compared. They may not share them with you.`;
+const HIDDEN = (handle: string) => `${handle}’s trophies aren’t available to compare.`;
 
 /** The compare card of a profile; the page shows it only when the player's trophies are visible. */
 export function CompareCard({ user }: { user: PublicUser }) {
@@ -63,7 +63,7 @@ export function CompareCard({ user }: { user: PublicUser }) {
     };
   }, [handle, attempt]);
 
-  const description = `You and ${handle}, in a game you both have.`;
+  const description = shared.status === "ready" && shared.titles.length > 0 ? `You and ${handle}, in a game you both have.` : `Your trophies next to ${handle}’s.`;
   let body: ReactNode;
   if (shared.status === "loading") {
     body = (
@@ -86,7 +86,7 @@ export function CompareCard({ user }: { user: PublicUser }) {
   } else if (shared.status === "hidden") {
     body = <Notice>{HIDDEN(handle)}</Notice>;
   } else if (shared.titles.length === 0 || !title) {
-    body = <Empty>You and {handle} have no game in common yet. Play one they have played, and it shows up here.</Empty>;
+    body = <Empty>You and {handle} have no game in common yet. Play a game {handle} has played and it shows up here.</Empty>;
   } else {
     body = (
       <div className="grid gap-5">
@@ -230,7 +230,7 @@ function Summary({ data }: { data: TrophyCompare }) {
           <thead>
             <tr className="text-left text-[13px] text-ink-3">
               <th scope="col" className="py-3 font-medium">
-                <span className="sr-only">Measure</span>
+                <span className="sr-only">Stat</span>
               </th>
               <th scope="col" className="w-[24%] py-3 text-right font-medium">
                 You
@@ -248,8 +248,8 @@ function Summary({ data }: { data: TrophyCompare }) {
                 <th scope="row" className="py-2 pr-3 text-left text-[14px] font-normal text-ink-2">
                   {r.label}
                 </th>
-                <td className={`py-2 text-right tabular-nums ${cell(r.a, r.b)}`}>{num(r.a)}</td>
-                <td className={`py-2 pl-3 text-right tabular-nums ${cell(r.b, r.a)}`}>{num(r.b)}</td>
+                <td className={`py-2 text-right tabular-nums ${cell(r.a, r.b)}`}>{num(r.a)}{r.a > r.b && <span className="sr-only"> (ahead)</span>}</td>
+                <td className={`py-2 pl-3 text-right tabular-nums ${cell(r.b, r.a)}`}>{num(r.b)}{r.b > r.a && <span className="sr-only"> (ahead)</span>}</td>
               </tr>
             ))}
           </tbody>
@@ -257,7 +257,7 @@ function Summary({ data }: { data: TrophyCompare }) {
       </div>
 
       <dl className="grid grid-cols-3 gap-3">
-        <Overlap term="Both" value={both} />
+        <Overlap term="Earned by both" value={both} />
         <Overlap term="Only you" value={onlyYou} />
         <Overlap term={`Only ${handle}`} value={onlyThem} />
       </dl>
