@@ -73,18 +73,29 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
             {children}
           </main>
           <footer className="mx-auto w-full max-w-[400px] pb-8 text-[13px] text-ink-3">
-            Need help?{" "}
-            <a href={LINKS.discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-              Ask on Discord
-            </a>
-            <span aria-hidden> · </span>
-            <a href={LINKS.privacy} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-              Privacy
-            </a>
-            <span aria-hidden> · </span>
-            <a href={LINKS.terms} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-              Terms
-            </a>
+            <p>
+              Need help?{" "}
+              <a href={LINKS.discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+                Ask on Discord
+              </a>
+            </p>
+            <nav aria-label="Legal">
+              <ul className="flex flex-wrap gap-x-6">
+                {(
+                  [
+                    ["Legal notice", LINKS.legal],
+                    ["Privacy notice", LINKS.privacy],
+                    ["Terms of use", LINKS.terms],
+                  ] as const
+                ).map(([label, href]) => (
+                  <li key={label}>
+                    <a href={href} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </footer>
         </div>
       </div>

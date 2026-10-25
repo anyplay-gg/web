@@ -206,6 +206,7 @@ export async function Landing() {
             <FooterColumn
               title="Legal"
               links={[
+                ["Legal notice", LINKS.legal],
                 ["Privacy notice", LINKS.privacy],
                 ["Terms of use", LINKS.terms],
               ]}

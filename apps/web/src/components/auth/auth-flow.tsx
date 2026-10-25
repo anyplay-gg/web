@@ -364,7 +364,7 @@ function DetailsStep({ api, view, onView }: StepProps) {
         </CheckField>
         {termsView && (
           <CheckField name="terms" checked={terms} onChange={setTerms} error={errors.terms_accepted}>
-            I accept the <TermsLink url={termsView.url} /> (version {termsView.version}) and have read the <PrivacyLink />.
+            I accept the <TermsLink url={termsView.url} /> (version {termsView.version}) and have read the <PrivacyLink url={view.cloud?.privacyUrl} />.
           </CheckField>
         )}
         {errors.form && <FormError>{errors.form}</FormError>}
@@ -386,9 +386,9 @@ function TermsLink({ url }: { url: string | null | undefined }) {
   );
 }
 
-function PrivacyLink() {
+function PrivacyLink({ url }: { url?: string | null }) {
   return (
-    <a href="/privacy" target="_blank" rel="noopener noreferrer" className={legalLink}>
+    <a href={url || "/privacy"} target="_blank" rel="noopener noreferrer" className={legalLink}>
       privacy notice<span className="sr-only"> (opens in a new tab)</span>
     </a>
   );

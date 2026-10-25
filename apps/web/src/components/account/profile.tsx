@@ -7,6 +7,7 @@ import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { FormError } from "../auth/fields";
 import { Wordmark } from "../landing/header";
 import { LandingProviders } from "../landing/providers";
+import { LegalLinks } from "../legal/links";
 import { Failed, useAction } from "./pages";
 import { loadApi } from "@/lib/api";
 import { BRAND, BrandLogo } from "./brand-logos";
@@ -95,6 +96,7 @@ export function ProfilePage({ handle }: { handle: string }) {
           )}
           {state.status === "ready" && <Profile user={state.user} />}
         </main>
+        <LegalLinks frame="max-w-[720px] px-[max(var(--gutter),env(safe-area-inset-left))]" />
       </div>
     </LandingProviders>
   );

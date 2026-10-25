@@ -20,6 +20,7 @@ import { type ReactNode, createContext, useCallback, useContext, useEffect, useR
 import { loadApi } from "@/lib/api";
 import { Wordmark } from "../landing/header";
 import { LandingProviders } from "../landing/providers";
+import { LegalLinks } from "../legal/links";
 import { StepUpProvider } from "./ui";
 
 /**
@@ -179,6 +180,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
                 <span className="h-40 w-full animate-pulse rounded-[24px] bg-white/[0.04]" />
               </div>
             )}
+            <LegalLinks frame="max-w-none px-0" className="mt-16" />
           </main>
         </div>
       </div>
