@@ -8,6 +8,7 @@ import type {
 	BanStatement,
 	DataExport,
 	FriendLists,
+	JoinView,
 	Me,
 	Passkey,
 	Privacy,
@@ -74,6 +75,16 @@ export interface PortalApi {
 		 * ran out, or `banned`: the session then shows the statement (`flow.step` is `banned`).
 		 */
 		open(code: string): Promise<SessionView>;
+	};
+
+	/** The page `/join/<code>`, which the link on a player's Discord profile opens. */
+	join: {
+		/**
+		 * Who invites and to what. Needs no session, changes nothing and joins nobody. Rejects with
+		 * `not_found` for a code that is unknown, expired, revoked or opens nothing now: one answer for
+		 * all of them, so the difference is not visible here either.
+		 */
+		get(code: string): Promise<JoinView>;
 	};
 
 	account: {

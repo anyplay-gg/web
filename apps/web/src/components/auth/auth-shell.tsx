@@ -14,8 +14,10 @@ import { DitherField } from "../landing/shaders";
  * The frame of the sign-in pages, in the landing's language: on a wide screen the left half is the
  * dithered field with the promise and a few of the launcher's own toasts arriving, the right half
  * holds the form. On a phone only the form shows, under the wordmark. The art is decorative.
+ * `toasts={false}` leaves the made-up toasts out, for a page about something real (an invitation
+ * must not sit next to a player who is "online" only in the picture).
  */
-export function AuthShell({ children }: { children: ReactNode }) {
+export function AuthShell({ children, toasts = true }: { children: ReactNode; toasts?: boolean }) {
   return (
     <LandingProviders>
       <div className="night grid min-h-dvh bg-bg text-ink lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
@@ -29,25 +31,27 @@ export function AuthShell({ children }: { children: ReactNode }) {
                 together.
               </span>
             </span>
-            <div className={`grid justify-items-start gap-3 text-white ${launcherFont}`}>
-              {(
-                [
-                  ["userCircle", "mira is online"],
-                  ["users", "kit joined your party"],
-                  ["trophyFill", "Trophy earned · Into the Ember"],
-                ] as const
-              ).map(([icon, text], i) => (
-                <m.div
-                  key={text}
-                  initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ type: "spring", duration: 0.6, bounce: 0.2, delay: 0.5 + i * 0.35 }}
-                  style={{ marginLeft: i * 28 }}
-                >
-                  <Toast icon={icon}>{text}</Toast>
-                </m.div>
-              ))}
-            </div>
+            {toasts && (
+              <div className={`grid justify-items-start gap-3 text-white ${launcherFont}`}>
+                {(
+                  [
+                    ["userCircle", "mira is online"],
+                    ["users", "kit joined your party"],
+                    ["trophyFill", "Trophy earned · Into the Ember"],
+                  ] as const
+                ).map(([icon, text], i) => (
+                  <m.div
+                    key={text}
+                    initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: "spring", duration: 0.6, bounce: 0.2, delay: 0.5 + i * 0.35 }}
+                    style={{ marginLeft: i * 28 }}
+                  >
+                    <Toast icon={icon}>{text}</Toast>
+                  </m.div>
+                ))}
+              </div>
+            )}
           </div>
         </aside>
 

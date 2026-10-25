@@ -228,3 +228,15 @@ export interface DataExport {
 }
 
 export type StepUpMethod = "passkey" | "email_code";
+
+/** What a join page may show about an invitation: who invites, to what, and how full it is. */
+export type JoinKind = "session" | "party";
+
+export interface JoinView {
+	handle: string;
+	/** The game's title as text; null for a party. */
+	title: string | null;
+	members: number;
+	maxMembers: number;
+	kind: JoinKind;
+}
