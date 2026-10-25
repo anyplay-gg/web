@@ -110,12 +110,12 @@ const AUDIENCES: { value: Audience; label: string }[] = [
   { value: "nobody", label: "Only me" },
 ];
 
-/** Who sees something: three choices as one radio group, keyboard by arrows like any radio group. */
-export function AudiencePicker({ value, onChange, label, disabled }: { value: Audience; onChange: (a: Audience) => void; label: string; disabled?: boolean }) {
+/** Who sees something: three choices (or the ones in `only`) as one radio group, keyboard by arrows like any radio group. */
+export function AudiencePicker({ value, onChange, label, disabled, only }: { value: Audience; onChange: (a: Audience) => void; label: string; disabled?: boolean; only?: Audience[] }) {
   return (
     <fieldset disabled={disabled} className="inline-flex rounded-full bg-white/[0.04] p-1 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
       <legend className="sr-only">{label}</legend>
-      {AUDIENCES.map((a) => (
+      {AUDIENCES.filter((a) => !only || only.includes(a.value)).map((a) => (
         <label
           key={a.value}
           className="relative cursor-pointer rounded-full px-3 py-1.5 text-[13px] font-medium text-ink-3 transition-colors duration-[var(--duration-quick)] has-[:checked]:bg-white/[0.1] has-[:checked]:text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ap-focus)] [@media(hover:hover)]:hover:text-ink"

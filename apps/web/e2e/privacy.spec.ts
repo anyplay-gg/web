@@ -18,7 +18,8 @@ test.describe("/account/privacy", () => {
     for (const part of ["Trophies", "Playtime", "About", "Favourite games", "Picture"]) {
       await expect(page.getByRole("group", { name: `Who sees: ${part}` })).toBeVisible();
     }
-    await expect(activity(page).getByRole("radio")).toHaveCount(3);
+    await expect(activity(page).getByRole("radio")).toHaveCount(2);
+    await expect(activity(page).getByLabel("Everyone")).toHaveCount(0);
     await expect(activity(page).getByLabel("Friends")).toBeChecked();
     await shoot(page, "privacy-load");
     const { violations } = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
@@ -41,13 +42,20 @@ test.describe("/account/privacy", () => {
 
   test("save: the choice is still there after the page is opened again", async ({ page }) => {
     await page.goto("/account/privacy");
-    await activity(page).getByText("Everyone").click();
-    await expect(activity(page).getByLabel("Everyone")).toBeChecked();
+    await activity(page).getByText("Only me").click();
+    await expect(activity(page).getByLabel("Only me")).toBeChecked();
     // Client-side navigation keeps the mock's memory; coming back reads the saved value
     await page.getByRole("link", { name: "Profile", exact: true }).first().click();
     await expect(page.getByRole("heading", { level: 1, name: "Profile" })).toBeVisible();
     await page.getByRole("link", { name: "Privacy", exact: true }).first().click();
-    await expect(activity(page).getByLabel("Everyone")).toBeChecked();
+    await expect(activity(page).getByLabel("Only me")).toBeChecked();
+  });
+
+  test("older data: a stored everyone shows as Friends", async ({ page }) => {
+    await page.goto("/account/privacy?mock=oldfeed");
+    await expect(activity(page).getByLabel("Friends")).toBeChecked();
+    await expect(activity(page).getByLabel("Everyone")).toHaveCount(0);
+    await shoot(page, "privacy-older-data");
   });
 
   test("error: a failed save puts the choice back and says so", async ({ page }) => {
