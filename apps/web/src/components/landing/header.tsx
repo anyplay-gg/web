@@ -19,7 +19,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
 }
 
 const navLink =
-  "inline-flex min-h-9 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink";
+  "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink";
 
 /**
  * At the top of the page the header is only the wordmark, the links and the button over the hero.
@@ -32,13 +32,13 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
   return (
-    <header className="fixed inset-x-0 top-3 z-30 px-3 sm:top-4">
+    <header className="fixed inset-x-0 top-[calc(0.75rem+env(safe-area-inset-top))] z-30 px-[max(0.75rem,env(safe-area-inset-left))] sm:top-[calc(1rem+env(safe-area-inset-top))]">
       <div className="relative mx-auto flex h-14 w-full max-w-[1040px] items-center justify-between pr-2 pl-5">
         <span
           aria-hidden
           className={`absolute inset-0 rounded-full bg-[#141312]/72 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08),inset_0_1px_0_rgb(255_255_255/0.08),0_10px_40px_-12px_rgb(0_0_0/0.6)] backdrop-blur-xl backdrop-saturate-150 transition-[opacity,scale] duration-[var(--duration-enter)] ease-[var(--ease-out)] ${scrolled ? "scale-100 opacity-100" : "scale-[0.985] opacity-0"}`}
         />
-        <Link href="/" aria-label="AnyPlay, home" className="relative -mx-2 rounded-full px-2 py-1">
+        <Link href="/" aria-label="AnyPlay, home" className="relative -mx-2 inline-flex min-h-11 items-center rounded-full px-2">
           <Wordmark />
         </Link>
         <nav aria-label="Main" className="relative hidden items-center md:flex">
@@ -81,7 +81,7 @@ function PhoneMenu() {
     <Menu.Root modal={false}>
       <Menu.Trigger
         aria-label="Menu"
-        className="ml-1 grid size-9 place-items-center rounded-full bg-white/[0.06] text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] active:scale-[0.96] md:hidden [@media(hover:hover)]:hover:bg-white/[0.1]"
+        className="ml-1 grid size-9 [@media(pointer:coarse)]:size-11 place-items-center rounded-full bg-white/[0.06] text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] active:scale-[0.96] md:hidden [@media(hover:hover)]:hover:bg-white/[0.1]"
       >
         <Bars3Icon aria-hidden className="size-[18px]" />
       </Menu.Trigger>

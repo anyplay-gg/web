@@ -228,3 +228,62 @@ export interface DataExport {
 }
 
 export type StepUpMethod = "passkey" | "email_code";
+
+/** What a push message is about; the player picks which of them a device receives. */
+export type PushKind = "friend_request" | "party_invite" | "message";
+
+/** One browser or phone that receives pushes. The cloud keeps no more than this. */
+export interface PushDevice {
+	id: number;
+	label: string | null;
+	kinds: PushKind[];
+	createdAt: number;
+}
+
+/** GET /push: whether this cloud can send pushes, the key a browser subscribes with, and the devices. */
+export interface PushState {
+	enabled: boolean;
+	/** The VAPID public key, base64url; null when the cloud has none. */
+	publicKey: string | null;
+	subscriptions: PushDevice[];
+}
+
+/** What `PushSubscription.toJSON()` holds that the cloud needs. */
+export interface PushSubscribeInput {
+	endpoint: string;
+	p256dh: string;
+	auth: string;
+	label?: string;
+	kinds?: PushKind[];
+}
+
+/** How a title ran for the players who answered "How did it run?", worst to best. */
+export type RunVerdict = "no_start" | "menus" | "in_game" | "playable";
+
+export interface RunCounts {
+	noStart: number;
+	menus: number;
+	inGame: number;
+	playable: number;
+}
+
+export interface CompatVersion {
+	version: string;
+	reports: number;
+	verdict: RunVerdict;
+}
+
+/** One game on the public compatibility list. Only titles with enough reports are listed. */
+export interface CompatTitle {
+	titleId: string;
+	/** The game's own name, only when the reports carried it. */
+	title?: string;
+	verdict: RunVerdict;
+	reports: number;
+	counts: RunCounts;
+	versions: CompatVersion[];
+}
+
+export interface CompatList {
+	titles: CompatTitle[];
+}

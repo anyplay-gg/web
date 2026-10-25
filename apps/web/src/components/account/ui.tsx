@@ -13,11 +13,11 @@ import { CodeField, FormError, TextField, primaryButton, secondaryButton } from 
  */
 
 export const smallButton =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-white/[0.06] px-3.5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white/[0.1]";
+  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-white/[0.06] px-3.5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white/[0.1]";
 export const smallPrimary =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-4 text-[14px] font-semibold text-[#161513] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white";
+  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-4 text-[14px] font-semibold text-[#161513] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white";
 export const smallDanger =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#ff5a3d]/10 px-3.5 text-[14px] font-medium text-[#ffb3a6] shadow-[inset_0_0_0_1px_rgb(255_140_128/0.25)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-[#ff5a3d]/16";
+  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#ff5a3d]/10 px-3.5 text-[14px] font-medium text-[#ffb3a6] shadow-[inset_0_0_0_1px_rgb(255_140_128/0.25)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-[#ff5a3d]/16";
 
 export function PageTitle({ title, lead }: { title: string; lead?: ReactNode }) {
   return (
@@ -70,8 +70,8 @@ export function Row({ icon, title, detail, trailing }: { icon?: ReactNode; title
     <li className="flex min-h-16 flex-wrap items-center gap-x-4 gap-y-3 py-3">
       {icon && <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-white/[0.05] text-ink-2">{icon}</span>}
       <span className="min-w-[10rem] flex-1">
-        <span className="block truncate text-[15px] font-medium">{title}</span>
-        {detail && <span className="mt-0.5 block truncate text-[13px] text-ink-3">{detail}</span>}
+        <span className="block text-[15px] font-medium break-words">{title}</span>
+        {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
       </span>
       {trailing && <span className="ml-auto flex shrink-0 items-center gap-2">{trailing}</span>}
     </li>
@@ -377,4 +377,71 @@ export function ago(seconds: number | null | undefined): string {
 
 export function date(seconds: number | null | undefined): string {
   return seconds ? new Date(seconds * 1000).toLocaleDateString("en", { dateStyle: "long" }) : "";
+}
+
+/**
+ * An on/off setting. The state is said three ways, so colour is never the only one: the side the
+ * knob is on, the word beside it, and the real checkbox a screen reader announces as a switch. The
+ * whole row is the target, 56 px high.
+ */
+export function Switch({
+  label,
+  detail,
+  checked,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  detail?: ReactNode;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <label className={`flex min-h-14 items-center gap-4 py-2 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-medium">{label}</span>
+        {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
+      </span>
+      <span aria-hidden className="w-7 text-right text-[13px] font-medium text-ink-3">
+        {checked ? "On" : "Off"}
+      </span>
+      <input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} className="peer sr-only" />
+      <span
+        aria-hidden
+        className="relative h-8 w-14 shrink-0 rounded-full bg-white/[0.12] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color] duration-[var(--duration-quick)] after:absolute after:top-1 after:left-1 after:size-6 after:rounded-full after:bg-[#f6f5f1] after:shadow-[0_1px_3px_rgb(0_0_0/0.4)] after:transition-transform after:duration-[var(--duration-quick)] after:ease-[var(--ease-out)] peer-checked:bg-[#ff5a1f] peer-checked:after:translate-x-6 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--ap-focus)]"
+      />
+    </label>
+  );
+}
+
+/** One choice among several that can all be on: a 48 px row with a real checkbox. */
+export function CheckRow({
+  label,
+  detail,
+  checked,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  detail?: ReactNode;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <label className={`flex min-h-12 items-start gap-3.5 py-3 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 size-5 shrink-0 cursor-pointer accent-[#ff7a3d]"
+      />
+      <span className="min-w-0">
+        <span className="block text-[15px] font-medium">{label}</span>
+        {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
+      </span>
+    </label>
+  );
 }

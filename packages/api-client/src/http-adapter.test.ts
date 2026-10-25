@@ -232,4 +232,31 @@ describe("http adapter", () => {
 		expect(call(1).url).toBe("/web/api/v1/sign-in/email");
 		expect(JSON.parse(String(call(1).init.body))).toEqual({ email: "a@b.c", intent: "create" });
 	});
+
+	it("subscribes with the endpoint and keys under `keys`, as the cloud wants, and reads the device back", async () => {
+		const { api, call } = setup((url, init) =>
+			url.endsWith("/session")
+				? json(view())
+				: init.method === "PUT"
+					? json({ id: 7, label: "Chrome on Android", kinds: ["message"], created_at: 1_700_000_100 })
+					: json({}),
+		);
+		const device = await api.push.subscribe({ endpoint: "https://push.example.test/a", p256dh: "pk", auth: "au", label: "Chrome on Android", kinds: ["message"] });
+		expect(device).toEqual({ id: 7, label: "Chrome on Android", kinds: ["message"], createdAt: 1_700_000_100 });
+		const put = call(1);
+		expect(put.url).toBe("/web/api/v1/push/subscription");
+		expect(put.init.method).toBe("PUT");
+		expect(JSON.parse(String(put.init.body))).toEqual({
+			endpoint: "https://push.example.test/a",
+			keys: { p256dh: "pk", auth: "au" },
+			label: "Chrome on Android",
+			kinds: ["message"],
+		});
+		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
+	});
+
+	it("reads the push state, the VAPID key included", async () => {
+		const { api } = setup(() => json({ enabled: true, public_key: "BKey", subscriptions: [] }));
+		expect(await api.push.get()).toEqual({ enabled: true, publicKey: "BKey", subscriptions: [] });
+	});
 });

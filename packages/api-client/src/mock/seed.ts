@@ -6,6 +6,10 @@
 import type {
 	Account,
 	BrowserSession,
+	CompatList,
+	CompatVersion,
+	RunCounts,
+	RunVerdict,
 	Device,
 	Friend,
 	FriendRequest,
@@ -255,3 +259,48 @@ export const ownPlaytime = [
 	{ titleId: "GAME02417", minutes: 2430 },
 	{ titleId: "GAME04550", minutes: 960 },
 ];
+
+type Row = [titleId: string, title: string | undefined, noStart: number, menus: number, inGame: number, playable: number];
+
+const ROWS: Row[] = [
+	["GAME01234", "Tidebreaker", 0, 1, 3, 21],
+	["GAME04550", "Paper Frontier", 1, 2, 9, 14],
+	["GAME03102", "Lap Nine", 0, 0, 2, 31],
+	["GAME07781", undefined, 4, 3, 1, 0],
+	["GAME02210", "Ember Court", 2, 6, 4, 1],
+	["GAME05919", undefined, 0, 0, 0, 3],
+	["GAME08840", "Hollow Mile", 7, 2, 0, 0],
+	["GAME06403", "Salt and Signal", 0, 2, 11, 5],
+	["GAME09127", undefined, 1, 4, 3, 0],
+	["GAME01998", "Kite Season", 0, 0, 1, 8],
+];
+
+const verdictOf = (c: RunCounts): RunVerdict => {
+	// the most reported one; on a tie the lower, so the list promises no more than players found
+	const order: [RunVerdict, number][] = [
+		["no_start", c.noStart],
+		["menus", c.menus],
+		["in_game", c.inGame],
+		["playable", c.playable],
+	];
+	return order.reduce((best, x) => (x[1] > best[1] ? x : best))[0];
+};
+
+/** The public compatibility list: only titles with at least three reports, as the cloud lists them. */
+export function seedCompatibility(): CompatList {
+	return {
+		titles: ROWS.map(([titleId, title, noStart, menus, inGame, playable]) => {
+			const counts = { noStart, menus, inGame, playable };
+			const reports = noStart + menus + inGame + playable;
+			const verdict = verdictOf(counts);
+			const versions: CompatVersion[] =
+				reports >= 12
+					? [
+							{ version: "1.02", reports: Math.ceil(reports * 0.7), verdict },
+							{ version: "1.00", reports: Math.floor(reports * 0.3), verdict: verdictOf({ ...counts, playable: 0 }) },
+						]
+					: [{ version: "1.00", reports, verdict }];
+			return { titleId, ...(title ? { title } : {}), verdict, reports, counts, versions };
+		}),
+	};
+}

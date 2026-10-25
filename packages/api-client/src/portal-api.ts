@@ -5,6 +5,11 @@ import type {
 	LinkProvider,
 	Audience,
 	AccountView,
+	CompatList,
+	PushState,
+	PushDevice,
+	PushSubscribeInput,
+	PushKind,
 	BanStatement,
 	DataExport,
 	FriendLists,
@@ -141,6 +146,19 @@ export interface PortalApi {
 	users: {
 		get(handle: string): Promise<PublicUser>;
 	};
+
+	/** Web Push to this browser: friend requests, party invitations and new messages. */
+	push: {
+		get(): Promise<PushState>;
+		/** Adds this browser, or updates it when the cloud knows its endpoint already. */
+		subscribe(input: PushSubscribeInput): Promise<PushDevice>;
+		unsubscribe(endpoint: string): Promise<void>;
+	};
+
+	/** The public list of how games run, from the players' "How did it run?" answers. */
+	compatibility: {
+		list(): Promise<CompatList>;
+	};
 }
 
-export type { Me };
+export type { Me, PushKind };

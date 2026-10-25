@@ -4,6 +4,7 @@
 import type { PortalApi, SessionView } from "@anyplay/api-client";
 import {
   ArrowRightStartOnRectangleIcon,
+  BellIcon,
   CircleStackIcon,
   EyeIcon,
   HomeIcon,
@@ -15,7 +16,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { loadApi } from "@/lib/api";
 import { Wordmark } from "../landing/header";
 import { LandingProviders } from "../landing/providers";
@@ -42,6 +43,7 @@ const NAV = [
   { href: "/account/friends", label: "Friends", icon: UsersIcon },
   { href: "/account/trophies", label: "Trophies", icon: TrophyIcon },
   { href: "/account/security", label: "Security", icon: ShieldCheckIcon },
+  { href: "/account/notifications", label: "Notifications", icon: BellIcon },
   { href: "/account/privacy", label: "Privacy", icon: EyeIcon },
   { href: "/account/connections", label: "Connections", icon: LinkIcon },
   { href: "/account/data", label: "Your data", icon: CircleStackIcon },
@@ -53,6 +55,16 @@ export function AccountShell({ children }: { children: ReactNode }) {
   const [failed, setFailed] = useState(false);
   const path = usePathname();
   const router = useRouter();
+  const strip = useRef<HTMLUListElement>(null);
+
+  // On a phone the tabs scroll sideways: bring the current one into view, so the person never has to
+  // hunt for where they are. It centres without animating, because it happens on every navigation.
+  useEffect(() => {
+    const current = strip.current?.querySelector<HTMLElement>("[aria-current=page]");
+    if (!current || !strip.current) return;
+    const list = strip.current;
+    list.scrollLeft = current.offsetLeft - (list.clientWidth - current.offsetWidth) / 2;
+  }, [path, api]);
 
   useEffect(() => {
     let alive = true;
@@ -92,8 +104,8 @@ export function AccountShell({ children }: { children: ReactNode }) {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgb(255_90_31/0.14),transparent)]"
         />
-        <header className="relative mx-auto flex h-20 w-full max-w-[1120px] items-center justify-between px-[var(--gutter)]">
-          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 rounded-full px-2 py-1">
+        <header className="relative mx-auto flex min-h-20 w-full max-w-[1120px] items-center justify-between px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)]">
+          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
             <Wordmark />
           </Link>
           {session?.account && (
@@ -105,7 +117,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={signOut}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+                className="inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
               >
                 <ArrowRightStartOnRectangleIcon aria-hidden className="size-[18px]" />
                 Sign out
@@ -114,9 +126,17 @@ export function AccountShell({ children }: { children: ReactNode }) {
           )}
         </header>
 
-        <div className="relative mx-auto grid w-full max-w-[1120px] gap-8 px-[var(--gutter)] pb-24 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-14 lg:pt-6">
-          <nav aria-label="Account" className="-mx-[var(--gutter)] overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:overflow-visible lg:px-0">
-            <ul className="flex gap-1 lg:sticky lg:top-8 lg:flex-col">
+        <div className="relative mx-auto w-full max-w-[1120px] pb-[calc(6rem+env(safe-area-inset-bottom))] lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-14 lg:px-[var(--gutter)] lg:pt-6">
+          {/* A phone gets one row of tabs that sticks under the notch while the page scrolls; the
+              edges fade out, which is the hint that more tabs wait past them. */}
+          <nav
+            aria-label="Account"
+            className="sticky top-0 z-20 bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-xl lg:static lg:bg-transparent lg:pt-0 lg:backdrop-blur-none"
+          >
+            <ul
+              ref={strip}
+              className="flex gap-1 overflow-x-auto overscroll-x-contain px-[max(var(--gutter),env(safe-area-inset-left))] py-1.5 [scrollbar-width:none] max-lg:[mask-image:linear-gradient(to_right,transparent,black_var(--gutter),black_calc(100%-var(--gutter)),transparent)] lg:sticky lg:top-8 lg:flex-col lg:overflow-visible lg:px-0 lg:py-0 [&::-webkit-scrollbar]:hidden"
+            >
               {NAV.map(({ href, label, icon: Icon }) => {
                 const current = href === "/account" ? path === href : path.startsWith(href);
                 return (
@@ -124,7 +144,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
                     <Link
                       href={href}
                       aria-current={current ? "page" : undefined}
-                      className={`relative flex h-10 items-center gap-3 rounded-[12px] px-3 text-[14px] font-medium whitespace-nowrap transition-colors duration-[var(--duration-quick)] ${
+                      className={`relative flex h-11 items-center gap-3 rounded-[12px] px-3.5 text-[14px] lg:h-10 lg:px-3 font-medium whitespace-nowrap transition-colors duration-[var(--duration-quick)] ${
                         current ? "bg-white/[0.07] text-ink" : "text-ink-3 [@media(hover:hover)]:hover:bg-white/[0.04] [@media(hover:hover)]:hover:text-ink"
                       }`}
                     >
@@ -138,7 +158,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
             </ul>
           </nav>
 
-          <main id="main" className="min-w-0">
+          <main id="main" className="min-w-0 px-[max(var(--gutter),env(safe-area-inset-left))] pt-6 lg:px-0 lg:pt-0">
             {failed ? (
               <div role="alert" className="text-ink-2">
                 Can’t reach AnyPlay. Check your connection and{" "}

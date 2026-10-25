@@ -24,6 +24,15 @@ const config: NextConfig = {
   async headers() {
     return [
       {
+        // The service worker is fetched fresh on every visit, so a fix reaches phones at once.
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, max-age=0" },
+          { key: "Service-Worker-Allowed", value: "/" },
+          { key: "Content-Type", value: "text/javascript; charset=utf-8" },
+        ],
+      },
+      {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },

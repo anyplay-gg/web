@@ -400,7 +400,7 @@ function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Prom
         {done && <Notice tone="ok">Your sign-in address is now {done}.</Notice>}
         {editing && (
           <form onSubmit={send} noValidate className="grid gap-3">
-            <TextField label="New address" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} error={error} autoFocus />
+            <TextField label="New address" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="send" value={email} onChange={(e) => setEmail(e.target.value)} error={error} autoFocus />
             <div className="flex gap-2">
               <button type="submit" className={smallPrimary} disabled={busy}>
                 {busy ? "Sending…" : "Send code"}

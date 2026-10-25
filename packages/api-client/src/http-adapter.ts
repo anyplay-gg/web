@@ -6,6 +6,9 @@ import type { PortalApi } from "./portal-api";
 import type {
 	LinkedAccount,
 	AccountView,
+	CompatList,
+	PushDevice,
+	PushState,
 	BanStatement,
 	FriendLists,
 	Passkey,
@@ -334,6 +337,26 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 
 		users: {
 			get: (name) => json<PublicUser>("GET", `/users/${encodeURIComponent(name)}`),
+		},
+
+		push: {
+			get: () => json<PushState>("GET", "/push"),
+			subscribe: (input) =>
+				json<PushDevice>("PUT", "/push/subscription", {
+					endpoint: input.endpoint,
+					keys: { p256dh: input.p256dh, auth: input.auth },
+					label: input.label,
+					kinds: input.kinds,
+				}),
+			unsubscribe: async (endpoint) => {
+				await json("DELETE", "/push/subscription", { endpoint });
+			},
+		},
+
+		compatibility: {
+			// The cloud route does not exist yet (the run reports are being built). Until it does,
+			// this answers `not_found` and the page says the list is not ready.
+			list: () => json<CompatList>("GET", "/compatibility"),
 		},
 	};
 }
