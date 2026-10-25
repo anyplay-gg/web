@@ -191,7 +191,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 		cloud: {
 			name: "AnyPlay",
 			signup: "open",
-			privacyUrl: null,
+			privacyUrl: "https://anyplaynet.com/privacy",
 			termsUrl: "https://anyplaynet.com/terms",
 		},
 	});

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Wordmark } from "../landing/header";
 import { LINKS } from "../landing/links";
+import { LegalLinks } from "./links";
 import { LEGAL } from "./meta";
 
 /**
@@ -29,23 +30,41 @@ export function A({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-export function Mail() {
-  return <A href={`mailto:${LEGAL.contact}`}>{LEGAL.contact}</A>;
+export function Mail({ kind = "contact" }: { kind?: "contact" | "privacy" | "abuse" }) {
+  const address = LEGAL[kind];
+  return <A href={`mailto:${address}`}>{address}</A>;
+}
+
+/** The operator's name and postal address, as the legal notice, the privacy notice and the terms print them. */
+export function Operator() {
+  const o = LEGAL.operator;
+  return (
+    <address className="text-[16px] leading-[1.6] text-ink-2 not-italic">
+      <Strong>{o.name}</Strong>
+      <br />
+      {o.street}
+      <br />
+      {o.city}
+      <br />
+      {o.country}
+    </address>
+  );
 }
 
 export function LegalPage({
   title,
   lead,
   summary,
-  contents,
-  other,
+  contents,  current,
+  mail = "contact",
   children,
 }: {
   title: string;
   lead: string;
-  summary: ReactNode[];
-  contents: Contents;
-  other: { href: string; label: string };
+  summary?: ReactNode[];
+  contents: Contents;  current: "legal" | "privacy" | "terms";
+  /** Which address the line at the foot names. */
+  mail?: "contact" | "privacy";
   children: ReactNode;
 }) {
   return (
@@ -62,36 +81,38 @@ export function LegalPage({
         </Link>
         <Link
           href="/"
-          className="inline-flex min-h-9 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+          className="inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-[color] duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
         >
           Back to the start
         </Link>
       </header>
 
       <main id="main" tabIndex={-1} className="outline-none">
-        <div className="mx-auto grid w-full max-w-[1160px] gap-x-20 px-[var(--gutter)] pt-8 pb-24 lg:grid-cols-[13rem_minmax(0,42rem)] lg:pt-14">
+        <div className="mx-auto grid w-full max-w-[1160px] gap-x-20 px-[var(--gutter)] pt-8 pb-24 lg:grid-cols-[13rem_minmax(0,36rem)] lg:pt-14">
           <div className="lg:col-start-2 lg:row-start-1">
             <h1 className="display text-[clamp(2rem,1.6rem+1.4vw,2.6rem)] leading-[1.05] text-balance">{title}</h1>
             <p className="mt-4 text-[17px] leading-[1.6] text-ink-2 text-pretty">{lead}</p>
             <p className="mt-4 text-[14px] text-ink-3">
               Last changed <time dateTime={LEGAL.changed}>{LEGAL.changedText}</time>. Version {LEGAL.version}.
             </p>
-            <section
-              aria-labelledby="short"
-              className="mt-10 rounded-[24px] bg-[#141312] p-6 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07),inset_0_1px_0_rgb(255_255_255/0.05)]"
-            >
-              <h2 id="short" className="text-[17px] font-semibold tracking-[-0.01em]">
-                In short
-              </h2>
-              <ul className="mt-4 grid gap-3 text-[16px] leading-[1.6] text-ink-2">
-                {summary.map((item, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span aria-hidden className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-brand" />
-                    <span className="text-pretty">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {summary && (
+              <section
+                aria-labelledby="short"
+                className="mt-10 rounded-[24px] bg-[#141312] p-6 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07),inset_0_1px_0_rgb(255_255_255/0.05)]"
+              >
+                <h2 id="short" className="text-[17px] font-semibold tracking-[-0.01em]">
+                  In short
+                </h2>
+                <ul className="mt-4 grid gap-3 text-[16px] leading-[1.6] text-ink-2">
+                  {summary.map((item, i) => (
+                    <li key={i} className="flex gap-3">
+                      <span aria-hidden className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-brand" />
+                      <span className="text-pretty">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
 
           <nav
@@ -104,7 +125,7 @@ export function LegalPage({
                 <li key={c.id}>
                   <a
                     href={`#${c.id}`}
-                    className="flex min-h-9 items-center text-[14px] leading-[1.35] text-ink-3 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+                    className="flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center text-[14px] leading-[1.35] text-ink-3 transition-[color] duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
                   >
                     {c.title}
                   </a>
@@ -115,13 +136,14 @@ export function LegalPage({
 
           <div className="mt-4 lg:col-start-2 lg:row-start-2">
             {children}
-            <p className="mt-16 border-t border-line pt-6 text-[15px] leading-[1.6] text-ink-2">
-              Questions about this text: <Mail />. The other text: <A href={other.href}>{other.label}</A>. The source of
-              this website is public on <A href={LINKS.github}>GitHub</A>.
+            <p className="mt-16 text-[15px] leading-[1.6] text-ink-2">
+              Questions about this text: <Mail kind={mail} />. The source of this website is public on{" "}
+              <A href={LINKS.github}>GitHub</A>.
             </p>
           </div>
         </div>
       </main>
+      <LegalLinks current={current} />
     </div>
   );
 }
@@ -138,15 +160,15 @@ export function Section({ id, title, children }: { id: string; title: string; ch
 }
 
 export function P({ children }: { children: ReactNode }) {
-  return <p className="text-[16px] leading-[1.7] text-ink-2">{children}</p>;
+  return <p className="text-[16px] leading-[1.6] text-ink-2">{children}</p>;
 }
 
 export function List({ children }: { children: ReactNode }) {
-  return <ul className="grid list-disc gap-2 ps-5 text-[16px] leading-[1.7] text-ink-2 marker:text-ink-3">{children}</ul>;
+  return <ul className="grid list-disc gap-2 ps-5 text-[16px] leading-[1.6] text-ink-2 marker:text-ink-3">{children}</ul>;
 }
 
 export function Steps({ children }: { children: ReactNode }) {
-  return <ol className="grid list-decimal gap-2 ps-6 text-[16px] leading-[1.7] text-ink-2 marker:text-ink-3">{children}</ol>;
+  return <ol className="grid list-decimal gap-2 ps-6 text-[16px] leading-[1.6] text-ink-2 marker:text-ink-3">{children}</ol>;
 }
 
 export function Strong({ children }: { children: ReactNode }) {
@@ -171,12 +193,12 @@ export function Facts({ items }: { items: Fact[] }) {
           <dl className="mt-3 grid gap-3 text-[15px] leading-[1.6]">
             {(
               [
-                ["Why", f.why],
+                ["What and why", f.why],
                 ["Basis", f.basis],
                 ["How long", f.keep],
               ] as const
             ).map(([term, text]) => (
-              <div key={term} className="grid gap-0.5 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-4">
+              <div key={term} className="grid gap-0.5 sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:gap-4">
                 <dt className="text-[13px] leading-[1.9] text-ink-3">{term}</dt>
                 <dd className="text-pretty text-ink-2">{text}</dd>
               </div>

@@ -11,4 +11,5 @@ export const LINKS = {
   createAccount: "/create",
   privacy: "/privacy",
   terms: "/terms",
+  legal: "/legal",
 } as const;

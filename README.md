@@ -14,7 +14,7 @@ Open **[anyplaynet.com](https://anyplaynet.com)**. The landing page links the la
 | `/sign-in`, `/create` | Sign-in and sign-up |
 | `/account` | Profile, friends, trophies, security (passkeys, launchers, browsers), privacy, connections (Discord, Steam) and your data (export, deletion) |
 | `/u/{handle}` | A player's public profile, showing only what that player lets the visitor see |
-| `/privacy`, `/terms` | The privacy notice and the terms of use |
+| `/legal`, `/privacy`, `/terms` | The legal notice, the privacy notice and the terms of use |
 
 ## Status
 
