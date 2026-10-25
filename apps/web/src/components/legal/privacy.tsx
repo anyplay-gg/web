@@ -4,7 +4,7 @@ import { LEGAL } from "./meta";
 
 /**
  * The privacy notice (GDPR Art. 12 to 14). Every sentence here describes what the cloud and this
- * website do today; the sources are crates/cloud in anyplay-gg/cloud and apps/web here. When the code
+ * website do today; the sources are crates/cloud in anyplaynet/cloud and apps/web here. When the code
  * changes, change the text in the same pull request, and raise LEGAL.version and the date.
  */
 

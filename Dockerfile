@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# The website as a Next.js standalone server, the image anyplay-gg/cloud's deploy/compose.web.yaml
+# The website as a Next.js standalone server, the image anyplaynet/cloud's deploy/compose.web.yaml
 # runs next to the cloud. Build context: this repository.
 
 FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS build

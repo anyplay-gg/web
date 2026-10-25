@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
+// Adapted from anyplaynet/cloud (portal-react, same project and licence): the data layer only.
 import type { StepUpMethod } from "./types";
 
 /**

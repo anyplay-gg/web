@@ -170,10 +170,10 @@ export function OverviewPage() {
 }
 
 const DOWNLOADS = {
-  windows: { href: "https://github.com/anyplay-gg/launcher/releases/latest" },
-  appImage: { href: "https://github.com/anyplay-gg/launcher/releases/latest" },
-  tarball: { href: "https://github.com/anyplay-gg/launcher/releases/latest" },
-  page: "https://github.com/anyplay-gg/launcher/releases/latest",
+  windows: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
+  appImage: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
+  tarball: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
+  page: "https://github.com/anyplaynet/launcher/releases/latest",
 };
 
 const AUDIENCE_WORD: Record<Audience, string> = { everyone: "Everyone", friends: "Friends", nobody: "Only you" };
