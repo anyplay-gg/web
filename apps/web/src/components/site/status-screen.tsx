@@ -1,6 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ReactNode, Ref } from "react";
 
+/*
+ * The classes of @anyplay/ui/button, written out: error.tsx and not-found.tsx ship with the root
+ * layout, so on every page, and importing buttonClass would pull tailwind-merge (about 9 kB
+ * gzipped) into the first load of all of them.
+ * Keep them in step with packages/ui/src/button.tsx.
+ */
+const base =
+  "inline-flex items-center justify-center gap-2 rounded-control font-semibold whitespace-nowrap select-none transition-[background-color,color,border-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] active:duration-[var(--duration-press)]";
+const medium = "min-h-11 px-4 text-small [@media(pointer:fine)]:min-h-10";
+export const actionPrimary = `${base} ${medium} bg-primary text-primary-ink [@media(hover:hover)]:hover:bg-ink-2`;
+export const actionSecondary = `${base} ${medium} border border-line bg-surface-2 text-ink [@media(hover:hover)]:hover:border-line-strong`;
+export const actionGhost = `${base} min-h-9 px-3 text-small text-ink-2 [@media(hover:hover)]:hover:bg-surface-2 [@media(hover:hover)]:hover:text-ink`;
+
 /**
  * The frame of the pages that say something went wrong or something is missing: the night ground,
  * the wordmark, one heading and the way out. No providers, no router and no hooks, so it also

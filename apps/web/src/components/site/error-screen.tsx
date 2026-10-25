@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { Button, ButtonLink } from "@anyplay/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { StatusActions, StatusScreen, StatusText } from "./status-screen";
+import { StatusActions, StatusScreen, StatusText, actionGhost, actionPrimary, actionSecondary } from "./status-screen";
 
 /**
  * What a crash looks like: one heading, what to do, one primary action. The stack never shows; the
@@ -35,19 +34,22 @@ export function ErrorScreen({ digest, reset }: { digest?: string; reset: () => v
         <StatusText>This page failed to load. Try again, and if it keeps happening, report it with the reference below.</StatusText>
       </div>
       <StatusActions>
-        <Button variant="primary" onClick={reset}>
+        <button type="button" onClick={reset} className={actionPrimary}>
           Try again
-        </Button>
-        <ButtonLink href="/">Go to AnyPlay</ButtonLink>
+        </button>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- no router here: global-error.tsx renders without one */}
+        <a href="/" className={actionSecondary}>
+          Go to AnyPlay
+        </a>
       </StatusActions>
       {digest && (
         <p className="mt-2 flex flex-wrap items-center gap-x-3 text-[13px] text-ink-3">
           <span>
             Reference <code className="font-mono text-ink-2 select-all">{digest}</code>
           </span>
-          <Button variant="ghost" size="sm" onClick={copy} aria-label="Copy reference">
+          <button type="button" onClick={copy} aria-label="Copy reference" className={actionGhost}>
             {copied ? "Copied" : "Copy"}
-          </Button>
+          </button>
           <span role="status" className="sr-only">
             {copied ? "Reference copied" : ""}
           </span>
