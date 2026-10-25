@@ -12,7 +12,7 @@ import { Loading, Step } from "./auth-flow";
 import { primaryButton, secondaryButton } from "./fields";
 
 /**
- * The page behind the link on a player's Discord profile (ADR 0022 in anyplay-gg/network). It
+ * The page behind the link on a player's Discord profile (ADR 0022 in anyplaynet/network). It
  * only shows: who invites, to what, and how many play. It starts nothing and joins nobody; the
  * launcher asks the person itself. A visitor with no session is sent through sign-in or sign-up and
  * comes back here. The code is checked here first, so a typo never becomes a request, and the

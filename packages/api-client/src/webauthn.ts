@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
+// Adapted from anyplaynet/cloud (portal-react, same project and licence): the data layer only.
 // Passkey ceremonies through the browser's native WebAuthn JSON API
 // (PublicKeyCredential.parse*OptionsFromJSON and credential.toJSON()). No library: every
 // browser we support has it. Only the HTTP adapter uses this module; the mock skips ceremonies.

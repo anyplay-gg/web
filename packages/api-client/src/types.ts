@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
+// Adapted from anyplaynet/cloud (portal-react, same project and licence): the data layer only.
 // The shapes the portal reads and writes, as `docs/api.md` and the network's `spec/portal-api.md`
 // describe them under /web/api/v1. Times are Unix seconds; account and device ids are integers.
 // Keys are camelCase here and snake_case on the wire (`case.ts`).

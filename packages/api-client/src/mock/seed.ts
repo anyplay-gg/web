@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
+// Adapted from anyplaynet/cloud (portal-react, same project and licence): the data layer only.
 // Realistic data for the in-memory adapter. Names, handles and titles are invented. Title ids use
 // the GAME01234 shape on purpose: real platform title ids never appear in code. Times are Unix
 // seconds, ids are integers, as on the wire.

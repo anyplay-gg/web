@@ -20,7 +20,7 @@ export type Downloads = {
 
 type Asset = { name: string; size: number; browser_download_url: string };
 
-const RELEASE_API = "https://api.github.com/repos/anyplay-gg/launcher/releases/latest";
+const RELEASE_API = "https://api.github.com/repos/anyplaynet/launcher/releases/latest";
 
 export async function latestDownloads(): Promise<Downloads> {
   const fallback: Downloads = {
