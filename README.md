@@ -2,7 +2,7 @@
 
 The website and the account web of [AnyPlay](https://github.com/anyplay-gg), live at **[anyplaynet.com](https://anyplaynet.com)**: the landing page, sign-in and sign-up, the account pages and public profiles. It is the browser side of the [AnyPlay cloud](https://github.com/anyplay-gg/cloud); the launcher is the place to play.
 
-Questions and ideas: the [AnyPlay Discord](https://discord.gg/nSHbHBRdS).
+Questions and ideas: the [AnyPlay Discord](https://discord.gg/9zYqf8fEsh).
 
 ## What is in it
 
