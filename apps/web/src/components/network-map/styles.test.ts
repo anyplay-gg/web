@@ -8,7 +8,11 @@ const css = readFileSync(fileURLToPath(new URL("../../../../../packages/tokens/d
 describe("map styles", () => {
   it("only name colour variables that every direction defines", () => {
     for (const d of DIRECTIONS) {
-      const start = css.indexOf(d === "a" ? ":root," : `[data-direction="${d}"] {`);
+      // directions.css holds one palette per direction the spec lists (today only A, which is also
+      // :root); a direction without its own block inherits :root, so that is the block it resolves to.
+      const own = css.indexOf(`[data-direction="${d}"] {`);
+      const start = own !== -1 ? own : css.indexOf(":root,");
+      expect(start, `a palette block for direction ${d}`).toBeGreaterThan(-1);
       const block = css.slice(start, css.indexOf("}", start));
       for (const name of Object.values(MAP_STYLES[d].palette)) {
         expect(block, `${name} in direction ${d}`).toContain(`${name}:`);
