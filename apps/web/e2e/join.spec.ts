@@ -32,7 +32,7 @@ test.describe("join page", () => {
     await expect(page.getByText("2 of 4 players")).toBeVisible();
     const open = page.getByRole("link", { name: "Open in AnyPlay" });
     await expect(open).toHaveAttribute("href", `anyps5://v1/join/${SESSION}`);
-    await expect(page.getByRole("link", { name: "Get AnyPlay" })).toHaveAttribute("href", /github\.com\/anyplay-gg\/launcher\/releases/);
+    await expect(page.getByRole("link", { name: "Get AnyPlay" })).toHaveAttribute("href", /github\.com\/anyplaynet\/launcher\/releases/);
     await expect(page.getByRole("link", { name: "Create an account" })).toHaveCount(0);
     await axeClean(page);
     await shoot(page, "session-signed-in");

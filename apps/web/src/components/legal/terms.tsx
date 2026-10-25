@@ -5,7 +5,7 @@ import { LEGAL } from "./meta";
 /**
  * The terms of use. The shape follows DSA Art. 14: the rules for what you provide, how moderation
  * works (who decides, with what tools), and how to complain, in plain language. Every statement
- * about moderation describes the cloud today (docs/moderation.md in anyplay-gg/cloud). When the
+ * about moderation describes the cloud today (docs/moderation.md in anyplaynet/cloud). When the
  * code changes, change the text in the same pull request, and raise LEGAL.version and the date.
  */
 

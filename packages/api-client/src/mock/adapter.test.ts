@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Adapted from anyplay-gg/cloud (portal-react, same project and licence): the data layer only.
+// Adapted from anyplaynet/cloud (portal-react, same project and licence): the data layer only.
 import { describe, expect, it } from "vitest";
 import { isStepUp } from "../errors";
 import { MOCK_JOIN_CODES, createMockApi, parseScenario } from "./adapter";

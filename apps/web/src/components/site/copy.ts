@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // The words of the landing, per direction. Plain English, sentence case, verbs first on buttons, no
 // exclamation marks. Every claim here can be checked in the repositories: the licence is a file,
-// the compose file is in anyplay-gg/cloud, the export and the 30-day deletion are in the portal API.
+// the compose file is in anyplaynet/cloud, the export and the 30-day deletion are in the portal API.
 import type { Direction } from "@/components/network-map/styles";
 
 export const LINKS = {
-  source: "https://github.com/anyplay-gg",
-  launcher: "https://github.com/anyplay-gg/launcher/releases",
+  source: "https://github.com/anyplaynet",
+  launcher: "https://github.com/anyplaynet/launcher/releases",
   signIn: "/sign-in",
 } as const;
 
