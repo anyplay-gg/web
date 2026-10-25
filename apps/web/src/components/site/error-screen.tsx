@@ -9,7 +9,7 @@ import { StatusActions, StatusScreen, StatusText, actionGhost, actionPrimary, ac
  * digest does, as a short reference to quote when reporting it. No providers and no router, so the
  * same screen serves error.tsx and global-error.tsx.
  */
-export function ErrorScreen({ digest, reset }: { digest?: string; reset: () => void }) {
+export function ErrorScreen({ digest, retry }: { digest?: string; retry: () => void }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -34,7 +34,7 @@ export function ErrorScreen({ digest, reset }: { digest?: string; reset: () => v
         <StatusText>This page failed to load. Try again, and if it keeps happening, report it with the reference below.</StatusText>
       </div>
       <StatusActions>
-        <button type="button" onClick={reset} className={actionPrimary}>
+        <button type="button" onClick={() => retry()} className={actionPrimary}>
           Try again
         </button>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- no router here: global-error.tsx renders without one */}

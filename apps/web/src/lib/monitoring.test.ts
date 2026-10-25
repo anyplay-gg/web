@@ -7,7 +7,7 @@ const sentry = vi.hoisted(() => ({
 }));
 vi.mock("@sentry/browser", () => sentry);
 
-import { captureError, initMonitoring, monitoringOrigin } from "./monitoring";
+import { captureError, initMonitoring, monitoringOrigin, scrubEvent } from "./monitoring";
 
 const DSN = "https://abc@glitch.example.org/12";
 
@@ -25,6 +25,22 @@ describe("monitoring", () => {
     expect(monitoringOrigin(DSN)).toBe("https://glitch.example.org");
     expect(monitoringOrigin("not a url")).toBeNull();
     expect(monitoringOrigin(undefined)).toBeNull();
+  });
+});
+
+describe("scrubEvent", () => {
+  it("drops the page URL, user and breadcrumbs, and keeps the exception", () => {
+    const event = scrubEvent({
+      request: { url: "https://anyplaynet.com/u/somebody", headers: { Referer: "x" } },
+      user: { ip_address: "1.2.3.4" },
+      breadcrumbs: [{ message: "x" }],
+      exception: { values: [{ value: "boom" }] },
+    });
+    expect(event).toEqual({ exception: { values: [{ value: "boom" }] } });
+  });
+  it("is what init installs as beforeSend", async () => {
+    await initMonitoring(DSN);
+    expect(sentry.init.mock.calls[0]?.[0]).toMatchObject({ beforeSend: scrubEvent });
   });
 });
 

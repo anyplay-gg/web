@@ -48,4 +48,15 @@ test.describe("error and not-found pages", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Recovered" })).toBeVisible();
   });
+
+  test("a crash in a Server Component recovers only because Try again refetches", async ({ page, context, baseURL }) => {
+    await page.route("https://sentry.test/**", (route) => route.fulfill({ status: 200, headers: { "access-control-allow-origin": "*", "access-control-allow-headers": "*" }, body: "{}" }));
+    await page.goto("/e2e-throw/server");
+    await expect(page.getByRole("heading", { level: 1, name: "Something went wrong" })).toBeVisible();
+    // The server healed meanwhile (the cookie stands in for a transient failure that passed).
+    // reset() would re-render the same cached error; only a refetch reaches the server again.
+    await context.addCookies([{ name: "e2e-heal", value: "1", url: baseURL ?? "http://localhost:3000" }]);
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Recovered on the server" })).toBeVisible();
+  });
 });

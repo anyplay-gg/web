@@ -6,9 +6,9 @@ import { ErrorScreen } from "@/components/site/error-screen";
 import { captureError } from "@/lib/monitoring";
 
 /** A route crashed while rendering: report it once, show the way out. The layout stays. */
-export default function RouteError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function RouteError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
     void captureError(error, { digest: error.digest, boundary: "route" });
   }, [error]);
-  return <ErrorScreen digest={error.digest} reset={reset} />;
+  return <ErrorScreen digest={error.digest} retry={retry} />;
 }

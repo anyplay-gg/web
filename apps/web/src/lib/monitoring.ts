@@ -3,7 +3,19 @@
 // Error monitoring through the Sentry SDK, OFF by default. A self-hoster who sets
 // NEXT_PUBLIC_SENTRY_DSN to a Sentry or GlitchTip (Sentry-compatible, MIT) address gets browser
 // errors there; nobody else sends anything anywhere. The SDK is loaded only when a DSN exists, so
-// the default bundle does not contain it. No session replay, no tracing, no personal data.
+// the default bundle does not contain it. No session replay, no tracing; the page URL is removed from every event.
+
+/**
+ * The browser SDK's default integrations attach the page URL (which can hold a /u/<handle>), the
+ * referrer and the user agent as event.request. None of that is needed to fix a crash, so it is
+ * dropped before sending, along with any user and breadcrumbs.
+ */
+export function scrubEvent<T extends { request?: unknown; user?: unknown; breadcrumbs?: unknown }>(event: T): T {
+  delete event.request;
+  delete event.user;
+  delete event.breadcrumbs;
+  return event;
+}
 
 /** Starts monitoring when a DSN is configured. Safe to call more than once. */
 export async function initMonitoring(dsn: string | undefined = process.env.NEXT_PUBLIC_SENTRY_DSN): Promise<boolean> {
@@ -15,6 +27,7 @@ export async function initMonitoring(dsn: string | undefined = process.env.NEXT_
     // Sentry 11 sends no personal data unless an integration asks for it; none is added here.
     tracesSampleRate: 0,
     integrations: [],
+    beforeSend: scrubEvent,
     environment: process.env.NEXT_PUBLIC_ENVIRONMENT ?? "production",
   });
   return true;
@@ -26,8 +39,10 @@ export type Boundary = "route" | "global";
 /**
  * Reports an error that an error boundary caught. Boundary-caught render errors do not reach
  * Sentry's global handlers, so they have to be sent on purpose. Fire and forget: it never throws,
- * does nothing without a DSN (and then loads nothing), and sends only the boundary and Next's
- * digest, a hash that ties the browser event to the server log. No user data.
+ * does nothing without a DSN (and then loads nothing). The event carries the error's message and
+ * stack, the boundary and Next's digest (a hash that ties it to the server log). Page URL, referrer,
+ * user and breadcrumbs are scrubbed in beforeSend; Next replaces the message of a server-side error
+ * with a generic one in production.
  */
 export async function captureError(
   error: unknown,
