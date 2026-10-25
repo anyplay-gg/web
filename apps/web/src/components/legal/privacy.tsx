@@ -178,8 +178,8 @@ export function PrivacyNotice() {
         </P>
         <Facts items={KEPT} />
         <P>
-          If we keep backup copies of the database, they are not changed when you delete something, so deleted data can
-          stay in an old copy for a short time until that copy is replaced.
+          We keep encrypted backup copies of the server for 14 days. A backup is not changed when you delete something, so
+          deleted data can stay in a backup until that backup is 14 days old and removed.
         </P>
       </Section>
 
