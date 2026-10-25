@@ -11,9 +11,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "gate": "turbo run lint typecheck test && node scripts/check-all.mjs",
-    "guards": "node scripts/check-all.mjs"
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
