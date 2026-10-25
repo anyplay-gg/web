@@ -18,6 +18,9 @@ export default defineConfig({
   webServer: {
     command: "pnpm exec next dev --hostname 127.0.0.1 --port 4410",
     url: "http://127.0.0.1:4410",
+    // E2E turns on the page that crashes on purpose (/e2e-throw) and a fake DSN, which errors.spec.ts
+    // answers itself. Neither is set in any build that ships.
+    env: { NEXT_PUBLIC_E2E: "1", NEXT_PUBLIC_SENTRY_DSN: "https://public@sentry.test/1" },
     reuseExistingServer: false,
     timeout: 120_000,
   },
