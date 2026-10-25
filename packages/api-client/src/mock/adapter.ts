@@ -52,7 +52,9 @@ export type MockScenario =
 	| "slow"
 	| "signedout"
 	| "banned"
-	| "handoff";
+	| "handoff"
+	/** Reads work, saving privacy fails. */
+	| "nosave";
 
 export interface MockOptions {
 	scenario?: MockScenario;
@@ -72,7 +74,7 @@ const pushView = (d: PushDevice): PushDevice => ({ id: d.id, label: d.label, kin
 const FRESH_FOR = 15 * 60;
 const GRACE = 30 * 86_400;
 const TAKEN = new Set(["admin", "root", "anyplay", ...players.map((p) => p.handle)]);
-const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff"];
+const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff", "nosave"];
 
 /** Codes the mock knows: an invitation to a game, one to a party, and one that ran out. Any other code is unknown. */
 export const MOCK_JOIN_CODES = {
@@ -490,6 +492,9 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 			privacy: () => call(() => privacy, { read: true }),
 			updatePrivacy: (input) =>
 				call(() => {
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
 					privacy = input;
 					return privacy;
 				}),

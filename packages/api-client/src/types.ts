@@ -10,7 +10,9 @@ export type ProfileTheme = "cosmic" | "aurora" | "sunset";
 /** Who sees a part of a profile. `nobody` means only the player. */
 export type Audience = "everyone" | "friends" | "nobody";
 export type ProfilePart = "trophies" | "about" | "favourites" | "avatar" | "playtime";
-export type Privacy = Record<ProfilePart, Audience>;
+/** `feed` is who sees the player's activity in feeds; it is not a part of the profile. */
+export type PrivacyKey = ProfilePart | "feed";
+export type Privacy = Record<PrivacyKey, Audience>;
 
 /** A service a player can link to their account. */
 export type LinkProvider = "discord" | "steam" | "twitch" | "youtube";
