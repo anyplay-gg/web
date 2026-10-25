@@ -707,10 +707,10 @@ export function ConnectionsPage() {
 }
 
 /**
- * The services a player can link today. Discord and Steam are built (cloud#38) but switched off
- * until AnyPlay's own Discord app and Steam key are set up; until then they show as coming soon.
+ * The services a player can link today. Steam is built (cloud#38) but switched off until AnyPlay's
+ * Steam key is set up; until then it shows as coming soon.
  */
-const LINKING_OPEN = new Set<LinkProvider>([]);
+const LINKING_OPEN = new Set<LinkProvider>(["discord"]);
 
 function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l: LinkedAccount) => void }) {
   const { api } = useAccount();
