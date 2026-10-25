@@ -173,7 +173,7 @@ export async function Landing() {
         </main>
 
         <footer className="relative border-t border-line bg-bg">
-          <div className="mx-auto grid w-full max-w-[1160px] gap-10 px-[var(--gutter)] py-14 md:grid-cols-[1fr_auto_auto_auto] md:gap-16">
+          <div className="mx-auto grid w-full max-w-[1160px] gap-10 px-[var(--gutter)] py-14 md:grid-cols-[1fr_auto_auto_auto_auto] md:gap-12 lg:gap-16">
             <div>
               <Wordmark />
               <p className="mt-3 max-w-[22rem] text-[14px] leading-[1.6] text-ink-3">
@@ -200,6 +200,13 @@ export async function Landing() {
               links={[
                 ["Sign in", LINKS.signIn],
                 ["Create an account", LINKS.createAccount],
+              ]}
+            />
+            <FooterColumn
+              title="Legal"
+              links={[
+                ["Privacy notice", LINKS.privacy],
+                ["Terms of use", LINKS.terms],
               ]}
             />
           </div>

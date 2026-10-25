@@ -8,4 +8,6 @@ export const LINKS = {
   selfHost: "https://github.com/anyplay-gg/cloud",
   signIn: "/sign-in",
   createAccount: "/create",
+  privacy: "/privacy",
+  terms: "/terms",
 } as const;

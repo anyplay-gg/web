@@ -71,6 +71,14 @@ export function AuthShell({ children }: { children: ReactNode }) {
             <a href={LINKS.discord} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
               Ask on Discord
             </a>
+            <span aria-hidden> · </span>
+            <a href={LINKS.privacy} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+              Privacy
+            </a>
+            <span aria-hidden> · </span>
+            <a href={LINKS.terms} className="text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+              Terms
+            </a>
           </footer>
         </div>
       </div>

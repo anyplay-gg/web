@@ -11,6 +11,7 @@ Questions and ideas: the [AnyPlay Discord](https://discord.gg/nSHbHBRdS).
 | `/` | The landing page, with a download menu that fetches the files of the latest [launcher release](https://github.com/anyplay-gg/launcher/releases) |
 | `/sign-in`, `/create` | Sign-in and sign-up: a passkey, or a code by e-mail. The launcher's own sign-in opens these pages too |
 | `/account` | Overview, profile, friends, trophies, security (passkeys, launchers, browsers), privacy, connections (Discord, Steam) and your data (export, deletion) |
+| `/privacy`, `/terms` | The privacy notice and the terms of use. The one source of both texts is `apps/web/src/components/legal`; change the text, `meta.ts` (version, date) and the cloud's `TERMS_VERSION` together |
 | `/u/{handle}` | A player's public profile, showing only what that player lets the visitor see |
 
 ## How it works

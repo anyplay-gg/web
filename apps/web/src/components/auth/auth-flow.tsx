@@ -345,13 +345,13 @@ function DetailsStep({ api, view, onView }: StepProps) {
           checked={age}
           onChange={setAge}
           error={errors.age_confirmed}
-          hint="In the EU that is 16, or lower where your country sets it."
+          hint="That means 16 or older."
         >
           I am old enough to agree to the terms on my own.
         </CheckField>
         {termsView && (
           <CheckField name="terms" checked={terms} onChange={setTerms} error={errors.terms_accepted}>
-            I accept the <TermsLink url={termsView.url} /> (version {termsView.version}).
+            I accept the <TermsLink url={termsView.url} /> (version {termsView.version}) and have read the <PrivacyLink />.
           </CheckField>
         )}
         {errors.form && <FormError>{errors.form}</FormError>}
@@ -363,11 +363,20 @@ function DetailsStep({ api, view, onView }: StepProps) {
   );
 }
 
+const legalLink = "font-medium text-brand-text underline underline-offset-4";
+
 function TermsLink({ url }: { url: string | null | undefined }) {
-  if (!url) return <>terms</>;
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-text underline underline-offset-4">
+    <a href={url || "/terms"} target="_blank" rel="noopener noreferrer" className={legalLink}>
       terms<span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
+}
+
+function PrivacyLink() {
+  return (
+    <a href="/privacy" target="_blank" rel="noopener noreferrer" className={legalLink}>
+      privacy notice<span className="sr-only"> (opens in a new tab)</span>
     </a>
   );
 }
