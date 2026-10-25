@@ -4,7 +4,7 @@ export const LINKS = {
   download: "https://github.com/anyplay-gg/launcher/releases/latest",
   releases: "https://github.com/anyplay-gg/launcher/releases",
   github: "https://github.com/anyplay-gg",
-  discord: "https://discord.gg/nSHbHBRdS",
+  discord: "https://discord.gg/9zYqf8fEsh",
   selfHost: "https://github.com/anyplay-gg/cloud",
   compatibility: "/compatibility",
   signIn: "/sign-in",
