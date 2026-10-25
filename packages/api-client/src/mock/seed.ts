@@ -71,6 +71,7 @@ export const defaultPrivacy = (): Privacy => ({
 	favourites: "friends",
 	avatar: "friends",
 	playtime: "friends",
+	feed: "friends",
 });
 
 export interface MockPlayer extends Account {
@@ -97,6 +98,7 @@ const everyone = (): Privacy => ({
 	favourites: "everyone",
 	avatar: "everyone",
 	playtime: "friends",
+	feed: "friends",
 });
 
 export const players: MockPlayer[] = [
@@ -144,6 +146,7 @@ export const players: MockPlayer[] = [
 			favourites: "nobody",
 			avatar: "nobody",
 			playtime: "nobody",
+			feed: "nobody",
 		},
 		trophies: counts(9, 40, 70, 120),
 		avatar: null,

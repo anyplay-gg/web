@@ -8,7 +8,7 @@ import {
   type LinkProvider,
   type Privacy,
   type Profile,
-  type ProfilePart,
+  type PrivacyKey,
   describeError,
 } from "@anyplay/api-client";
 import { ArrowDownTrayIcon, ArrowRightIcon, ComputerDesktopIcon, GlobeAltIcon, KeyIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -726,7 +726,7 @@ function EverywhereCard() {
 
 /* ───────────────────────────── Privacy ───────────────────────────── */
 
-const PARTS: { part: ProfilePart; title: string; detail: string }[] = [
+const PARTS: { part: PrivacyKey; title: string; detail: string }[] = [
   { part: "trophies", title: "Trophies", detail: "Your trophy counts and what you earned" },
   { part: "playtime", title: "Playtime", detail: "How long you played, per game" },
   { part: "about", title: "About", detail: "The line on your profile" },
@@ -738,11 +738,11 @@ export function PrivacyPage() {
   const { api } = useAccount();
   const load = useCallback(() => api.account.privacy(), [api]);
   const { data, error, reload, setData } = useLoad<Privacy>(load);
-  const [saving, setSaving] = useState<ProfilePart | null>(null);
-  const [problem, setProblem] = useState<string | null>(null);
+  const [saving, setSaving] = useState<PrivacyKey | null>(null);
+  const [problem, setProblem] = useState<{ part: PrivacyKey; text: string } | null>(null);
   if (error) return <Failed message={error} retry={reload} />;
   if (!data) return <Loading />;
-  const set = async (part: ProfilePart, audience: Audience) => {
+  const set = async (part: PrivacyKey, audience: Audience) => {
     const before = data;
     const next = { ...data, [part]: audience };
     setData(next);
@@ -752,26 +752,42 @@ export function PrivacyPage() {
       setData(await api.account.updatePrivacy(next));
     } catch (e) {
       setData(before);
-      setProblem(describeError(e));
+      setProblem({ part, text: describeError(e) });
     } finally {
       setSaving(null);
     }
   };
   return (
     <div>
-      <PageTitle title="Privacy" lead="Who sees each part of your profile. Your handle is always visible, so friends can find you." />
-      <Card title="Your profile" description="Changes count at once, in the launcher too.">
-        <Rows>
-          {PARTS.map((p) => (
-            <Row key={p.part} title={p.title} detail={p.detail} trailing={<AudiencePicker label={`Who sees: ${p.title}`} value={data[p.part]} disabled={saving === p.part} onChange={(a) => void set(p.part, a)} />} />
-          ))}
-        </Rows>
-        {problem && (
-          <div className="mt-4">
-            <FormError>{problem}</FormError>
+      <PageTitle title="Privacy" lead="Who sees your profile and your activity. Your handle is always visible, so friends can find you." />
+      <div className="grid gap-6">
+        <Card title="Your profile" description="Changes count at once, in the launcher too.">
+          <Rows>
+            {PARTS.map((p) => (
+              <Row key={p.part} title={p.title} detail={p.detail} trailing={<AudiencePicker label={`Who sees: ${p.title}`} value={data[p.part]} disabled={saving === p.part} onChange={(a) => void set(p.part, a)} />} />
+            ))}
+          </Rows>
+          {problem && problem.part !== "feed" && (
+            <div className="mt-4">
+              <FormError>{problem.text}</FormError>
+            </div>
+          )}
+        </Card>
+        <Card title="Your activity" description="What you do on AnyPlay, as your friends see it in their feed.">
+          <Rows>
+            <Row
+              title="Activity"
+              detail="Friends see it in their feed. Strangers see no feed. Only me hides what is there and stops new items."
+              trailing={<AudiencePicker label="Who sees: Activity" value={data.feed} disabled={saving === "feed"} onChange={(a) => void set("feed", a)} />}
+            />
+          </Rows>
+          {problem?.part === "feed" && (
+            <div className="mt-4">
+              <FormError>{problem.text}</FormError>
           </div>
         )}
       </Card>
+      </div>
     </div>
   );
 }
