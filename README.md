@@ -39,7 +39,7 @@ pnpm dev            # http://127.0.0.1:4400, on the mock
 
 In development the mock stands in for the cloud. Add `?mock=signedout`, `?mock=handoff`, `?mock=banned`, `?mock=empty`, `?mock=slow` or `?mock=error` to a URL to see those states.
 
-Before a pull request: `pnpm lint`, `pnpm typecheck` and `pnpm test`. The browser tests (`pnpm --filter @anyplay/web e2e`, Playwright, on the mock at 375 and 1280 px) start their own dev server on port 4410; `SHOTS=<folder>` also saves screenshots.
+Before a pull request: `pnpm lint`, `pnpm typecheck` and `pnpm test`. CI (`.github/workflows/ci.yml`) runs those plus the build, the Playwright suite and the shared rules on every pull request and on `main`. The browser tests (`pnpm --filter @anyplay/web e2e`, Playwright, on the mock at 375 and 1280 px) start their own dev server on port 4410; `SHOTS=<folder>` also saves screenshots.
 
 ## Run it
 
