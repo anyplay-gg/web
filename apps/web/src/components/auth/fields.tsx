@@ -27,9 +27,20 @@ export const textButton =
  * more reliably than one that appears together with its text. Empty, it takes no room (the grid's
  * gap above it is pulled back).
  */
-function FieldError({ id, className = "", children }: { id: string; className?: string; children?: ReactNode }) {
+function FieldError({
+  id,
+  className = "",
+  pull = "empty:-mt-2",
+  children,
+}: {
+  id: string;
+  className?: string;
+  /** Pulls the empty container back by the gap of the grid it sits in (gap-2 in TextField, gap-1.5 in CheckField). */
+  pull?: "empty:-mt-2" | "empty:-mt-1.5";
+  children?: ReactNode;
+}) {
   return (
-    <div role="alert" id={id} className="empty:-mt-2">
+    <div role="alert" id={id} className={pull}>
       {children && <p className={`text-[14px] leading-[1.45] text-[#ff9a8a] ${className}`}>{children}</p>}
     </div>
   );
@@ -96,7 +107,7 @@ export function CheckField({
           {hint && <span className="mt-0.5 block text-[13px] text-ink-3">{hint}</span>}
         </span>
       </label>
-      <FieldError id={`${id}-error`} className="pl-8">
+      <FieldError id={`${id}-error`} className="pl-8" pull="empty:-mt-1.5">
         {error}
       </FieldError>
     </div>
