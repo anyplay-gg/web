@@ -15,6 +15,7 @@ import type {
 	FriendLists,
 	FriendRequest,
 	GradeCounts,
+	JoinView,
 	Me,
 	Passkey,
 	Privacy,
@@ -72,6 +73,13 @@ const FRESH_FOR = 15 * 60;
 const GRACE = 30 * 86_400;
 const TAKEN = new Set(["admin", "root", "anyplay", ...players.map((p) => p.handle)]);
 const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff"];
+
+/** Codes the mock knows: an invitation to a game, one to a party, and one that ran out. Any other code is unknown. */
+export const MOCK_JOIN_CODES = {
+	session: "ember23456",
+	party: "party23456",
+	expired: "expired234",
+} as const;
 
 export function parseScenario(search: string): MockScenario {
 	const v = new URLSearchParams(search).get("mock") as MockScenario | null;
@@ -361,6 +369,20 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 						appealFiled = true;
 					},
 					{ auth: false },
+				),
+		},
+
+		join: {
+			get: (code) =>
+				call(
+					(): JoinView => {
+						if (code === MOCK_JOIN_CODES.session)
+							return { handle: "mira", title: "Into the Ember", members: 2, maxMembers: 4, kind: "session" };
+						if (code === MOCK_JOIN_CODES.party)
+							return { handle: "mira", title: null, members: 3, maxMembers: 8, kind: "party" };
+						throw new ApiError("not_found", "There is nothing like that here.", { status: 404 });
+					},
+					{ read: true, auth: false },
 				),
 		},
 

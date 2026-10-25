@@ -83,6 +83,29 @@ describe("http adapter", () => {
 		expect(call(1).url).toBe("/web/api/v1/session"); // the write asked for a token first
 	});
 
+	it("reads a join page without a session, camelized, and maps its one refusal to not_found", async () => {
+		const { api, call } = setup((url) =>
+			url.endsWith("/join/ember23456")
+				? json({ handle: "mira", title: "Into the Ember", members: 2, max_members: 4, kind: "session" })
+				: json({ error: "not_found", message: "There is nothing like that here." }, { status: 404 }),
+		);
+		expect(await api.join.get("ember23456")).toEqual({
+			handle: "mira",
+			title: "Into the Ember",
+			members: 2,
+			maxMembers: 4,
+			kind: "session",
+		});
+		expect(call(0).url).toBe("/web/api/v1/join/ember23456");
+		expect(call(0).init.method).toBe("GET");
+		expect(call(0).init.credentials).toBe("same-origin");
+		const err = await api.join.get("zzzzzzzzzz").catch((e) => e);
+		expect(err).toBeInstanceOf(ApiError);
+		expect(err.code).toBe("not_found");
+		expect(err.status).toBe(404);
+		expect(call(1).url).toBe("/web/api/v1/join/zzzzzzzzzz"); // a read: no session call, no token
+	});
+
 	it("takes the new token a sign-in step hands back", async () => {
 		const { api, call } = setup((url) => {
 			if (url.endsWith("/session"))
