@@ -11,7 +11,7 @@ import {
   type ProfilePart,
   describeError,
 } from "@anyplay/api-client";
-import { ArrowDownTrayIcon, ArrowRightIcon, ComputerDesktopIcon, GlobeAltIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowRightIcon, ComputerDesktopIcon, GlobeAltIcon, KeyIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
@@ -213,6 +213,7 @@ export function ProfilePage() {
       <div className="grid gap-6">
         <AvatarCard profile={data} handle={session.account!.handle} onChange={setData} />
         <AboutCard profile={data} onChange={setData} />
+        <FavouritesCard profile={data} onChange={setData} />
       </div>
     </div>
   );
@@ -289,7 +290,7 @@ function AboutCard({ profile, onChange }: { profile: Profile; onChange: (p: Prof
     });
   };
   return (
-    <Card title="About" description="A line or two about you: what you play, when you're around.">
+    <Card id="profile-about" title="About" description="A line or two about you: what you play, when you're around.">
       <form onSubmit={submit} className="grid gap-3">
         <label htmlFor="about" className="sr-only">
           About
@@ -323,6 +324,110 @@ function AboutCard({ profile, onChange }: { profile: Profile; onChange: (p: Prof
         </div>
         {error && <FormError>{error}</FormError>}
       </form>
+    </Card>
+  );
+}
+
+/** The cloud keeps at most three favourite titles (network spec/cloud-api.md, Profiles). */
+const FAVOURITES_MAX = 3;
+const TITLE_ID = /^[A-Za-z0-9_-]{1,64}$/;
+
+function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p: Profile) => void }) {
+  const { api } = useAccount();
+  const { busy, error, run } = useAction();
+  const saved = profile.favourites ?? [];
+  const [list, setList] = useState<string[]>(saved);
+  const [draft, setDraft] = useState("");
+  const [problem, setProblem] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  const dirty = list.length !== saved.length || list.some((id, i) => id !== saved[i]);
+  const full = list.length >= FAVOURITES_MAX;
+
+  const add = (e: FormEvent) => {
+    e.preventDefault();
+    const id = draft.trim();
+    if (!id) return;
+    if (!TITLE_ID.test(id)) return setProblem("Use only letters, numbers, hyphens and underscores.");
+    if (list.includes(id)) return setProblem(`${id} is on the list already.`);
+    setList([...list, id]);
+    setDraft("");
+    setProblem(null);
+    setDone(false);
+  };
+  const save = () => {
+    setDone(false);
+    void run(async () => {
+      onChange(await api.account.updateProfile({ favourites: list }));
+      setDone(true);
+    });
+  };
+
+  return (
+    <Card
+      id="profile-favourites"
+      title="Favourite games"
+      description={`Up to ${FAVOURITES_MAX}, by title ID. This site shows the ID. The launcher shows each game's name from your own copy.`}
+    >
+      <div className="grid gap-4">
+        {list.length === 0 ? (
+          <Empty>No favourite games yet. Add a title ID below.</Empty>
+        ) : (
+          <ul aria-label="Your favourite games" className="flex flex-wrap gap-3">
+            {list.map((id) => (
+              <li
+                key={id}
+                className="inline-flex h-9 items-center gap-1 rounded-full bg-white/[0.05] pr-1 pl-4 text-[14px] font-medium tabular-nums shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] [@media(pointer:coarse)]:h-11"
+              >
+                {id}
+                <button
+                  type="button"
+                  aria-label={`Remove ${id}`}
+                  onClick={() => {
+                    setList(list.filter((x) => x !== id));
+                    setDone(false);
+                  }}
+                  className="grid size-8 place-items-center rounded-full text-ink-3 transition-[background-color,color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] [@media(hover:hover)]:hover:bg-white/[0.08] [@media(hover:hover)]:hover:text-ink [@media(pointer:coarse)]:size-10"
+                >
+                  <XMarkIcon aria-hidden className="size-4" strokeWidth={1.8} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <form onSubmit={add} className="flex flex-wrap items-end gap-3">
+          <TextField
+            label="Title ID"
+            className="min-w-[12rem] flex-1"
+            value={draft}
+            disabled={full}
+            placeholder="GAME00001"
+            autoCapitalize="none"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={64}
+            error={problem}
+            hint={full ? `You have ${FAVOURITES_MAX} games. Remove one to add another.` : undefined}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              setProblem(null);
+            }}
+          />
+          <button type="submit" className={smallButton} disabled={full || !draft.trim()}>
+            Add game
+          </button>
+        </form>
+        <div className="flex items-center justify-end gap-3">
+          {done && !dirty && (
+            <span role="status" className="text-[13px] text-[#7fe3b0]">
+              Saved
+            </span>
+          )}
+          <button type="button" className={smallPrimary} disabled={busy || !dirty} onClick={save}>
+            {busy ? "Saving…" : "Save"}
+          </button>
+        </div>
+        {error && <FormError>{error}</FormError>}
+      </div>
     </Card>
   );
 }

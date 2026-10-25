@@ -100,7 +100,8 @@ export function ProfilePage({ handle }: { handle: string }) {
 
 function Profile({ user }: { user: PublicUser }) {
   const { handle } = user.account;
-  const hasAny = user.about || user.trophies || user.favourites?.length || user.playtime?.length;
+  const links = user.links ?? [];
+  const hasAny = user.about || user.trophies || user.favourites?.length || user.playtime?.length || links.length;
   const trophies = user.trophies;
 
   return (
@@ -116,32 +117,38 @@ function Profile({ user }: { user: PublicUser }) {
           <div className="min-w-0 flex-1">
             <h1 className="display truncate text-[clamp(1.9rem,1.4rem+1.6vw,2.6rem)] leading-[1.05]">{handle}</h1>
             {user.about && <p className="mt-2 max-w-[34rem] text-[16px] leading-[1.6] text-ink-2 text-pretty">{user.about}</p>}
-            {user.links && user.links.length > 0 && <Links links={user.links} />}
           </div>
         </div>
         <Relation user={user} />
       </section>
 
       {trophies && (
-        <Card title="Trophies" description={totalOf(trophies) === 0 ? undefined : `${totalOf(trophies)} earned.`}>
+        <Card id="trophies" title="Trophies" description={totalOf(trophies) === 0 ? undefined : `${totalOf(trophies)} earned.`}>
           {totalOf(trophies) === 0 ? <Empty>{handle} has not earned a trophy yet.</Empty> : <GradeTiles counts={trophies} />}
         </Card>
       )}
 
       {user.favourites && user.favourites.length > 0 && (
-        <Card title="Favourite games">
+        <Card id="favourites" title="Favourite games" description="Shown by title ID.">
           <ul className="flex flex-wrap gap-3">
             {user.favourites.map((id) => (
-              <li key={id} className="inline-flex h-9 items-center rounded-full bg-white/[0.05] px-4 text-[14px] font-medium tabular-nums shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
-                {id}
+              <li key={id} className="inline-flex h-9 items-center gap-2 rounded-full bg-white/[0.05] px-4 text-[14px] font-medium shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
+                <span className="text-ink-3">Game</span>
+                <span className="tabular-nums">{id}</span>
               </li>
             ))}
           </ul>
         </Card>
       )}
 
+      {links.length > 0 && (
+        <Card id="connections" title="Connections">
+          <Links links={links} />
+        </Card>
+      )}
+
       {user.playtime && user.playtime.length > 0 && (
-        <Card title="Playtime">
+        <Card id="playtime" title="Playtime">
           <Rows>
             {user.playtime.map((p) => (
               <Row key={p.titleId} title={<span className="tabular-nums">{p.titleId}</span>} trailing={<span className="text-[15px] font-medium tabular-nums">{hours(p.minutes)}</span>} />
@@ -150,40 +157,35 @@ function Profile({ user }: { user: PublicUser }) {
         </Card>
       )}
 
-      {!hasAny && <Notice>{handle} keeps the rest of their profile private.</Notice>}
+      {!hasAny && <Notice>There is nothing more to show of {handle} yet.</Notice>}
     </div>
   );
 }
 
-/** The player's linked accounts: the name on the other service, a link where it has a profile page. */
+/** The player's linked accounts: the name on the other service, and a link where it has a profile page. */
 function Links({ links }: { links: PublicLink[] }) {
   return (
-    <ul aria-label="Linked accounts" className="mt-4 flex flex-wrap gap-2">
+    <Rows>
       {links.map((l) => {
         const brand = BRAND[l.provider];
-        const inner = (
-          <>
-            <BrandLogo provider={l.provider} className="size-4" />
-            <span className="sr-only">{brand.name}: </span>
-            {l.displayName ?? brand.name}
-          </>
-        );
-        const chip =
-          "inline-flex h-8 items-center gap-2 rounded-full bg-white/[0.05] px-3 text-[13px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]";
         return (
-          <li key={l.provider}>
-            {l.profileUrl ? (
-              <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={`${chip} [@media(pointer:coarse)]:h-11 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:bg-white/[0.09]`}>
-                {inner}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            ) : (
-              <span className={chip}>{inner}</span>
-            )}
-          </li>
+          <Row
+            key={l.provider}
+            icon={<BrandLogo provider={l.provider} className="size-5" />}
+            title={brand.name}
+            detail={l.displayName ?? undefined}
+            trailing={
+              l.profileUrl ? (
+                <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={smallButton}>
+                  Open profile
+                  <span className="sr-only"> on {brand.name} (opens in a new tab)</span>
+                </a>
+              ) : undefined
+            }
+          />
         );
       })}
-    </ul>
+    </Rows>
   );
 }
 
