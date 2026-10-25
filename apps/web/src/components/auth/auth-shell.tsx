@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { Wordmark } from "../landing/header";
 import { Toast, launcherFont } from "../landing/launcher-ui";
 import { LINKS } from "../landing/links";
-import { LandingProviders } from "../landing/providers";
+import { LandingProviders, WhenVisible } from "../landing/providers";
 import { DitherField } from "../landing/shaders";
 
 /**
@@ -22,7 +22,9 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
     <LandingProviders>
       <div className="night grid min-h-dvh bg-bg text-ink lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         <aside aria-hidden className="relative hidden overflow-hidden border-r border-white/[0.06] lg:block">
-          <DitherField className="absolute inset-0 size-full opacity-80 [mask-image:radial-gradient(120%_90%_at_30%_100%,black_25%,transparent_75%)]" />
+          <WhenVisible className="absolute inset-0 opacity-80 [mask-image:radial-gradient(120%_90%_at_30%_100%,black_25%,transparent_75%)]">
+            <DitherField className="size-full" />
+          </WhenVisible>
           <span className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_15%,rgb(11_10_9/0.85),transparent)]" />
           <div className="relative flex h-full flex-col justify-between p-12 xl:p-16">
             <span className="display max-w-[11ch] pt-24 text-[clamp(2.75rem,1.2rem+3vw,4.25rem)] leading-[1.04]">
