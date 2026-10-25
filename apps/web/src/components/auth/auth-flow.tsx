@@ -5,8 +5,10 @@ import { type BanStatement, type PortalApi, type SessionView, type SignInIntent,
 import { AnimatePresence, m } from "@anyplay/ui/motion";
 import { ArrowRightIcon, ComputerDesktopIcon, KeyIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { loadApi } from "@/lib/api";
+import { withNext } from "@/lib/join";
 import { CheckField, CodeField, FormError, TextField, primaryButton, secondaryButton, textButton } from "./fields";
 
 /**
@@ -22,7 +24,11 @@ function fieldError(e: unknown, field: string): string {
   return (isApiError(e) && e.fields[field]) || describeError(e);
 }
 
-export function AuthFlow({ intent }: { intent: SignInIntent }) {
+/**
+ * `next` is where the person goes when they are signed in: a join page, already checked by
+ * `safeNext` (it is null for anything else). Without it they land on their account.
+ */
+export function AuthFlow({ intent, next = null }: { intent: SignInIntent; next?: string | null }) {
   const [api, setApi] = useState<PortalApi | null>(null);
   const [view, setView] = useState<SessionView | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
@@ -72,13 +78,13 @@ export function AuthFlow({ intent }: { intent: SignInIntent }) {
           exit={{ opacity: 0, y: -6, filter: "blur(2px)", transition: { duration: 0.14 } }}
           transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}
         >
-          {step === "email" && <EmailStep api={api} view={view} intent={view.authorize?.create ? "create" : intent} onView={setView} />}
+          {step === "email" && <EmailStep api={api} view={view} intent={view.authorize?.create ? "create" : intent} next={next} onView={setView} />}
           {step === "code" && <CodeStep api={api} view={view} onView={setView} />}
           {step === "details" && <DetailsStep api={api} view={view} onView={setView} />}
           {step === "terms" && <TermsStep api={api} view={view} onView={setView} />}
           {step === "banned" && <BannedStep api={api} />}
           {step === "handoff" && <HandoffStep url={view.flow.redirect ?? ""} />}
-          {step === "done" && <DoneStep view={view} />}
+          {step === "done" && <DoneStep view={view} next={next} />}
         </m.div>
       </AnimatePresence>
     </div>
@@ -117,7 +123,7 @@ export function Loading() {
 
 type StepProps = { api: PortalApi; view: SessionView; onView: (v: SessionView) => void };
 
-function EmailStep({ api, view, intent, onView }: StepProps & { intent: SignInIntent }) {
+function EmailStep({ api, view, intent, next, onView }: StepProps & { intent: SignInIntent; next: string | null }) {
   const create = intent === "create";
   const [email, setEmail] = useState(view.flow.email ?? "");
   const [error, setError] = useState<string | null>(null);
@@ -210,7 +216,7 @@ function EmailStep({ api, view, intent, onView }: StepProps & { intent: SignInIn
       </form>
       <p className="mt-8 text-[14px] text-ink-3">
         {create ? "Already have an account?" : "New to AnyPlay?"}{" "}
-        <Link href={create ? "/sign-in" : "/create"} className="font-medium text-brand-text underline-offset-4 [@media(hover:hover)]:hover:underline">
+        <Link href={withNext(create ? "/sign-in" : "/create", next)} className="font-medium text-brand-text underline-offset-4 [@media(hover:hover)]:hover:underline">
           {create ? "Sign in" : "Create an account"}
         </Link>
       </p>
@@ -475,7 +481,20 @@ function HandoffStep({ url }: { url: string }) {
   );
 }
 
-function DoneStep({ view }: { view: SessionView }) {
+function DoneStep({ view, next }: { view: SessionView; next: string | null }) {
+  const router = useRouter();
+  useEffect(() => {
+    if (next) router.replace(next);
+  }, [next, router]);
+  if (next) {
+    return (
+      <Step title="You’re signed in" lead="Taking you back to the invitation.">
+        <Link href={next} replace className={primaryButton}>
+          Continue <ArrowRightIcon aria-hidden className="size-4" />
+        </Link>
+      </Step>
+    );
+  }
   return (
     <Step
       title="You’re signed in"

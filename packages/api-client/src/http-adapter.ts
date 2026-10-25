@@ -11,6 +11,7 @@ import type {
 	PushState,
 	BanStatement,
 	FriendLists,
+	JoinView,
 	Passkey,
 	Privacy,
 	Profile,
@@ -190,6 +191,10 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 			appeal: async (text) => {
 				await json("POST", "/ban/appeal", { text });
 			},
+		},
+
+		join: {
+			get: (code) => json<JoinView>("GET", `/join/${encodeURIComponent(code)}`),
 		},
 
 		link: {
