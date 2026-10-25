@@ -24,12 +24,20 @@ import type {
 	PublicUser,
 	SessionView,
 	StepUpMethod,
+	TrophyCompare,
 	TrophySummary,
+	CompareSide,
 	Viewer,
 } from "../types";
 import {
 	defaultPrivacy,
+	levelFor,
 	ownPlaytime,
+	ownTrophies,
+	playerTitles,
+	playerTrophies,
+	pointsOf,
+	tally,
 	players,
 	presenceFor,
 	seedDevices,
@@ -56,7 +64,11 @@ export type MockScenario =
 	/** Reads work, saving privacy fails. */
 	| "nosave"
 	/** The stored feed visibility is "everyone", as older data may have it. */
-	| "oldfeed";
+	| "oldfeed"
+	/** Comparing trophies fails with a server error. */
+	| "nocompare"
+	/** The other player hid their trophies after the page loaded: comparing answers not_found. */
+	| "hiddennow";
 
 export interface MockOptions {
 	scenario?: MockScenario;
@@ -76,7 +88,7 @@ const pushView = (d: PushDevice): PushDevice => ({ id: d.id, label: d.label, kin
 const FRESH_FOR = 15 * 60;
 const GRACE = 30 * 86_400;
 const TAKEN = new Set(["admin", "root", "anyplay", ...players.map((p) => p.handle)]);
-const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff", "nosave", "oldfeed"];
+const SCENARIOS: MockScenario[] = ["empty", "error", "slow", "signedout", "banned", "handoff", "nosave", "oldfeed", "nocompare", "hiddennow"];
 
 /** Codes the mock knows: an invitation to a game, one to a party, and one that ran out. Any other code is unknown. */
 export const MOCK_JOIN_CODES = {
@@ -116,7 +128,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 	let incoming: FriendRequest[] = empty ? [] : seedIncoming(t0);
 	let outgoing: FriendRequest[] = empty ? [] : seedOutgoing(t0);
 	let blocked: Account[] = [];
-	const trophyData: TrophySummary = empty ? { counts: zero(), titles: [] } : seedTrophies(t0);
+	const trophyData: TrophySummary = empty ? { counts: zero(), points: 0, level: levelFor(0), titles: [] } : seedTrophies(t0);
 	let links: LinkedAccount[] = [
 		{ provider: "discord", available: true, linked: !empty, externalId: empty ? null : "301928374655", name: empty ? null : "riley.chen", avatarUrl: null, linkedAt: empty ? null : t0 - 40 * 86_400, audience: "friends" },
 		{ provider: "steam", available: true, linked: false, externalId: null, name: null, avatarUrl: null, linkedAt: null, audience: "friends" },
@@ -212,6 +224,21 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 		if (audience === "everyone") return true;
 		if (audience === "friends") return viewer === "friend" || viewer === "self";
 		return viewer === "self";
+	}
+
+	/** The player whose trophies the viewer may see, or the cloud's unauthorized, bad_request and not_found. */
+	async function visibleTrophyPlayer(handle: string) {
+		await wait();
+		if (scenario === "error") throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+		if (!signedIn) throw new ApiError("unauthorized", "Sign in first.", { status: 401 });
+		const h = handle.toLowerCase();
+		if (h === me.handle) throw new ApiError("bad_request", "That is you.", { status: 400 });
+		const p = players.find((x) => x.handle === h);
+		const hidden = (x: (typeof players)[number]) =>
+			blocked.some((b) => b.id === x.id) ||
+			!can(x.privacy.trophies, friends.some((f) => f.account.id === x.id) ? "friend" : "none");
+		if (!p || hidden(p)) throw new ApiError("not_found", "No such player.", { status: 404 });
+		return p;
 	}
 
 	const api: PortalApi = {
@@ -491,6 +518,15 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 				call(() => {
 					profile = { ...profile, avatar: null };
 				}),
+			appearOffline: () => call(() => Boolean(me.appearOffline), { read: true }),
+			setAppearOffline: (value) =>
+				call(() => {
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
+					me = { ...me, appearOffline: value };
+					return value;
+				}),
 			privacy: () => call(() => privacy, { read: true }),
 			updatePrivacy: (input) =>
 				call(() => {
@@ -748,6 +784,37 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 		},
 
 		users: {
+			trophies: async (handle) => {
+				const p = await visibleTrophyPlayer(handle);
+				const titles = (playerTitles[p.id] ?? []).map(({ titleId }) => {
+					const earned = playerTrophies(p.id, titleId, t0);
+					return {
+						titleId,
+						counts: tally(earned).counts,
+						earned: earned.length,
+						lastEarned: earned.reduce((m, x) => Math.max(m, x.earned), 0) || null,
+					};
+				});
+				const points = pointsOf(p.trophies);
+				return { counts: p.trophies, points, level: levelFor(points), titles };
+			},
+			compare: async (handle, titleId) => {
+				const p = await visibleTrophyPlayer(handle);
+				if (scenario === "nocompare") throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+				if (scenario === "hiddennow") throw new ApiError("not_found", "No such player.", { status: 404 });
+				const side = (account: Account, trophies: CompareSide["trophies"], total: GradeCounts): CompareSide => ({
+					account,
+					trophies,
+					title: tally(trophies),
+					total: { counts: total, points: pointsOf(total) },
+					level: levelFor(pointsOf(total)),
+				});
+				return {
+					titleId,
+					you: side(toAccount(me), ownTrophies(titleId, t0), trophyData.counts),
+					them: side(toAccount(p), playerTrophies(p.id, titleId, t0), p.trophies),
+				} satisfies TrophyCompare;
+			},
 			get: async (handle) => {
 				await wait();
 				if (scenario === "error")
@@ -761,6 +828,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 						avatar: profile.avatar,
 						playtime: ownPlaytime,
 						trophies: trophyData.counts,
+						level: trophyData.level ?? null,
 						viewer: { relation: "self", requested: null, blocked: false },
 					} satisfies PublicUser;
 				}
@@ -791,6 +859,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 					avatar: part("avatar", p.avatar, !p.avatar),
 					playtime: part("playtime", p.playtime, p.playtime.length === 0),
 					trophies: part("trophies", p.trophies, false),
+					level: part("trophies", levelFor(pointsOf(p.trophies)), false),
 					viewer,
 					// Every seeded player shows the same two links, so the profile's link row can be seen.
 					links: isBlocked

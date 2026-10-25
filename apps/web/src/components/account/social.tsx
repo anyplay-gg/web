@@ -6,6 +6,7 @@ import { TrophyIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useCallback, useState } from "react";
 import { FormError, TextField } from "../auth/fields";
+import { LevelMeter } from "./level";
 import { Failed, Loading, useAction, useLoad } from "./pages";
 import { Initial, useAccount } from "./shell";
 import { Card, Confirm, Empty, Notice, PageTitle, Row, Rows, ago, smallButton, smallPrimary } from "./ui";
@@ -298,7 +299,12 @@ export function TrophiesPage() {
       <PageTitle title="Trophies" lead="What you earned in your games. AnyPlay keeps counts per game and grade, never trophy names or art." />
       <div className="grid gap-6">
         <Card title="Totals" description={total === 0 ? undefined : `${total} earned across ${titles.length} ${titles.length === 1 ? "game" : "games"}.`}>
-          {total === 0 ? <Empty>No trophies yet. Play a game through AnyPlay and the ones you earn are counted here.</Empty> : <GradeTiles counts={data.counts} />}
+          {total === 0 ? <Empty>No trophies yet. Play a game through AnyPlay and the ones you earn are counted here.</Empty> : (
+            <div className="grid gap-5">
+              {data.level && <LevelMeter level={data.level} />}
+              <GradeTiles counts={data.counts} />
+            </div>
+          )}
         </Card>
 
         {titles.length > 0 && (

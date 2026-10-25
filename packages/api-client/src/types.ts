@@ -42,6 +42,8 @@ export interface Account {
 export interface Me extends Account {
 	email: string;
 	created: number;
+	/** Friends see the player as offline while this is on (ADR 0028). Absent on an older cloud. */
+	appearOffline?: boolean;
 }
 
 export interface CloudInfo {
@@ -175,9 +177,56 @@ export interface TitleSummary {
 	lastEarned: number | null;
 }
 
+/** Points and level (ADR 0029): the cloud always sends the numbers, the web only draws them. */
+export interface TrophyLevel {
+	points: number;
+	/** 1 to 100. */
+	level: number;
+	/** The points where this level began. */
+	from: number;
+	/** The points where the next level begins; null at level 100. */
+	to: number | null;
+}
+
 export interface TrophySummary {
 	counts: GradeCounts;
+	/** What the trophies are worth. Absent on an older cloud. */
+	points?: number;
+	level?: TrophyLevel;
 	titles: TitleSummary[];
+}
+
+export type TrophyGrade = keyof GradeCounts;
+
+/** One trophy of a title as the cloud records it: its number, grade and when it was earned. No name, text or art. */
+export interface Trophy {
+	number: number;
+	grade: TrophyGrade;
+	/** Unix seconds. */
+	earned: number;
+}
+
+/** Trophies counted by grade, with what they are worth. */
+export interface Tally {
+	counts: GradeCounts;
+	points: number;
+}
+
+export interface CompareSide {
+	account: Account;
+	/** The trophies of this one title, by number. */
+	trophies: Trophy[];
+	title: Tally;
+	/** Every trophy the viewer may see of this player, in all titles. */
+	total: Tally;
+	level: TrophyLevel;
+}
+
+/** The viewer (`you`) next to another player (`them`) in one title. */
+export interface TrophyCompare {
+	titleId: string;
+	you: CompareSide;
+	them: CompareSide;
 }
 
 export interface Viewer {
@@ -193,6 +242,8 @@ export interface PublicUser {
 	avatar: string | null;
 	playtime: { titleId: string; minutes: number }[] | null;
 	trophies: GradeCounts | null;
+	/** Null when the trophies are hidden from the visitor; absent on an older cloud. */
+	level?: TrophyLevel | null;
 	/** Null for a visitor who is not signed in. */
 	viewer: Viewer | null;
 	/** The linked accounts this visitor may see; the cloud applies each link's visibility. */

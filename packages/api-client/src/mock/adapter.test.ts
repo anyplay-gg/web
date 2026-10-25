@@ -175,6 +175,52 @@ describe("mock adapter", () => {
 		expect((await make({ scenario: "empty" }).compatibility.list()).titles).toEqual([]);
 	});
 
+	it("keeps appear offline apart from privacy, and fails to save in the nosave scenario", async () => {
+		const api = make();
+		expect(await api.account.appearOffline()).toBe(false);
+		const before = await api.account.privacy();
+		expect(await api.account.setAppearOffline(true)).toBe(true);
+		expect(await api.account.appearOffline()).toBe(true);
+		expect((await api.account.get()).account.appearOffline).toBe(true);
+		expect(await api.account.privacy()).toEqual(before);
+		await expect(make({ scenario: "nosave" }).account.setAppearOffline(true)).rejects.toMatchObject({ code: "internal" });
+	});
+
+	it("counts points and levels as ADR 0029 does", async () => {
+		const own = await make().trophies.mine();
+		expect(own.points).toBe(own.counts.bronze * 10 + own.counts.silver * 25 + own.counts.gold * 60 + own.counts.platinum * 150);
+		expect(own.level).toMatchObject({ points: own.points, level: 19, from: 3132, to: 3420 });
+		expect((await make({ scenario: "empty" }).trophies.mine()).level).toEqual({ points: 0, level: 1, from: 0, to: 72 });
+		expect((await make().users.get("mira")).level).not.toBeNull();
+		expect((await make().users.get("kenji")).level).toBeNull();
+		expect((await make().users.get("riley")).level?.points).toBe(own.points);
+	});
+
+	it("compares one game: numbers, grades and times, and the cloud's refusals", async () => {
+		const api = make();
+		const r = await api.users.compare("mira", "GAME01234");
+		expect(r.titleId).toBe("GAME01234");
+		expect(r.you.account.handle).toBe("riley");
+		// the viewer's own side is exactly what the trophy page counts
+		const mine = (await api.trophies.mine()).titles.find((t) => t.titleId === "GAME01234")!;
+		expect(r.you.title.counts).toEqual(mine.counts);
+		expect(r.them.title.points).toBeGreaterThan(0);
+		expect(Object.keys(r.them.trophies[0]!).sort()).toEqual(["earned", "grade", "number"]);
+		expect((await api.users.compare("mira", "GAME09999")).them.trophies).toEqual([]);
+		expect((await api.users.compare("kenji", "GAME01234").catch((e) => e)).code).toBe("not_found");
+		expect((await api.users.compare("jonas", "GAME03102").catch((e) => e)).code).toBe("not_found");
+		expect((await api.users.compare("riley", "GAME01234").catch((e) => e)).code).toBe("bad_request");
+		expect((await make({ scenario: "signedout" }).users.compare("mira", "GAME01234").catch((e) => e)).code).toBe("unauthorized");
+		expect((await make({ scenario: "error" }).users.compare("mira", "GAME01234").catch((e) => e)).code).toBe("internal");
+	});
+
+	it("lists the games another player has trophies in, only when they show them", async () => {
+		const api = make();
+		expect((await api.users.trophies("mira")).titles.map((t) => t.titleId)).toEqual(["GAME01234", "GAME04550"]);
+		expect((await api.users.trophies("ines")).titles).toEqual([]);
+		expect((await api.users.trophies("kenji").catch((e) => e)).code).toBe("not_found");
+	});
+
 	it("parses the scenario from a URL", () => {
 		expect(parseScenario("?mock=empty")).toBe("empty");
 		expect(parseScenario("?mock=banned")).toBe("banned");

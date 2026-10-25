@@ -74,3 +74,53 @@ test.describe("/account/privacy", () => {
     await shoot(page, "privacy-load-error");
   });
 });
+
+test.describe("/account/privacy appear offline", () => {
+  const offline = (page: Page) => page.getByRole("switch", { name: "Appear offline" });
+  // the whole row is the target; the real checkbox is visually hidden under it
+  const toggle = (page: Page) => page.getByText("Appear offline", { exact: true }).click();
+
+  test("load: off by default, with its one-line explanation", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await expect(offline(page)).not.toBeChecked();
+    await expect(page.getByText("Friends see you as offline. You can still play, chat and join.")).toBeVisible();
+    await shoot(page, "appear-offline-load");
+    const { violations } = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+  });
+
+  test("turning it on moves the switch, shows on the overview and leaves privacy alone", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await toggle(page);
+    await expect(offline(page)).toBeChecked();
+    await expect(page.locator("main [role=alert]")).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "Who sees: Trophies" }).getByLabel("Friends")).toBeChecked();
+    await shoot(page, "appear-offline-on");
+
+    // Client-side navigation keeps the mock's memory: the overview now says it, and the page reads it back
+    await page.getByRole("link", { name: "Overview", exact: true }).first().click();
+    await expect(page.getByRole("region", { name: "Your account" }).getByText("Appearing offline")).toBeVisible();
+    await shoot(page, "appear-offline-overview");
+    await page.getByRole("link", { name: "Privacy", exact: true }).first().click();
+    await expect(offline(page)).toBeChecked();
+
+    await toggle(page);
+    await expect(offline(page)).not.toBeChecked();
+  });
+
+  test("keyboard: Space toggles it", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await offline(page).focus();
+    await page.keyboard.press("Space");
+    await expect(offline(page)).toBeChecked();
+  });
+
+  test("error: a failed save puts the switch back and says so", async ({ page }) => {
+    await page.goto("/account/privacy?mock=nosave");
+    await toggle(page);
+    await expect(page.locator("main [role=alert]")).toContainText("problem");
+    await expect(offline(page)).not.toBeChecked();
+    await page.waitForTimeout(400);
+    await shoot(page, "appear-offline-save-error");
+  });
+});
