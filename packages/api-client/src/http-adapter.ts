@@ -18,6 +18,7 @@ import type {
 	PublicUser,
 	SessionView,
 	StepUpMethod,
+	TrophyCompare,
 	TrophySummary,
 } from "./types";
 import {
@@ -225,6 +226,14 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 			},
 			privacy: () => json<Privacy>("GET", "/me/privacy"),
 			updatePrivacy: (input) => json<Privacy>("PUT", "/me/privacy", input),
+			appearOffline: async () =>
+				(await json<{ appearOffline: boolean }>("GET", "/me/appear-offline")).appearOffline,
+			setAppearOffline: async (value) =>
+				(
+					await json<{ appearOffline: boolean }>("PUT", "/me/appear-offline", {
+						appear_offline: value,
+					})
+				).appearOffline,
 		},
 
 		security: {
@@ -342,6 +351,12 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 
 		users: {
 			get: (name) => json<PublicUser>("GET", `/users/${encodeURIComponent(name)}`),
+			trophies: (name) => json<TrophySummary>("GET", `/users/${encodeURIComponent(name)}/trophies`),
+			compare: (name, titleId) =>
+				json<TrophyCompare>(
+					"GET",
+					`/users/${encodeURIComponent(name)}/compare/${encodeURIComponent(titleId)}`,
+				),
 		},
 
 		push: {

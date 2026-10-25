@@ -10,6 +10,8 @@ import { LandingProviders } from "../landing/providers";
 import { Failed, useAction } from "./pages";
 import { loadApi } from "@/lib/api";
 import { BRAND, BrandLogo } from "./brand-logos";
+import { CompareCard, CompareSignIn } from "./compare";
+import { LevelMeter } from "./level";
 import { GradeTiles, totalOf } from "./social";
 import { Initial } from "./shell";
 import { Badge, Card, Empty, Notice, Row, Rows, smallButton, smallPrimary } from "./ui";
@@ -124,9 +126,19 @@ function Profile({ user }: { user: PublicUser }) {
 
       {trophies && (
         <Card id="trophies" title="Trophies" description={totalOf(trophies) === 0 ? undefined : `${totalOf(trophies)} earned.`}>
-          {totalOf(trophies) === 0 ? <Empty>{handle} has not earned a trophy yet.</Empty> : <GradeTiles counts={trophies} />}
+          {totalOf(trophies) === 0 ? (
+            <Empty>{handle} has not earned a trophy yet.</Empty>
+          ) : (
+            <div className="grid gap-5">
+              {user.level && <LevelMeter level={user.level} />}
+              <GradeTiles counts={trophies} />
+            </div>
+          )}
         </Card>
       )}
+
+      {trophies && totalOf(trophies) > 0 && !user.viewer && <CompareSignIn handle={handle} />}
+      {trophies && totalOf(trophies) > 0 && user.viewer && user.viewer.relation !== "self" && !user.viewer.blocked && <CompareCard user={user} />}
 
       {user.favourites && user.favourites.length > 0 && (
         <Card id="favourites" title="Favourite games" description="Shown by title ID.">

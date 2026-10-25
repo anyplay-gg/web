@@ -18,6 +18,7 @@ import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useStat
 import { CodeField, FormError, TextField } from "../auth/fields";
 import { DownloadMenu } from "../landing/download-button";
 import { DitherField } from "../landing/shaders";
+import { LevelMeter } from "./level";
 import { BRAND, BrandLogo } from "./brand-logos";
 import { Initial, useAccount } from "./shell";
 import {
@@ -36,6 +37,7 @@ import {
   smallButton,
   smallDanger,
   smallPrimary,
+  Switch,
   useStepUp,
 } from "./ui";
 
@@ -112,12 +114,16 @@ export function useAction() {
 
 export function OverviewPage() {
   const { api, session } = useAccount();
-  const load = useCallback(() => Promise.all([api.account.get(), api.links.list(), api.account.privacy()]), [api]);
+  const load = useCallback(
+    // The level is a nicety: if the trophies fail to load, the overview still opens without it
+    () => Promise.all([api.account.get(), api.links.list(), api.account.privacy(), api.trophies.mine().catch(() => null)]),
+    [api],
+  );
   const { data, error, reload } = useLoad(load);
   const me = session.account!;
   if (error) return <Failed message={error} retry={reload} />;
   if (!data) return <Loading />;
-  const [view, links, privacy] = data;
+  const [view, links, privacy, trophies] = data;
   const linked = links.filter((l) => l.linked).length;
 
   return (
@@ -130,6 +136,12 @@ export function OverviewPage() {
             <h1 className="display truncate text-[clamp(1.9rem,1.4rem+1.6vw,2.6rem)] leading-[1.05]">{me.handle}</h1>
             <p className="mt-1.5 truncate text-[15px] text-ink-2">{me.email}</p>
             <p className="mt-1 text-[13px] text-ink-3">Member since {date(me.created)}</p>
+            {view.account.appearOffline && (
+              <p className="mt-3">
+                <Badge>Appearing offline</Badge>
+              </p>
+            )}
+            {trophies?.level && <LevelMeter level={trophies.level} className="mt-5 -mx-3 w-[min(19rem,calc(100vw-6rem))] rounded-[16px] bg-[#120f0d]/90 p-3" />}
           </div>
         </div>
       </section>
@@ -727,12 +739,61 @@ function EverywhereCard() {
 /* ───────────────────────────── Privacy ───────────────────────────── */
 
 const PARTS: { part: PrivacyKey; title: string; detail: string }[] = [
-  { part: "trophies", title: "Trophies", detail: "Your trophy counts and what you earned" },
+  { part: "trophies", title: "Trophies", detail: "Your trophy counts, points and level" },
   { part: "playtime", title: "Playtime", detail: "How long you played, per game" },
   { part: "about", title: "About", detail: "The line on your profile" },
   { part: "favourites", title: "Favourite games", detail: "Up to three games you pin" },
   { part: "avatar", title: "Picture", detail: "Your profile picture" },
 ];
+
+/**
+ * Appear offline: friends see the player as offline while the player keeps playing, chatting and
+ * joining (ADR 0028). It is a setting of its own, not a part of Privacy. The switch moves at once
+ * and goes back, with the reason, when the cloud says no.
+ */
+function AppearOfflineCard() {
+  const { api } = useAccount();
+  const load = useCallback(() => api.account.appearOffline(), [api]);
+  const { data, error, reload, setData } = useLoad<boolean>(load);
+  const [problem, setProblem] = useState<string | null>(null);
+  const latest = useRef(0);
+  let body: ReactNode;
+  if (error) body = <Failed message={error} retry={reload} />;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else {
+    const set = async (value: boolean) => {
+      const before = data;
+      const mine = ++latest.current;
+      setData(value);
+      setProblem(null);
+      try {
+        const saved = await api.account.setAppearOffline(value);
+        if (mine === latest.current) setData(saved);
+      } catch (e) {
+        if (mine !== latest.current) return;
+        setData(before);
+        setProblem(describeError(e));
+      }
+    };
+    body = (
+      <>
+        <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
+          <Switch label="Appear offline" detail="Friends see you as offline. You can still play, chat and join." checked={data} onChange={(on) => void set(on)} />
+        </div>
+        {problem && (
+          <div className="mt-4">
+            <FormError>{problem}</FormError>
+          </div>
+        )}
+      </>
+    );
+  }
+  return (
+    <Card title="Online status" description="Applies to every launcher and browser signed in to your account.">
+      {body}
+    </Card>
+  );
+}
 
 export function PrivacyPage() {
   const { api } = useAccount();
@@ -786,7 +847,8 @@ export function PrivacyPage() {
               <FormError>{problem.text}</FormError>
           </div>
         )}
-      </Card>
+        </Card>
+        <AppearOfflineCard />
       </div>
     </div>
   );

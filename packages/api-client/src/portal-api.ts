@@ -23,6 +23,7 @@ import type {
 	SessionView,
 	SignInIntent,
 	StepUpMethod,
+	TrophyCompare,
 	TrophySummary,
 } from "./types";
 
@@ -103,6 +104,9 @@ export interface PortalApi {
 		removeAvatar(): Promise<void>;
 		privacy(): Promise<Privacy>;
 		updatePrivacy(input: Privacy): Promise<Privacy>;
+		/** Whether friends see the player as offline. Not part of `Privacy`; set on its own. */
+		appearOffline(): Promise<boolean>;
+		setAppearOffline(value: boolean): Promise<boolean>;
 	};
 
 	security: {
@@ -156,6 +160,13 @@ export interface PortalApi {
 
 	users: {
 		get(handle: string): Promise<PublicUser>;
+		/** The player's trophy counts per game. `not_found` when the viewer may not see them. */
+		trophies(handle: string): Promise<TrophySummary>;
+		/**
+		 * The viewer next to the player in one game; needs a session. `not_found` when the player does
+		 * not exist or hides their trophies from the viewer, `bad_request` for the viewer's own name.
+		 */
+		compare(handle: string, titleId: string): Promise<TrophyCompare>;
 	};
 
 	/** Web Push to this browser: friend requests, party invitations and new messages. */

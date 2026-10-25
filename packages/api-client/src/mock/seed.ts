@@ -19,6 +19,9 @@ import type {
 	Presence,
 	Privacy,
 	TitleSummary,
+	Trophy,
+	TrophyGrade,
+	TrophyLevel,
 	TrophySummary,
 } from "../types";
 
@@ -28,7 +31,7 @@ const DAY = 24 * HOUR;
 export const ago = { min: MIN, hour: HOUR, day: DAY };
 
 export function seedMe(now: number): Me {
-	return { id: 41, handle: "riley", email: "riley.chen@example.com", created: now - 212 * DAY };
+	return { id: 41, handle: "riley", email: "riley.chen@example.com", created: now - 212 * DAY, appearOffline: false };
 }
 
 export function seedPasskeys(now: number): Passkey[] {
@@ -238,6 +241,71 @@ const titles: { titleId: string; counts: GradeCounts; ago: number }[] = [
 	{ titleId: "GAME05871", counts: counts(0, 0, 2, 5), ago: 47 * DAY },
 ];
 
+/* ───────── points and levels (ADR 0029) ───────── */
+
+export const GRADE_POINTS: Record<TrophyGrade, number> = { bronze: 10, silver: 25, gold: 60, platinum: 150 };
+export const pointsOf = (c: GradeCounts) =>
+	c.bronze * GRADE_POINTS.bronze + c.silver * GRADE_POINTS.silver + c.gold * GRADE_POINTS.gold + c.platinum * GRADE_POINTS.platinum;
+
+/** Level L (1 to 100) starts at 6 * (L - 1) * (L + 10) points, as the cloud counts them. */
+const startOf = (level: number) => 6 * (level - 1) * (level + 10);
+export function levelFor(points: number): TrophyLevel {
+	let level = 1;
+	while (level < 100 && points >= startOf(level + 1)) level += 1;
+	return { points, level, from: startOf(level), to: level === 100 ? null : startOf(level + 1) };
+}
+
+/* ───────── the trophies of one title, as numbers ───────── */
+
+const GRADE_ORDER: TrophyGrade[] = ["platinum", "gold", "silver", "bronze"];
+const hash = (n: number) => Math.imul(n + 1, 2654435761) >>> 0;
+
+/** The trophies a title has: a little more than the player's own counts, so there is something to chase. */
+function layoutOf(titleId: string): { number: number; grade: TrophyGrade }[] {
+	const own = titles.find((t) => t.titleId === titleId)?.counts ?? counts(0, 1, 3, 6);
+	const size: GradeCounts = { platinum: own.platinum, gold: own.gold + 1, silver: own.silver + 2, bronze: own.bronze + 4 };
+	const grades = GRADE_ORDER.flatMap((g) => Array.from({ length: size[g] }, () => g));
+	const seed = [...titleId].reduce((a, c) => a + c.charCodeAt(0), 0);
+	return grades
+		.map((grade, i) => ({ grade, key: hash(i * 7 + seed) }))
+		.sort((a, b) => a.key - b.key)
+		.map((x, number) => ({ number, grade: x.grade }));
+}
+
+/** Trophies counted by grade, with what they are worth. */
+export function tally(list: Trophy[]) {
+	const c = counts(0, 0, 0, 0);
+	for (const t of list) c[t.grade] += 1;
+	return { counts: c, points: pointsOf(c) };
+}
+
+/** What the signed-in player earned in a title: exactly the counts the trophy page shows. */
+export function ownTrophies(titleId: string, now: number): Trophy[] {
+	const own = titles.find((t) => t.titleId === titleId);
+	if (!own) return [];
+	const left = { ...own.counts };
+	return layoutOf(titleId)
+		.filter((t) => left[t.grade]-- > 0)
+		.map((t) => ({ number: t.number, grade: t.grade, earned: now - own.ago - (t.number % 9) * HOUR }));
+}
+
+/** The games a seeded player has trophies in, and how much of each they earned (percent). */
+export const playerTitles: Record<number, { titleId: string; pct: number }[]> = {
+	101: [{ titleId: "GAME01234", pct: 85 }, { titleId: "GAME04550", pct: 40 }],
+	102: [{ titleId: "GAME03102", pct: 60 }],
+	104: [{ titleId: "GAME02417", pct: 55 }],
+	105: [{ titleId: "GAME05871", pct: 25 }],
+	106: [{ titleId: "GAME04550", pct: 70 }],
+};
+
+export function playerTrophies(playerId: number, titleId: string, now: number): Trophy[] {
+	const row = playerTitles[playerId]?.find((t) => t.titleId === titleId);
+	if (!row) return [];
+	return layoutOf(titleId)
+		.filter((t) => hash(t.number * 31 + playerId) % 100 < row.pct)
+		.map((t) => ({ number: t.number, grade: t.grade, earned: now - (1 + (t.number % 40)) * DAY }));
+}
+
 export function seedTrophies(now: number): TrophySummary {
 	const list: TitleSummary[] = titles.map((t) => ({
 		titleId: t.titleId,
@@ -254,7 +322,8 @@ export function seedTrophies(now: number): TrophySummary {
 		}),
 		counts(0, 0, 0, 0),
 	);
-	return { counts: total, titles: list };
+	const points = pointsOf(total);
+	return { counts: total, points, level: levelFor(points), titles: list };
 }
 
 export const ownPlaytime = [

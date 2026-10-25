@@ -282,4 +282,42 @@ describe("http adapter", () => {
 		const { api } = setup(() => json({ enabled: true, public_key: "BKey", subscriptions: [] }));
 		expect(await api.push.get()).toEqual({ enabled: true, publicKey: "BKey", subscriptions: [] });
 	});
+
+	it("reads and sets appear offline on its own, without the six audiences", async () => {
+		const { api, call } = setup((url, init) =>
+			url.endsWith("/session") ? json(view()) : json({ appear_offline: init.method === "PUT" }),
+		);
+		expect(await api.account.appearOffline()).toBe(false);
+		expect(call(0).url).toBe("/web/api/v1/me/appear-offline");
+		expect(await api.account.setAppearOffline(true)).toBe(true);
+		const put = call(2);
+		expect(put.url).toBe("/web/api/v1/me/appear-offline");
+		expect(put.init.method).toBe("PUT");
+		expect(JSON.parse(String(put.init.body))).toEqual({ appear_offline: true });
+		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
+	});
+
+	it("reads the level on a public user and the compare answer, ids and grades only", async () => {
+		const level = { points: 340, level: 4, from: 252, to: 372 };
+		const side = (name: string) => ({
+			account: { id: 1, handle: name },
+			trophies: [{ number: 0, grade: "gold", earned: 1_700_000_000 }],
+			title: { counts: { bronze: 0, silver: 0, gold: 1, platinum: 0 }, points: 60 },
+			total: { counts: { bronze: 0, silver: 0, gold: 1, platinum: 0 }, points: 60 },
+			level,
+		});
+		const { api, call } = setup((url) =>
+			url.includes("/compare/")
+				? json({ title_id: "GAME01234", you: side("riley"), them: side("mira") })
+				: url.endsWith("/session")
+					? json(view())
+					: json({ account: { id: 2, handle: "mira" }, trophies: { bronze: 1, silver: 0, gold: 0, platinum: 0 }, level, viewer: null }),
+		);
+		expect((await api.users.get("mira")).level).toEqual(level);
+		const compare = await api.users.compare("mira", "GAME01234");
+		expect(call(1).url).toBe("/web/api/v1/users/mira/compare/GAME01234");
+		expect(compare.titleId).toBe("GAME01234");
+		expect(compare.them.trophies).toEqual([{ number: 0, grade: "gold", earned: 1_700_000_000 }]);
+		expect(compare.you.level.to).toBe(372);
+	});
 });
