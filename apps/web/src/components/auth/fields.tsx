@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type InputHTMLAttributes, type ReactNode, useId } from "react";
+import { type InputHTMLAttributes, type ReactNode, useEffect, useId, useRef } from "react";
 
 /**
  * The controls of the sign-in pages, on the landing's night palette: one label above each field,
@@ -21,6 +21,20 @@ export const secondaryButton =
 export const textButton =
   "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-2 text-[14px] font-medium text-brand-text transition-colors duration-[var(--duration-quick)] disabled:text-ink-3 [@media(hover:hover)]:hover:text-ink";
 
+/**
+ * The problem under a field. The alert container is always in the page and only its text comes
+ * and goes, because a screen reader announces text added to a live region that already exists far
+ * more reliably than one that appears together with its text. Empty, it takes no room (the grid's
+ * gap above it is pulled back).
+ */
+function FieldError({ id, className = "", children }: { id: string; className?: string; children?: ReactNode }) {
+  return (
+    <div role="alert" id={id} className="empty:-mt-2">
+      {children && <p className={`text-[14px] leading-[1.45] text-[#ff9a8a] ${className}`}>{children}</p>}
+    </div>
+  );
+}
+
 export function TextField({
   label,
   hint,
@@ -38,11 +52,7 @@ export function TextField({
         {label}
       </label>
       <input id={id} aria-invalid={error ? true : undefined} aria-describedby={described} className={control} {...input} />
-      {error && (
-        <p id={`${id}-error`} className="text-[14px] leading-[1.45] text-[#ff9a8a]">
-          {error}
-        </p>
-      )}
+      <FieldError id={`${id}-error`}>{error}</FieldError>
       {showHint && (
         <p id={`${id}-hint`} className="text-[13px] leading-[1.45] text-ink-3">
           {hint}
@@ -86,11 +96,9 @@ export function CheckField({
           {hint && <span className="mt-0.5 block text-[13px] text-ink-3">{hint}</span>}
         </span>
       </label>
-      {error && (
-        <p id={`${id}-error`} className="pl-8 text-[14px] text-[#ff9a8a]">
-          {error}
-        </p>
-      )}
+      <FieldError id={`${id}-error`} className="pl-8">
+        {error}
+      </FieldError>
     </div>
   );
 }
@@ -111,22 +119,34 @@ export function CodeField({
   disabled?: boolean;
 }) {
   const id = useId();
+  const input = useRef<HTMLInputElement>(null);
+  // A wrong code clears the field. Put the caret back, so the next try needs no tap and a phone's
+  // keyboard stays up.
+  useEffect(() => {
+    if (error) input.current?.focus({ preventScroll: true });
+  }, [error]);
   return (
     <div className="grid gap-2">
       <label htmlFor={id} className="text-[14px] font-medium text-ink-2">
         Code
       </label>
-      <div className="group relative">
+      <div className="group relative" data-busy={disabled ? "" : undefined}>
+        {/* Not `disabled`: a disabled input drops the focus (and the phone's keyboard) while the code is checked. */}
         <input
+          ref={input}
           id={id}
           value={value}
-          onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
+          onChange={(e) => {
+            if (disabled) return;
+            onChange(e.target.value.replace(/\D/g, "").slice(0, 6));
+          }}
           inputMode="numeric"
           enterKeyHint="go"
           autoComplete="one-time-code"
           pattern="\d{6}"
           maxLength={6}
-          disabled={disabled}
+          aria-disabled={disabled || undefined}
+          aria-busy={disabled || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
@@ -137,7 +157,7 @@ export function CodeField({
             return (
               <span
                 key={i}
-                className={`grid h-14 place-items-center rounded-[14px] bg-white/[0.04] font-mono text-[22px] text-ink tabular-nums transition-[box-shadow,background-color] duration-[var(--duration-quick)] ${
+                className={`grid h-14 place-items-center rounded-[14px] bg-white/[0.04] font-mono text-[22px] text-ink tabular-nums transition-[box-shadow,background-color,opacity] duration-[var(--duration-quick)] group-data-[busy]:opacity-60 ${
                   error
                     ? "shadow-[inset_0_0_0_1px_#ff8c80]"
                     : active
@@ -151,11 +171,7 @@ export function CodeField({
           })}
         </div>
       </div>
-      {error && (
-        <p id={`${id}-error`} className="text-[14px] text-[#ff9a8a]">
-          {error}
-        </p>
-      )}
+      <FieldError id={`${id}-error`}>{error}</FieldError>
     </div>
   );
 }
