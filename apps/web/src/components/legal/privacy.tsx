@@ -114,6 +114,18 @@ const KEPT: Fact[] = [
     keep: "30 days after it was sent, then deleted. A conversation with no new messages for 30 days is deleted.",
   },
   {
+    what: "Screenshots and clips you send to a friend",
+    why: "If you use “Send to a Friend” in the launcher: the file you chose (a PNG or JPEG screenshot of up to 10 MB, or an MP4 clip of up to 100 MB and 60 seconds), who sent it, when, and the conversation it is in. Only the friend you sent it to can open it: it goes into your direct conversation, never to strangers, message requests or groups, and we check who may open it on every request. We check the type, size and length of a file. We do not look at the picture and we do not remove metadata from it; screenshots made by the launcher have none. A file comes to us only when you press Send. If your friend reports it, a moderator can see it.",
+    basis: contract,
+    keep: "30 days after you sent it, then deleted. If you take the message back, nobody can open it at once, and we delete it after 7 days. A reported file stays as long as the report (up to 1 year) and survives the deletion of your account, like the report.",
+  },
+  {
+    what: "Looking-for-group listings",
+    why: "If you use “Find Players”: the game, the way you want to play (online, LAN or Play Together), a language, a note of up to 140 characters, how many players you look for, and who asked to join. Every signed-in player who looks at the listings of that game sees your handle, the game, the mode, the language, your note and the free places, unless you blocked each other. Anyone you accept gets an invitation to your party. Your note is public to them: do not write personal data in it. We cannot tell which games a player owns; the launcher only asks for the listings of games in its own library.",
+    basis: contract,
+    keep: "A listing is open for 1 hour. We delete it, with its requests, a day after it closed. A ban closes your listings at once. A report of a listing keeps its note.",
+  },
+  {
     what: "Feed",
     why: "Short items that your friends see: a trophy you earned, a new friend, a game you played for the first time, a party. Friends can react to an item; you see how many reacted, not who. The setting “Feed” on the Privacy page can switch it off, and then nothing is recorded. We also keep the list of games we have seen you play, so that we can tell when a game is new for you.",
     basis: contract,
@@ -182,6 +194,7 @@ export function PrivacyNotice() {
         "We keep what we need to run your account, your friends, your messages and your game sessions. Nothing else.",
         "We show no ads, sell no data, and use no analytics or tracking tools. This website loads nothing from other companies.",
         "Messages are not end-to-end encrypted, and we keep them for 30 days.",
+        "A screenshot or clip you send to a friend is stored on our server for 30 days and only your friend can open it. A looking-for-group listing is public to other players of that game for 1 hour.",
         "We never see your game files, your saves or what happens inside a game.",
         <>
           You can download your data and delete your account on the <A href="/account/data">Your data</A> page whenever
@@ -340,7 +353,7 @@ export function PrivacyNotice() {
             <Strong>Access and a copy.</Strong> On the <A href="/account/data">Your data</A> page you can download a file
             with your account, devices, passkeys, friends, requests and blocks, privacy choices, profile, picture,
             trophies, play time, game reports, connected accounts, notification devices, party, feed items, conversations
-            and your own messages, your reports, the actions against you and your consent record. It does not hold your
+            and your own messages, a list of the screenshots and clips you sent (not the files), your looking-for-group listings and requests, your reports, the actions against you and your consent record. It does not hold your
             presence, the list of games we saw you play, invitations, missed calls, your join code, the messages other
             people wrote to you, and the records about you that moderators keep. Write to us for those.
           </li>
@@ -385,8 +398,9 @@ export function PrivacyNotice() {
         <P>
           Deleting removes your account, devices, passkeys, friends, requests, blocks, presence, sessions, party, join
           code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices
-          and the messages you wrote. A direct conversation is deleted as a whole, with what the other person wrote in
-          it. Group conversations keep what others wrote.
+          the messages you wrote, the screenshots and clips you sent, and your looking-for-group listings and requests. A
+          direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
+          others wrote. A screenshot or clip that a report holds stays for the time of the report.
         </P>
         <P>
           It does not remove the records about reports, warnings, mutes, bans and appeals, nor the moderation log. They
