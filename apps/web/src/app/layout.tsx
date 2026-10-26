@@ -26,7 +26,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = { themeColor: "#0b0a09", colorScheme: "dark light", viewportFit: "cover" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  await connection();
   const site = readSite();
   return (
     <html lang="en">
