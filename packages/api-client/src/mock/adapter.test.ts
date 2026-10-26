@@ -175,6 +175,14 @@ describe("mock adapter", () => {
 		expect((await make({ scenario: "empty" }).compatibility.list()).titles).toEqual([]);
 	});
 
+	it("keeps the public profile off until the player turns it on", async () => {
+		const api = make();
+		expect(await api.account.publicProfile()).toBe(false);
+		expect(await api.account.setPublicProfile(true)).toBe(true);
+		expect(await api.account.publicProfile()).toBe(true);
+		await expect(make({ scenario: "nosave" }).account.setPublicProfile(true)).rejects.toMatchObject({ code: "internal" });
+	});
+
 	it("keeps appear offline apart from privacy, and fails to save in the nosave scenario", async () => {
 		const api = make();
 		expect(await api.account.appearOffline()).toBe(false);

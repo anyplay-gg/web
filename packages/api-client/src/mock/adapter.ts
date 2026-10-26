@@ -114,6 +114,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 	const empty = scenario === "empty";
 	let signedIn = scenario !== "signedout" && scenario !== "handoff";
 	let me: Me = seedMe(t0);
+	let publicProfile = false;
 	let freshUntil = options.fresh ? t0 + FRESH_FOR : 0;
 	let passkeys: Passkey[] = empty ? [] : seedPasskeys(t0);
 	let devices: Device[] = empty ? [] : seedDevices(t0);
@@ -525,6 +526,15 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
 					}
 					me = { ...me, appearOffline: value };
+					return value;
+				}),
+			publicProfile: () => call(() => publicProfile, { read: true }),
+			setPublicProfile: (value) =>
+				call(() => {
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
+					publicProfile = value;
 					return value;
 				}),
 			privacy: () => call(() => privacy, { read: true }),

@@ -234,6 +234,14 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 						appear_offline: value,
 					})
 				).appearOffline,
+			publicProfile: async () =>
+				(await json<{ publicProfile: boolean }>("GET", "/me/public-profile")).publicProfile,
+			setPublicProfile: async (value) =>
+				(
+					await json<{ publicProfile: boolean }>("PUT", "/me/public-profile", {
+						public_profile: value,
+					})
+				).publicProfile,
 		},
 
 		security: {

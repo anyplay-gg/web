@@ -297,6 +297,18 @@ describe("http adapter", () => {
 		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
 	});
 
+	it("reads and sets the public profile switch", async () => {
+		const { api, call } = setup((url, init) =>
+			url.endsWith("/session") ? json(view()) : json({ public_profile: init.method === "PUT" }),
+		);
+		expect(await api.account.publicProfile()).toBe(false);
+		expect(call(0).url).toBe("/web/api/v1/me/public-profile");
+		expect(await api.account.setPublicProfile(true)).toBe(true);
+		const put = call(2);
+		expect(put.init.method).toBe("PUT");
+		expect(JSON.parse(String(put.init.body))).toEqual({ public_profile: true });
+	});
+
 	it("reads the level on a public user and the compare answer, ids and grades only", async () => {
 		const level = { points: 340, level: 4, from: 252, to: 372 };
 		const side = (name: string) => ({

@@ -795,6 +795,64 @@ function AppearOfflineCard() {
   );
 }
 
+/**
+ * The public profile: off for a new account. On, anyone with the link sees the player's level,
+ * trophy counts and games played at /u/<handle>; nothing else changes. Same optimistic switch as
+ * appearing offline.
+ */
+function PublicProfileCard() {
+  const { api, session } = useAccount();
+  const load = useCallback(() => api.account.publicProfile(), [api]);
+  const { data, error, reload, setData } = useLoad<boolean>(load);
+  const [problem, setProblem] = useState<string | null>(null);
+  const latest = useRef(0);
+  const handle = session.account?.handle;
+  let body: ReactNode;
+  if (error) body = <Failed message={error} retry={reload} />;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else {
+    const set = async (value: boolean) => {
+      const before = data;
+      const mine = ++latest.current;
+      setData(value);
+      setProblem(null);
+      try {
+        const saved = await api.account.setPublicProfile(value);
+        if (mine === latest.current) setData(saved);
+      } catch (e) {
+        if (mine !== latest.current) return;
+        setData(before);
+        setProblem(describeError(e));
+      }
+    };
+    body = (
+      <>
+        <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
+          <Switch label="Show a public profile" detail="Anyone with the link sees your level, trophies and games played. It never shows whether you are online." checked={data} onChange={(on) => void set(on)} />
+        </div>
+        {data && handle && (
+          <p className="mt-4 text-[14px] text-ink-2">
+            Your page:{" "}
+            <a href={`/u/${encodeURIComponent(handle)}`} className="font-medium text-ink underline underline-offset-4">
+              anyplaynet.com/u/{handle}
+            </a>
+          </p>
+        )}
+        {problem && (
+          <div className="mt-4">
+            <FormError>{problem}</FormError>
+          </div>
+        )}
+      </>
+    );
+  }
+  return (
+    <Card title="Public profile" description="Off until you turn it on. Applies to every launcher and browser signed in to your account.">
+      {body}
+    </Card>
+  );
+}
+
 export function PrivacyPage() {
   const { api } = useAccount();
   const load = useCallback(() => api.account.privacy(), [api]);
@@ -848,6 +906,7 @@ export function PrivacyPage() {
           </div>
         )}
         </Card>
+        <PublicProfileCard />
         <AppearOfflineCard />
       </div>
     </div>

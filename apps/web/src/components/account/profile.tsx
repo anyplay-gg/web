@@ -162,7 +162,7 @@ function Profile({ user }: { user: PublicUser }) {
       )}
 
       {user.playtime && user.playtime.length > 0 && (
-        <Card id="playtime" title="Playtime">
+        <Card id="playtime" title="Games played" description={`${user.playtime.length} ${user.playtime.length === 1 ? "game" : "games"}, ${hours(user.playtime.reduce((n, p) => n + p.minutes, 0))} in total.`}>
           <Rows>
             {user.playtime.map((p) => (
               <Row key={p.titleId} title={<span className="tabular-nums">{p.titleId}</span>} trailing={<span className="text-[15px] font-medium tabular-nums">{hours(p.minutes)}</span>} />
@@ -264,9 +264,19 @@ function Relation({ user }: { user: PublicUser }) {
     );
   }
 
+  // The launcher answers anyps5:// links (friend/<handle> opens the request there). Not for yourself,
+  // a friend or a player you blocked.
+  const inLauncher = viewer?.relation !== "self" && viewer?.relation !== "friend" && !viewer?.blocked;
   return (
     <div className="mt-6 grid justify-items-start gap-3">
-      {body}
+      <div className="flex flex-wrap items-center gap-3">
+        {body}
+        {inLauncher && (
+          <a href={`anyps5://v1/friend/${encodeURIComponent(handle)}`} className={smallButton}>
+            Add friend in AnyPlay
+          </a>
+        )}
+      </div>
       {error && <FormError>{error}</FormError>}
     </div>
   );

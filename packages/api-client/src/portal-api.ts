@@ -107,6 +107,9 @@ export interface PortalApi {
 		/** Whether friends see the player as offline. Not part of `Privacy`; set on its own. */
 		appearOffline(): Promise<boolean>;
 		setAppearOffline(value: boolean): Promise<boolean>;
+		/** Whether the page at /u/<handle> is open to people who are not friends. Off for a new account. */
+		publicProfile(): Promise<boolean>;
+		setPublicProfile(value: boolean): Promise<boolean>;
 	};
 
 	security: {

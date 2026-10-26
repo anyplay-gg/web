@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "updated": "2026-10-26",
+  "titles": {
+    "PPSA17221": { "name": "Minecraft", "mode": "lan", "max_players": 8, "version": "exact" }
+  }
+}
