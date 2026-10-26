@@ -115,6 +115,18 @@ const KEPT: Fact[] = [
     keep: "30 days after it was sent, then deleted. A conversation with no new messages for 30 days is deleted.",
   },
   {
+    what: "Reactions to messages",
+    why: "If you answer a message with one of six reactions (nice, love, laugh, gg, wow, sad): which message, your account and the reaction. You have one reaction per message; choosing another replaces it. The members of the conversation who can see the message see the reaction and who set it. If you and the person who reacted have blocked each other, you do not see it.",
+    basis: contract,
+    keep: "Until you remove it, the message is deleted (30 days after it was sent) or the message is unsent, whichever comes first. Deleting your account removes your reactions.",
+  },
+  {
+    what: "Edited and unsent messages",
+    why: "You can change the text of your own message for 15 minutes after you sent it, up to 20 times. The people in the conversation then see the new text and that it was edited, and when. You can also unsend a message at any time while it exists: its text disappears for everyone at once and a marker stays in the conversation. The old text of an edited or unsent message cannot be opened by the people in the conversation. We keep it only so that a report can be judged on what the reporter saw. A moderator reads it only when someone has reported that message. To keep the service fair, an account can make 60 edits, unsends and reactions per minute.",
+    basis: contract,
+    keep: "The old text: 7 days, then deleted (it also goes when the message is deleted). It is not part of the data you can download. A message that a report holds stays with the report.",
+  },
+  {
     what: "Screenshots and clips you send to a friend",
     why: "If you use “Send to a Friend” in the launcher: the file you chose (a PNG or JPEG screenshot of up to 10 MB, or an MP4 clip of up to 100 MB and 60 seconds), who sent it, when, and the conversation it is in. Only the friend you sent it to can open it: it goes into your direct conversation, never to strangers, message requests or groups, and we check who may open it on every request. We check the type, size and length of a file. We do not look at the picture and we do not remove metadata from it; screenshots made by the launcher have none. A file comes to us only when you press Send. If your friend reports it, a moderator can see it.",
     basis: contract,
@@ -357,9 +369,9 @@ export function PrivacyNotice() {
             <Strong>Access and a copy.</Strong> On the <A href="/account/data">Your data</A> page you can download a file
             with your account, devices, passkeys, friends, requests and blocks, privacy choices, profile, picture,
             trophies, play time, game reports, connected accounts, notification devices, party, feed items, conversations
-            and your own messages, a list of the screenshots and clips you sent (not the files), your looking-for-group listings and requests, your reports, the actions against you and your consent record. It does not hold your
+            and your own messages and reactions, a list of the screenshots and clips you sent (not the files), your looking-for-group listings and requests, your reports, the actions against you and your consent record. It does not hold your
             presence, the list of games we saw you play, invitations, missed calls, your join code, the messages other
-            people wrote to you, and the records about you that moderators keep. Write to us for those.
+            people wrote to you, the old text of messages you edited or unsent, and the records about you that moderators keep. Write to us for those.
           </li>
           <li>
             <Strong>Correction.</Strong> You can change your e-mail address and your profile in your account. For
@@ -406,7 +418,7 @@ export function PrivacyNotice() {
         <P>
           Deleting removes your account, devices, passkeys, friends, requests, blocks, presence, sessions, party, join
           code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices,
-          the messages you wrote, the screenshots and clips you sent, and your looking-for-group listings and requests. A
+          the messages you wrote with their old texts, your reactions, the screenshots and clips you sent, and your looking-for-group listings and requests. A
           direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
           others wrote. A screenshot or clip that a report holds stays for the time of the report.
         </P>
