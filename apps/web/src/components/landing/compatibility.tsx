@@ -9,7 +9,12 @@ import { loadApi } from "@/lib/api";
 import { Wordmark } from "./header";
 import { LINKS } from "./links";
 import { LandingProviders } from "./providers";
-import { filterTitles, plural } from "./compat";
+import { FILTERS, type Filter, type ModeFacts, type Sort, SORTS, arrange, hasMode, plural } from "./compat";
+import modeData from "@/data/title-modes.v1.json";
+
+const FACTS: ModeFacts = modeData.titles;
+const FILTER_WORD: Record<Filter, string> = { works: "Works well", issues: "Has issues", online: "Online", lan: "LAN" };
+const SORT_WORD: Record<Sort, string> = { reports: "Most reports", best: "Best result first", name: "Name, A to Z" };
 
 /**
  * The public compatibility list: for each game, how it ran for the players who answered "How did it
@@ -33,6 +38,8 @@ export function CompatibilityPage() {
   const [state, setState] = useState<State>({ status: "loading" });
   const [query, setQuery] = useState("");
   const [shown, setShown] = useState(PAGE);
+  const [chosen, setChosen] = useState<ReadonlySet<Filter>>(new Set());
+  const [sort, setSort] = useState<Sort>("reports");
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -62,7 +69,26 @@ export function CompatibilityPage() {
   };
 
   const titles = useMemo(() => (state.status === "ready" ? state.list.titles : []), [state]);
-  const found = useMemo(() => filterTitles(titles, query), [titles, query]);
+  const found = useMemo(() => arrange(titles, query, chosen, sort, FACTS), [titles, query, chosen, sort]);
+  // A mode with no game in the data would be a filter that always comes back empty: leave it out.
+  const offered = useMemo(() => FILTERS.filter((f) => (f !== "lan" && f !== "online") || titles.some((t) => hasMode(FACTS, t.titleId, f))), [titles]);
+  const narrowed = query.trim() !== "" || chosen.size > 0;
+  const toggle = (f: Filter) => {
+    const next = new Set(chosen);
+    // Works well and Has issues exclude each other; picking one drops the other.
+    if (next.has(f)) next.delete(f);
+    else {
+      next.add(f);
+      if (f === "works") next.delete("issues");
+      if (f === "issues") next.delete("works");
+    }
+    setChosen(next);
+    setShown(PAGE);
+  };
+  const clearAll = () => {
+    setChosen(new Set());
+    search("");
+  };
 
   return (
     <LandingProviders>
@@ -110,8 +136,37 @@ export function CompatibilityPage() {
             </div>
           </div>
 
+          {state.status === "ready" && titles.length > 0 && (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+              <div role="group" aria-label="Show only" className="flex flex-wrap gap-3">
+                {offered.map((f) => (
+                  <button key={f} type="button" aria-pressed={chosen.has(f)} onClick={() => toggle(f)} className={chip}>
+                    {FILTER_WORD[f]}
+                  </button>
+                ))}
+              </div>
+              <label className="flex items-center gap-3 text-[14px] text-ink-2">
+                Sort by
+                <select
+                  value={sort}
+                  onChange={(e) => {
+                    setSort(e.target.value as Sort);
+                    setShown(PAGE);
+                  }}
+                  className="h-11 rounded-full bg-white/[0.06] px-4 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] outline-none focus-visible:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.22),0_0_0_3px_rgb(255_122_61/0.35)]"
+                >
+                  {SORTS.map((o) => (
+                    <option key={o} value={o}>
+                      {SORT_WORD[o]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          )}
+
           <p role="status" className="mt-6 min-h-6 text-[14px] text-ink-3 tabular-nums">
-            {state.status === "ready" && titles.length > 0 && (query.trim() ? `${plural(found.length, "game")} match` : plural(titles.length, "game"))}
+            {state.status === "ready" && titles.length > 0 && (narrowed ? `${plural(found.length, "game")} match` : plural(titles.length, "game"))}
           </p>
 
           <div className="mt-2">
@@ -138,9 +193,9 @@ export function CompatibilityPage() {
             )}
             {state.status === "ready" && titles.length > 0 && found.length === 0 && (
               <div className="grid justify-items-start gap-3 rounded-[20px] bg-white/[0.03] px-5 py-6 text-[15px] leading-[1.6] text-ink-2 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)]">
-                <p>No game matches “{query.trim()}”. Check the title ID, or try part of the name.</p>
-                <button type="button" onClick={() => search("")} className={button}>
-                  Clear search
+                <p>{query.trim() ? `No game matches “${query.trim()}”${chosen.size ? " with these filters" : ""}. Check the title ID, or try part of the name.` : "No game fits these filters."}</p>
+                <button type="button" onClick={clearAll} className={button}>
+                  {chosen.size ? "Clear filters" : "Clear search"}
                 </button>
               </div>
             )}
@@ -177,6 +232,9 @@ export function CompatibilityPage() {
 const button =
   "inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-white/[0.06] px-5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] [@media(hover:hover)]:hover:bg-white/[0.1]";
 
+const chip =
+  "inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-white/[0.06] px-5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,box-shadow,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] aria-pressed:bg-[#ff5a1f]/15 aria-pressed:shadow-[inset_0_0_0_1px_rgb(255_122_61/0.6)] [@media(hover:hover)]:hover:bg-white/[0.1]";
+
 function Title({ title: t }: { title: CompatTitle }) {
   const v = VERDICTS[t.verdict];
   const Icon = v.icon;
@@ -205,6 +263,11 @@ function Title({ title: t }: { title: CompatTitle }) {
           ))}
         </span>
         <span className="text-[13px] text-ink-3 tabular-nums">{plural(t.reports, "report")}</span>
+        {(["online", "lan"] as const).map((m) => hasMode(FACTS, t.titleId, m) && (
+          <span key={m} className="inline-flex h-6 items-center rounded-full bg-white/[0.06] px-2.5 text-[12px] font-medium text-ink-2">
+            {FILTER_WORD[m]}
+          </span>
+        ))}
       </div>
       <details className="group mt-3 border-t border-white/[0.06]">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-[14px] font-medium text-ink-2 select-none [&::-webkit-details-marker]:hidden">

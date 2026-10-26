@@ -1,6 +1,6 @@
 import type { CompatTitle } from "@anyplay/api-client";
 import { describe, expect, it } from "vitest";
-import { filterTitles, plural } from "./compat";
+import { type Filter, arrange, filterTitles, plural } from "./compat";
 
 const t = (titleId: string, reports: number, title?: string): CompatTitle => ({
   titleId,
@@ -35,5 +35,25 @@ describe("plural", () => {
   it("counts", () => {
     expect(plural(1, "report")).toBe("1 report");
     expect(plural(0, "game")).toBe("0 games");
+  });
+});
+
+describe("arrange", () => {
+  const v = (id: string, verdict: CompatTitle["verdict"], reports: number, title?: string): CompatTitle => ({ ...t(id, reports, title), verdict });
+  const games = [v("GAME00001", "playable", 5, "Zed"), v("GAME00002", "menus", 9, "Abe"), v("GAME00003", "in_game", 7), v("GAME00004", "no_start", 12, "Mo")];
+  const facts = { GAME00003: { mode: "lan" }, GAME00001: { mode: "online" } };
+  const ids = (x: CompatTitle[]) => x.map((g) => g.titleId);
+  it("filters by verdict and by mode data", () => {
+    expect(ids(arrange(games, "", new Set(["works"]), "reports", facts))).toEqual(["GAME00001"]);
+    expect(ids(arrange(games, "", new Set(["issues"]), "reports", facts))).toEqual(["GAME00004", "GAME00002", "GAME00003"]);
+    expect(ids(arrange(games, "", new Set(["lan"]), "reports", facts))).toEqual(["GAME00003"]);
+    expect(ids(arrange(games, "", new Set(["online"]), "reports", facts))).toEqual(["GAME00001"]);
+    expect(arrange(games, "", new Set(["works", "lan"]), "reports", facts)).toEqual([]);
+  });
+  it("sorts by reports, by best answer and by name", () => {
+    const none = new Set<Filter>();
+    expect(ids(arrange(games, "", none, "reports", facts))).toEqual(["GAME00004", "GAME00002", "GAME00003", "GAME00001"]);
+    expect(ids(arrange(games, "", none, "best", facts))).toEqual(["GAME00001", "GAME00003", "GAME00002", "GAME00004"]);
+    expect(ids(arrange(games, "", none, "name", facts))).toEqual(["GAME00002", "GAME00003", "GAME00004", "GAME00001"]);
   });
 });
