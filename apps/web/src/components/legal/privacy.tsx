@@ -397,7 +397,7 @@ export function PrivacyNotice() {
         </P>
         <P>
           Deleting removes your account, devices, passkeys, friends, requests, blocks, presence, sessions, party, join
-          code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices
+          code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices,
           the messages you wrote, the screenshots and clips you sent, and your looking-for-group listings and requests. A
           direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
           others wrote. A screenshot or clip that a report holds stays for the time of the report.
