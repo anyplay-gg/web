@@ -49,6 +49,27 @@ No cloud is needed in development. Before a pull request, run `pnpm lint`, `pnpm
 
 The `Dockerfile` builds a standalone server. The cloud runs it on the same host name as the API, using [`deploy/compose.web.yaml`](https://github.com/anyplaynet/cloud/blob/main/deploy/compose.web.yaml). The cloud's [deploy guide](https://github.com/anyplaynet/cloud/blob/main/docs/deploy.md#the-website) has the steps.
 
+### Run your own AnyPlay website
+
+This repository holds no personal data and nothing that belongs to one instance. Your instance says who it is through environment variables. They are read by the server on every request, not at build time, so one image serves any instance and you change them with a restart. [`apps/web/.env.example`](apps/web/.env.example) is a template.
+
+| Variable | Required | Meaning |
+| --- | --- | --- |
+| `SITE_URL` | yes | Public address of your instance, for example `https://play.example.org`. Used for canonical links and named in the legal texts. |
+| `LEGAL_OPERATOR_NAME` | yes | Full name of the person or company that runs the instance. |
+| `LEGAL_OPERATOR_STREET` | yes | Street and number of the postal address. |
+| `LEGAL_OPERATOR_CITY` | yes | Postcode and city. |
+| `LEGAL_OPERATOR_COUNTRY` | yes | Country. |
+| `LEGAL_CONTACT_EMAIL` | yes | General contact, also the point of contact under the EU Digital Services Act. |
+| `LEGAL_PRIVACY_EMAIL` | yes | Address for data protection requests. |
+| `LEGAL_ABUSE_EMAIL` | yes | Address for notices of illegal content. |
+| `LEGAL_AUTHORITY_NAME`, `_STREET`, `_CITY`, `_SITE` | no | The data protection authority named in the privacy notice. Set all four or none. |
+| `COMMUNITY_DISCORD_URL` | no | Invite link to your community. Without it every Discord link is hidden. |
+
+Nothing has a default. Whatever you leave out is left out of the pages: without the operator details the legal notice says that this instance has not published them yet, the privacy notice and the terms drop the operator block, and a missing e-mail address or link is not shown. Visitors never see variable names. The server logs one warning at start-up that lists what is missing, and `pnpm dev` shows a small hint on the legal notice.
+
+The legal texts (legal notice, privacy notice, terms) are written for the AnyPlay service, including the hosting and e-mail providers it uses and German law. Before you publish an instance, have them reviewed for your own situation and edit `apps/web/src/components/legal/` where they differ.
+
 ## Contribute
 
 The web repository is limited to the AnyPlay team until 2027-04-25. Issues, ideas and bug reports are welcome on the [AnyPlay Discord](https://discord.gg/9zYqf8fEsh). The launcher and network repositories already take outside contributions; the shared rules are in [CONTRIBUTING.md](https://github.com/anyplaynet/.github/blob/main/CONTRIBUTING.md).

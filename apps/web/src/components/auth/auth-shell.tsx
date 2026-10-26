@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Wordmark } from "../landing/header";
 import { Toast, launcherFont } from "../landing/launcher-ui";
 import { LINKS } from "../landing/links";
+import { useSite } from "../site-context";
 import { LandingProviders, WhenVisible } from "../landing/providers";
 import { DitherField } from "../landing/shaders";
 
@@ -18,6 +19,7 @@ import { DitherField } from "../landing/shaders";
  * must not sit next to a player who is "online" only in the picture).
  */
 export function AuthShell({ children, toasts = true }: { children: ReactNode; toasts?: boolean }) {
+  const { discord } = useSite();
   return (
     <LandingProviders>
       <div className="night grid min-h-dvh bg-bg text-ink lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
@@ -73,12 +75,14 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
             {children}
           </main>
           <footer className="mx-auto w-full max-w-[400px] pb-8 text-[13px] text-ink-3">
-            <p>
-              Need help?{" "}
-              <a href={LINKS.discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-                Ask on Discord
-              </a>
-            </p>
+            {discord && (
+              <p>
+                Need help?{" "}
+                <a href={discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+                  Ask on Discord
+                </a>
+              </p>
+            )}
             <nav aria-label="Legal">
               <ul className="flex flex-wrap gap-x-6">
                 {(

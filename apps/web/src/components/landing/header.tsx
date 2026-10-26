@@ -6,6 +6,7 @@ import { useMotionValueEvent, useScroll } from "@anyplay/ui/motion";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useState } from "react";
+import { useSite } from "../site-context";
 import { DownloadMenu } from "./download-button";
 import { LINKS } from "./links";
 import type { Downloads } from "./release";
@@ -27,6 +28,7 @@ const navLink =
  * past. Only the pill's opacity and scale change; the links never move.
  */
 export function Header({ pill, downloads }: { pill: string; downloads: Downloads }) {
+  const { discord } = useSite();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
@@ -51,9 +53,11 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
           <a href={LINKS.github} className={navLink}>
             GitHub
           </a>
-          <a href={LINKS.discord} className={navLink}>
-            Discord
-          </a>
+          {discord && (
+            <a href={discord} className={navLink}>
+              Discord
+            </a>
+          )}
         </nav>
         <div className="relative flex items-center gap-1">
           <a href={LINKS.signIn} className={`${navLink} max-sm:hidden`}>
@@ -67,16 +71,17 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
   );
 }
 
-const PHONE_LINKS: [string, string][] = [
-  ["Launcher", LINKS.releases],
-  ["Self-hosting", LINKS.selfHost],
-  ["GitHub", LINKS.github],
-  ["Discord", LINKS.discord],
-  ["Sign in", LINKS.signIn],
-];
 
 /** Below the width where the links fit, they move into a menu behind one button. */
 function PhoneMenu() {
+  const { discord } = useSite();
+  const links: [string, string][] = [
+    ["Launcher", LINKS.releases],
+    ["Self-hosting", LINKS.selfHost],
+    ["GitHub", LINKS.github],
+    ...(discord ? ([["Discord", discord]] as [string, string][]) : []),
+    ["Sign in", LINKS.signIn],
+  ];
   return (
     <Menu.Root modal={false}>
       <Menu.Trigger
@@ -88,7 +93,7 @@ function PhoneMenu() {
       <Menu.Portal>
         <Menu.Positioner side="bottom" align="end" sideOffset={10} className="z-40">
           <Menu.Popup className="night w-[220px] origin-[var(--transform-origin)] rounded-[20px] bg-[#151311]/94 p-1.5 text-[#f6f5f1] shadow-[0_0_0_1px_rgb(255_255_255/0.09),0_24px_60px_-12px_rgb(0_0_0/0.75)] backdrop-blur-2xl transition-[opacity,scale] duration-[180ms] ease-[var(--ease-out)] outline-none data-[ending-style]:scale-[0.98] data-[ending-style]:opacity-0 data-[starting-style]:scale-[0.96] data-[starting-style]:opacity-0">
-            {PHONE_LINKS.map(([label, href]) => (
+            {links.map(([label, href]) => (
               <Menu.LinkItem
                 key={label}
                 href={href}

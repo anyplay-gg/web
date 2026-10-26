@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { A, type Contents, LegalPage, List, Mail, Operator, P, Section, Strong } from "./doc";
+import { readSite } from "@/lib/site";
+import { readLegal } from "./meta";
 
 /**
  * The legal notice (Impressum) under § 5 DDG, with the responsible person under § 18(2) MStV, the
@@ -8,51 +10,75 @@ import { A, type Contents, LegalPage, List, Mail, Operator, P, Section, Strong }
  * link to it belongs here.
  */
 
-export const NOTICE_CONTENTS: Contents = [
-  { id: "provider", title: "Provider" },
-  { id: "contact", title: "Contact" },
-  { id: "content", title: "Responsible for content" },
-  { id: "dsa", title: "Points of contact under the EU Digital Services Act" },
-  { id: "disputes", title: "Consumer arbitration" },
-];
+/** Without operator details there is nobody to name as responsible for the content, so that section is left out. */
+export function noticeContents(operatorSet: boolean): Contents {
+  return [
+    { id: "provider", title: "Provider" },
+    { id: "contact", title: "Contact" },
+    ...(operatorSet ? [{ id: "content", title: "Responsible for content" }] : []),
+    { id: "dsa", title: "Points of contact under the EU Digital Services Act" },
+    { id: "disputes", title: "Consumer arbitration" },
+  ];
+}
+
+export const NOTICE_CONTENTS: Contents = noticeContents(true);
 
 export function LegalNotice() {
+  const legal = readLegal();
+  const set = legal.operator !== null;
+  const { host } = readSite();
   return (
     <LegalPage
       title="Legal notice"
-      lead="Who runs AnyPlay at anyplaynet.com, and how to reach them. This is the Impressum required by § 5 of the German Digital Services Law (Digitale-Dienste-Gesetz, DDG)."
-      contents={NOTICE_CONTENTS}
+      lead={`Who runs AnyPlay${host ? ` at ${host}` : " here"}, and how to reach them. This is the Impressum required by § 5 of the German Digital Services Law (Digitale-Dienste-Gesetz, DDG).`}
+      contents={noticeContents(set)}
       current="legal"
     >
       <Section id="provider" title="Provider">
-        <Operator />
-        <P>AnyPlay is run by a private individual. There is no company, no commercial register entry and no VAT ID.</P>
+        <Operator missing="explain" />
+        {set && (
+          <P>AnyPlay is run by a private individual. There is no company, no commercial register entry and no VAT ID.</P>
+        )}
       </Section>
 
       <Section id="contact" title="Contact">
-        <List>
-          <li>
-            <Strong>General questions and this notice:</Strong> <Mail />
-          </li>
-          <li>
-            <Strong>Data protection:</Strong> <Mail kind="privacy" />
-          </li>
-          <li>
-            <Strong>Notices of illegal content:</Strong> <Mail kind="abuse" />
-          </li>
-        </List>
-        <P>
-          We read and answer in English and German. A person reads every message. We have no telephone number. Write an
-          e-mail and we answer as soon as we can.
-        </P>
+        {legal.contact || legal.privacy || legal.abuse ? (
+          <>
+            <List>
+              {legal.contact && (
+                <li>
+                  <Strong>General questions and this notice:</Strong> <Mail />
+                </li>
+              )}
+              {legal.privacy && (
+                <li>
+                  <Strong>Data protection:</Strong> <Mail kind="privacy" />
+                </li>
+              )}
+              {legal.abuse && (
+                <li>
+                  <Strong>Notices of illegal content:</Strong> <Mail kind="abuse" />
+                </li>
+              )}
+            </List>
+            <P>
+              We read and answer in English and German. A person reads every message. We have no telephone number. Write
+              an e-mail and we answer as soon as we can.
+            </P>
+          </>
+        ) : (
+          <P>This instance has not published a contact address yet.</P>
+        )}
       </Section>
 
-      <Section id="content" title="Responsible for content">
-        <P>
-          Responsible for the content of this website under § 18(2) of the German Interstate Media Treaty (MStV):
-        </P>
-        <Operator />
-      </Section>
+      {set && (
+        <Section id="content" title="Responsible for content">
+          <P>
+            Responsible for the content of this website under § 18(2) of the German Interstate Media Treaty (MStV):
+          </P>
+          <Operator />
+        </Section>
+      )}
 
       <Section id="dsa" title="Points of contact under the EU Digital Services Act">
         <P>
@@ -61,15 +87,19 @@ export function LegalNotice() {
           people who use AnyPlay.
         </P>
         <List>
-          <li>
-            <Strong>E-mail:</Strong> <Mail />
-          </li>
+          {legal.contact && (
+            <li>
+              <Strong>E-mail:</Strong> <Mail />
+            </li>
+          )}
           <li>
             <Strong>Languages:</Strong> English and German.
           </li>
-          <li>
-            <Strong>Post:</Strong> the address above.
-          </li>
+          {set && (
+            <li>
+              <Strong>Post:</Strong> the address above.
+            </li>
+          )}
         </List>
         <P>
           To tell us about content you think is illegal, write to <Mail kind="abuse" />. What to include is explained in the

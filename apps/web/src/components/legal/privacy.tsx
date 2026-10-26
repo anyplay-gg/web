@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { A, type Contents, type Fact, Facts, LegalPage, List, Mail, Operator, P, Section, Strong } from "./doc";
-import { LEGAL } from "./meta";
+import { readSite } from "@/lib/site";
+import { LEGAL, readLegal } from "./meta";
 
 /**
  * The privacy notice (GDPR Art. 12 to 14). Every sentence here describes what the cloud, the launcher
@@ -186,10 +187,13 @@ const KEPT: Fact[] = [
 ];
 
 export function PrivacyNotice() {
+  const { operator, authority } = readLegal();
+  const { host } = readSite();
+  const site = host ?? "this website";
   return (
     <LegalPage
       title="Privacy notice"
-      lead="How AnyPlay handles your data. This notice is for the AnyPlay cloud at anyplaynet.com. It says what we keep about you, why, for how long, and what you can do about it."
+      lead={`How AnyPlay handles your data. This notice is for the AnyPlay cloud ${host ? `at ${host}` : "you are using"}. It says what we keep about you, why, for how long, and what you can do about it.`}
       summary={[
         "We keep what we need to run your account, your friends, your messages and your game sessions. Nothing else.",
         "We show no ads, sell no data, and use no analytics or tracking tools. This website loads nothing from other companies.",
@@ -208,7 +212,7 @@ export function PrivacyNotice() {
     >
       <Section id="who" title="Who is responsible">
         <P>
-          Under the GDPR, the one responsible for your data (the “controller”) is a private person, not a company:
+          Under the GDPR, the one responsible for your data (the “controller”) is a private person, not a company{operator ? ":" : "."}
         </P>
         <Operator />
         <P>
@@ -267,7 +271,7 @@ export function PrivacyNotice() {
         <List>
           <li>No analytics, no ads, no tracking tools, and no error reports sent from your browser to anyone.</li>
           <li>
-            Everything on the page, including fonts and pictures, comes from anyplaynet.com. The page loads nothing from
+            Everything on the page, including fonts and pictures, comes from {site}. The page loads nothing from
             other companies.
           </li>
           <li>
@@ -299,8 +303,8 @@ export function PrivacyNotice() {
             can.
           </li>
           <li>
-            <Strong>Cloudflare, Inc.</Strong>, USA, runs the DNS of anyplaynet.com, passes the visitors of
-            www.anyplaynet.com on to the main address, and forwards the e-mail we receive. When you open anyplaynet.com
+            <Strong>Cloudflare, Inc.</Strong>, USA, runs the DNS of {site}, passes the visitors of
+            www.{site} on to the main address, and forwards the e-mail we receive. When you open {site}
             itself, your request goes to our server and not through Cloudflare. It relies on the EU Standard
             Contractual Clauses and on its certification under the EU-U.S. Data Privacy Framework.
           </li>
@@ -374,11 +378,15 @@ export function PrivacyNotice() {
           </li>
           <li>
             <Strong>Complaint.</Strong> You can complain to a data protection authority, for example in the country where
-            you live or work. The one responsible for us is the{" "}
-            <A href={LEGAL.authority.site}>{LEGAL.authority.name}</A>, {LEGAL.authority.street}, {LEGAL.authority.city},
-            Germany. The{" "}
-            <A href="https://www.edpb.europa.eu/about-edpb/about-edpb/members_en">European Data Protection Board</A>{" "}
-            lists the others.
+            you live or work.{" "}
+            {authority && (
+              <>
+                The one responsible for us is the <A href={authority.site}>{authority.name}</A>, {authority.street},{" "}
+                {authority.city}.{" "}
+              </>
+            )}
+            The <A href="https://www.edpb.europa.eu/about-edpb/about-edpb/members_en">European Data Protection Board</A>{" "}
+            lists {authority ? "the others" : "them"}.
           </li>
         </List>
         <P>
