@@ -18,6 +18,7 @@ import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useStat
 import { CodeField, FormError, TextField } from "../auth/fields";
 import { DownloadMenu } from "../landing/download-button";
 import { DitherField } from "../landing/shaders";
+import { useSite } from "../site-context";
 import { LevelMeter } from "./level";
 import { BRAND, BrandLogo } from "./brand-logos";
 import { Initial, useAccount } from "./shell";
@@ -802,6 +803,7 @@ function AppearOfflineCard() {
  */
 function PublicProfileCard() {
   const { api, session } = useAccount();
+  const { host } = useSite();
   const load = useCallback(() => api.account.publicProfile(), [api]);
   const { data, error, reload, setData } = useLoad<boolean>(load);
   const [problem, setProblem] = useState<string | null>(null);
@@ -834,7 +836,7 @@ function PublicProfileCard() {
           <p className="mt-4 text-[14px] text-ink-2">
             Your page:{" "}
             <a href={`/u/${encodeURIComponent(handle)}`} className="font-medium text-ink underline underline-offset-4">
-              anyplaynet.com/u/{handle}
+              {host ?? ""}/u/{handle}
             </a>
           </p>
         )}

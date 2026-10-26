@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { A, type Contents, LegalPage, List, Mail, Operator, P, Section, Steps, Strong } from "./doc";
-import { LEGAL } from "./meta";
+import { readSite } from "@/lib/site";
+import { LEGAL, readLegal } from "./meta";
 
 /**
  * The terms of use. The shape follows DSA Art. 14: the rules for what you provide, how moderation
@@ -27,10 +28,12 @@ export const TERMS_CONTENTS: Contents = [
 ];
 
 export function TermsOfUse() {
+  const { operator } = readLegal();
+  const { host } = readSite();
   return (
     <LegalPage
       title="Terms of use"
-      lead="These are the rules for using AnyPlay at anyplaynet.com: what you can expect from us, what we expect from you, and what happens when someone breaks a rule."
+      lead={`These are the rules for using AnyPlay${host ? ` at ${host}` : ""}: what you can expect from us, what we expect from you, and what happens when someone breaks a rule.`}
       summary={[
         `You need to be at least ${LEGAL.minimumAge} years old.`,
         "Play only games you own. Do not use cheating tools. Do not build or use anything that pretends to be the server of a publisher whose service still runs.",
@@ -43,8 +46,8 @@ export function TermsOfUse() {
     >
       <Section id="who" title="Who we are">
         <P>
-          AnyPlay at anyplaynet.com, an online service for people who play with AnyPS5, is run by a private person
-          (“we”):
+          AnyPlay{host ? ` at ${host}` : ""}, an online service for people who play with AnyPS5, is run by a private person
+          (“we”){operator ? ":" : "."}
         </P>
         <Operator />
         <P>

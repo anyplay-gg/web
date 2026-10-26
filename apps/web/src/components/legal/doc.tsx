@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Wordmark } from "../landing/header";
 import { LINKS } from "../landing/links";
 import { LegalLinks } from "./links";
-import { LEGAL } from "./meta";
+import { LEGAL, readLegal } from "./meta";
 
 /**
  * The frame and the parts of the two legal texts: a title with a short summary, the date of the last
@@ -31,13 +31,19 @@ export function A({ href, children }: { href: string; children: ReactNode }) {
 }
 
 export function Mail({ kind = "contact" }: { kind?: "contact" | "privacy" | "abuse" }) {
-  const address = LEGAL[kind];
-  return <A href={`mailto:${address}`}>{address}</A>;
+  const address = readLegal()[kind];
+  // An instance that has not set the address points to the legal notice instead of printing a blank.
+  return address ? <A href={`mailto:${address}`}>{address}</A> : <>the contact details in the <A href="/legal">legal notice</A></>;
 }
 
-/** The operator's name and postal address, as the legal notice, the privacy notice and the terms print them. */
-export function Operator() {
-  const o = LEGAL.operator;
+/**
+ * The operator's name and postal address, as the legal notice, the privacy notice and the terms print
+ * them. Without operator details the privacy notice and the terms print nothing here; the legal
+ * notice, whose whole job is to name them, says what is missing (`missing="explain"`).
+ */
+export function Operator({ missing = "omit" }: { missing?: "omit" | "explain" }) {
+  const { operator: o, missing: unset } = readLegal();
+  if (!o) return missing === "explain" ? <OperatorUnset vars={unset} /> : null;
   return (
     <address className="text-[16px] leading-[1.6] text-ink-2 not-italic">
       <Strong>{o.name}</Strong>
@@ -48,6 +54,27 @@ export function Operator() {
       <br />
       {o.country}
     </address>
+  );
+}
+
+function OperatorUnset({ vars }: { vars: string[] }) {
+  return (
+    <div
+      role="note"
+      className="rounded-[20px] bg-[#141312] p-5 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07),inset_0_1px_0_rgb(255_255_255/0.05)]"
+    >
+      <h3 className="text-[16px] leading-[1.4] font-semibold">Operator details not published</h3>
+      <p className="mt-3 text-[15px] leading-[1.6] text-ink-2 text-pretty">
+        The person who runs a website has to be named in its legal notice. This instance has not published that
+        information yet.
+      </p>
+      {process.env.NODE_ENV === "development" && (
+        <p className="mt-3 text-[13px] leading-[1.6] text-ink-3">
+          Development hint, not shown in production: set <code className="font-mono">{vars.join(", ")}</code>. The
+          README has the details.
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -67,6 +94,7 @@ export function LegalPage({
   mail?: "contact" | "privacy";
   children: ReactNode;
 }) {
+  const address = readLegal()[mail];
   return (
     <div className="night min-h-dvh bg-bg text-ink">
       <a
@@ -137,8 +165,12 @@ export function LegalPage({
           <div className="mt-4 lg:col-start-2 lg:row-start-2">
             {children}
             <p className="mt-16 text-[15px] leading-[1.6] text-ink-2">
-              Questions about this text: <Mail kind={mail} />. The source of this website is public on{" "}
-              <A href={LINKS.github}>GitHub</A>.
+              {address && (
+                <>
+                  Questions about this text: <Mail kind={mail} />.{" "}
+                </>
+              )}
+              The source of this website is public on <A href={LINKS.github}>GitHub</A>.
             </p>
           </div>
         </div>

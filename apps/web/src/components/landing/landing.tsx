@@ -5,6 +5,7 @@ import { DownloadMenu } from "./download-button";
 import { Header, Wordmark } from "./header";
 import { HeroField, TiltIn } from "./hero";
 import { LauncherDemo } from "./launcher-demo";
+import { readSite } from "@/lib/site";
 import { LINKS } from "./links";
 import { LandingProviders, WhenVisible } from "./providers";
 import { latestDownloads } from "./release";
@@ -39,6 +40,7 @@ const OPEN = [
 ] as const;
 
 export async function Landing() {
+  const { discord } = readSite();
   const downloads = await latestDownloads();
   return (
     <LandingProviders>
@@ -164,9 +166,11 @@ export async function Landing() {
               <p className="mt-4 text-[17px] text-ink-2">Download the launcher, sign in, and your friends are one click away.</p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <DownloadMenu downloads={downloads} className={pillLight} />
-                <a href={LINKS.discord} className={pillGlass}>
-                  Join the Discord
-                </a>
+                {discord && (
+                  <a href={discord} className={pillGlass}>
+                    Join the Discord
+                  </a>
+                )}
               </div>
             </div>
           </section>
@@ -192,7 +196,7 @@ export async function Landing() {
             <FooterColumn
               title="Community"
               links={[
-                ["Discord", LINKS.discord],
+                ...(discord ? ([["Discord", discord]] as [string, string][]) : []),
                 ["GitHub", LINKS.github],
               ]}
             />
