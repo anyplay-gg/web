@@ -1,9 +1,22 @@
 name: docker
 
-# The production image builds. Only when the Dockerfile, its context rules or the lockfile change:
-# the `check` job does not build the image, and a Dockerfile that stopped building would be found
-# at the next deploy otherwise.
+# The production image.
+#
+# On every merge to main it is built and pushed to ghcr.io, so that a deploy pulls it instead of
+# compiling the website on the server (5 to 8 minutes there):
+#
+#   ghcr.io/anyplaynet/web:<commit>   ghcr.io/anyplaynet/web:main
+#
+# The image carries an attestation of its digest (actions/attest-build-provenance), so a deploy can
+# check with `gh attestation verify` that this workflow built it. anyplaynet/cloud's
+# `deploy/update.sh --web-image` does so (docs/deploy.md there).
+#
+# On pull requests that touch the Dockerfile, its context rules or the lockfile, the same build runs
+# without pushing: the `check` job does not build the image, and a Dockerfile that stopped building
+# would be found at the next deploy otherwise.
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - Dockerfile
@@ -11,25 +24,83 @@ on:
       - pnpm-lock.yaml
       - pnpm-workspace.yaml
       - .github/workflows/docker.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+# Pushes to main each get their own group (the run id) and are never cancelled: the image of every
+# main commit should exist.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  REGISTRY: ghcr.io/anyplaynet
 
 jobs:
   image:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write # pushes the image
+      id-token: write # the OIDC token the attestation is signed with
+      attestations: write # stores the attestation
+    env:
+      PUSH: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      - if: env.PUSH == 'true'
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # The BuildKit cache lives in the Actions cache. The dependency layer (lockfile and manifests
+      # only) is restored unless the lockfile changed; the pnpm store mount is not part of it.
+      - id: web
+        name: Build the web image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           target: web
-          push: false
+          push: ${{ env.PUSH == 'true' }}
+          tags: |
+            ${{ env.REGISTRY }}/web:${{ github.sha }}
+            ${{ env.REGISTRY }}/web:main
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.title=anyplay-web
+          sbom: ${{ env.PUSH == 'true' }}
+          provenance: ${{ env.PUSH == 'true' && 'mode=max' || 'false' }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max,ignore-error=true
+
+      - if: env.PUSH == 'true'
+        name: Attest the web image
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ env.REGISTRY }}/web
+          subject-digest: ${{ steps.web.outputs.digest }}
+          push-to-registry: true
+
+      - if: env.PUSH == 'true'
+        name: What to deploy
+        env:
+          WEB_DIGEST: ${{ steps.web.outputs.digest }}
+        run: |
+          {
+            echo "## Web image for ${GITHUB_SHA}"
+            echo
+            echo "- web: \`${REGISTRY}/web@${WEB_DIGEST}\`"
+            echo
+            echo "Deploy on the server (add it to the cloud's \`--image\` update):"
+            echo '```'
+            echo "cloud/deploy/update.sh --cloud <cloud commit> --image <digest> --relay-image <digest> --web-image ${WEB_DIGEST}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

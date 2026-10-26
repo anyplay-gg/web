@@ -49,6 +49,8 @@ No cloud is needed in development. Before a pull request, run `pnpm lint`, `pnpm
 
 The `Dockerfile` builds a standalone server. The cloud runs it on the same host name as the API, using [`deploy/compose.web.yaml`](https://github.com/anyplaynet/cloud/blob/main/deploy/compose.web.yaml). The cloud's [deploy guide](https://github.com/anyplaynet/cloud/blob/main/docs/deploy.md#the-website) has the steps.
 
+Every merge to `main` builds the image in CI ([`docker` workflow](.github/workflows/docker.yml)) and pushes it to `ghcr.io/anyplaynet/web`, tagged with the commit and as `main`, with an attestation of its digest. The server pulls it instead of building the website itself: `cloud/deploy/update.sh ... --web-image sha256:<digest>` (the digest is in the run's job summary; see the cloud's [deploy guide](https://github.com/anyplaynet/cloud/blob/main/docs/deploy.md#deploying-a-prebuilt-image)). Without it the server builds the image from the checkout, as before.
+
 ### Run your own AnyPlay website
 
 This repository holds no personal data and nothing that belongs to one instance. Your instance says who it is through environment variables. They are read by the server on every request, not at build time, so one image serves any instance and you change them with a restart. [`apps/web/.env.example`](apps/web/.env.example) is a template.
