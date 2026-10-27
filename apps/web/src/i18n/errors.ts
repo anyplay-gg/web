@@ -22,6 +22,9 @@ const KNOWN = new Set([
   "passkey_unsupported",
 ]);
 
+/** True when the failure has words of ours in every language, so they win over text the cloud wrote (English). */
+export const isTranslated = (e: unknown): boolean => isApiError(e) && KNOWN.has(e.code);
+
 /**
  * The words for a failure, in the visitor's language: the translated twin of the API client's
  * `describeError`. A lockout the cloud words itself (how long, and that a passkey still works) is

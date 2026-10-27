@@ -12,16 +12,6 @@ export const LOCALE_COOKIE = "lang";
 export const LOCALE_HEADER = "x-locale";
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-/** Each language's own name, for the one place that lists them. */
-export const LOCALE_NAMES: Record<Locale, string> = {
-  en: "English",
-  tr: "Türkçe",
-  de: "Deutsch",
-  es: "Español",
-  fr: "Français",
-  pt: "Português",
-};
-
 const known = new Set<string>(LOCALES);
 
 /** `de`, `de-AT`, `DE_at` and ` de ` all mean German; anything else is no answer. */

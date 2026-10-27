@@ -4,7 +4,7 @@
     "on": "Açık",
     "off": "Kapalı",
     "cancel": "Vazgeç",
-    "working": "Çalışıyor…",
+    "working": "İşleniyor…",
     "typeToConfirm": "Onaylamak için {word} yaz",
     "audience": {
       "everyone": "Herkes",
@@ -15,7 +15,7 @@
       "title": "Sen olduğunu doğrula",
       "needed": "Bu değişiklik için yakın zamanda giriş yapmış olman gerekir. 15 dakika geçerli kalır.",
       "sent": "{hint} adresine 6 haneli bir kod gönderdik.",
-      "passkey": "Passkey’ini kullan",
+      "passkey": "Geçiş anahtarını kullan",
       "sending": "Gönderiliyor…",
       "sendCode": "E-postayla kod gönder"
     }
@@ -38,7 +38,7 @@
   },
   "level": {
     "top": "En üst seviyeye ulaşıldı",
-    "toNext": "{count, plural, one {# puan} other {# puan}} sonra seviye {level}",
+    "toNext": "{level}. seviyeye {count, plural, one {# puan} other {# puan}} kaldı",
     "level": "Seviye {level}",
     "points": "{count, plural, one {# puan} other {# puan}}",
     "progress": "Seviye ilerlemesi",
@@ -147,7 +147,7 @@
     },
     "devices": {
       "title": "Launcher’lar",
-      "description": "Launcher’ın hesabına giriş yaptığı tüm bilgisayarlar.",
+      "description": "Launcher’ın hesabınla giriş yaptığı tüm bilgisayarlar.",
       "detail": "{platform} · Son kullanım: {used}",
       "signOut": "Çıkış yap",
       "empty": "Henüz hiçbir Launcher’da giriş yapılmadı.",
@@ -211,7 +211,7 @@
       "title": "Etkinliğin",
       "description": "AnyPlay’de yaptıkların, arkadaşlarının akışında göründüğü gibi.",
       "row": "Etkinlik",
-      "detail": "Arkadaşların akışlarında görür. Yabancılar akış görmez. {nobody} oradakini gizler ve yeni öğeleri durdurur."
+      "detail": "Arkadaşların akışlarında görür. Yabancılar akış görmez. Oradakini gizlemek ve yeni öğeleri durdurmak için “{nobody}” seç."
     },
     "appearOffline": {
       "title": "Çevrimiçi durumu",

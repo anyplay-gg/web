@@ -413,8 +413,10 @@ export function Switch({
         <span className="block text-[15px] font-medium">{label}</span>
         {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
       </span>
-      <span aria-hidden className="min-w-7 shrink-0 text-right text-[13px] font-medium text-ink-3">
-        {checked ? t("on") : t("off")}
+      {/* Both words share one cell, so the longer one sets the width and nothing shifts between states. */}
+      <span aria-hidden className="grid shrink-0 text-right text-[13px] font-medium text-ink-3">
+        <span className={`col-start-1 row-start-1 ${checked ? "invisible" : ""}`}>{t("off")}</span>
+        <span className={`col-start-1 row-start-1 ${checked ? "" : "invisible"}`}>{t("on")}</span>
       </span>
       <input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} className="peer sr-only" />
       <span

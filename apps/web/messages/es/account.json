@@ -15,7 +15,7 @@
       "title": "Confirma que eres tú",
       "needed": "Este cambio requiere un inicio de sesión reciente. Dura 15 minutos.",
       "sent": "Hemos enviado un código de 6 dígitos a {hint}.",
-      "passkey": "Usa tu passkey",
+      "passkey": "Usa tu llave de acceso",
       "sending": "Enviando…",
       "sendCode": "Enviar un código por correo"
     }
@@ -171,7 +171,7 @@
     },
     "everywhere": {
       "title": "Cerrar sesión en todas partes",
-      "description": "Todos los launchers y todos los navegadores, también este. Úsalo si perdiste un dispositivo o alguien más pudo iniciar sesión.",
+      "description": "Todos los launchers y todos los navegadores, también este. Úsalo si has perdido un dispositivo o alguien más pudo iniciar sesión.",
       "button": "Cerrar sesión en todas partes",
       "confirmTitle": "¿Cerrar sesión en todas partes?",
       "confirmDescription": "Se cierra la sesión de todos los launchers y navegadores a la vez, también este.",
@@ -211,7 +211,7 @@
       "title": "Tu actividad",
       "description": "Lo que haces en AnyPlay, tal como lo ven tus amigos en su feed.",
       "row": "Actividad",
-      "detail": "Tus amigos la ven en su feed. Los desconocidos no ven ningún feed. {nobody} oculta lo que hay y detiene los elementos nuevos."
+      "detail": "Tus amigos la ven en su feed. Los desconocidos no ven ningún feed. Elige «{nobody}» para ocultar lo que hay y detener los elementos nuevos."
     },
     "appearOffline": {
       "title": "Estado en línea",

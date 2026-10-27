@@ -8,7 +8,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
-import { useDescribeError } from "@/i18n/errors";
+import { isTranslated, useDescribeError } from "@/i18n/errors";
 import { loadApi } from "@/lib/api";
 import { withNext } from "@/lib/join";
 import { CheckField, CodeField, FormError, TextField, primaryButton, secondaryButton, textButton } from "./fields";
@@ -22,9 +22,9 @@ import { CheckField, CodeField, FormError, TextField, primaryButton, secondaryBu
 
 const ACCOUNT = "/account";
 
-/** A word the cloud wrote for one field (English) wins; every other failure is worded here. */
+/** A failure we have words for is worded here, in the visitor's language; a field text only the cloud has (English) is shown as it is. */
 function fieldError(e: unknown, field: string, describe: (e: unknown) => string): string {
-  return (isApiError(e) && e.fields[field]) || describe(e);
+  return (isApiError(e) && !isTranslated(e) && e.fields[field]) || describe(e);
 }
 
 const bold = (chunks: ReactNode) => <strong className="font-semibold text-ink">{chunks}</strong>;
@@ -356,7 +356,10 @@ function DetailsStep({ api, view, onView }: StepProps) {
       onView(await api.auth.submitDetails({ handle: handle.trim(), ageConfirmed: age, termsAccepted: termsView ? terms : true }));
     } catch (err) {
       const fields = isApiError(err) ? err.fields : {};
-      setErrors(Object.keys(fields).length ? fields : { form: describeError(err) });
+      const names = Object.keys(fields);
+      setErrors(
+        !names.length ? { form: describeError(err) } : isTranslated(err) ? Object.fromEntries(names.map((k) => [k, describeError(err)])) : fields,
+      );
     } finally {
       setBusy(false);
     }

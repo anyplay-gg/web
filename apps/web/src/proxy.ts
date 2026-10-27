@@ -20,6 +20,9 @@ import { monitoringOrigin } from "@/lib/monitoring";
  */
 const PAPER_SHADERS_STYLE = "'sha256-bcX2M6hOeEgeI9Ttj3KtXWZuoRsKenyQAlXswSnLakA='";
 
+/** The account flows and the public profile; everything else is English only for now. */
+const TRANSLATED_PAGES = /^\/(sign-in|create|link|join|account|u)(\/|$)/;
+
 export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const dev = process.env.NODE_ENV !== "production";
@@ -50,12 +53,13 @@ export function proxy(request: NextRequest) {
   const param = request.nextUrl.searchParams.get("lang");
   const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
   const locale = resolveLocale({ param, cookie, acceptLanguage: request.headers.get("accept-language") });
-  headers.set(LOCALE_HEADER, locale);
+  // Only the pages that are translated take the language; the others are English, and say so (<html lang>).
+  headers.set(LOCALE_HEADER, TRANSLATED_PAGES.test(request.nextUrl.pathname) ? locale : "en");
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("content-security-policy", csp);
   // An explicit choice is remembered, so the next page opened without it keeps the language.
   if (parseLocale(param) && parseLocale(cookie) !== locale) {
-    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: LOCALE_COOKIE_MAX_AGE, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: LOCALE_COOKIE_MAX_AGE, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
   }
   return response;
 }

@@ -37,6 +37,14 @@ describe("proxy", () => {
     expect(lang("http://127.0.0.1:4400/sign-in", { "accept-language": "pt-BR,pt;q=0.9" })).toBe("pt");
     expect(lang("http://127.0.0.1:4400/sign-in", { "accept-language": "ja" })).toBe("en");
   });
+  it("keeps the pages that are not translated yet in English, so <html lang> tells the truth", () => {
+    const lang = (url: string) => proxy(new NextRequest(url)).headers.get("x-middleware-request-x-locale");
+    expect(lang("http://127.0.0.1:4400/?lang=de")).toBe("en");
+    expect(lang("http://127.0.0.1:4400/download?lang=tr")).toBe("en");
+    expect(lang("http://127.0.0.1:4400/account/privacy?lang=tr")).toBe("tr");
+    expect(lang("http://127.0.0.1:4400/u/mira?lang=fr")).toBe("fr");
+    expect(lang("http://127.0.0.1:4400/join/ABCD?lang=es")).toBe("es");
+  });
   it("remembers an explicit language in a cookie, and only an explicit one", () => {
     const remembered = proxy(new NextRequest("http://127.0.0.1:4400/sign-in?lang=es")).headers.get("set-cookie") ?? "";
     expect(remembered).toMatch(/lang=es/);

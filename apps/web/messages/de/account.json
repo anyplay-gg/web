@@ -4,7 +4,7 @@
     "on": "An",
     "off": "Aus",
     "cancel": "Abbrechen",
-    "working": "Läuft …",
+    "working": "Wird ausgeführt…",
     "typeToConfirm": "Gib zum Bestätigen {word} ein",
     "audience": {
       "everyone": "Alle",
@@ -31,7 +31,7 @@
     "nav_security": "Sicherheit",
     "nav_notifications": "Benachrichtigungen",
     "nav_privacy": "Datenschutz",
-    "nav_connections": "Verbindungen",
+    "nav_connections": "Verknüpfungen",
     "nav_data": "Deine Daten",
     "unreachable": "AnyPlay ist nicht erreichbar. Prüfe deine Verbindung und <retry>versuche es erneut</retry>.",
     "loading": "Lädt"
@@ -132,7 +132,7 @@
     },
     "passkeys": {
       "title": "Passkeys",
-      "description": "Melde dich mit Fingerabdruck, Gesicht oder Geräte-PIN statt mit einem Code an. Einen Passkey kann niemand abfischen.",
+      "description": "Melde dich mit Fingerabdruck, Gesicht oder Geräte-PIN statt mit einem Code an. Passkeys lassen sich nicht phishen.",
       "add": "Passkey hinzufügen",
       "waiting": "Warte auf dein Gerät…",
       "detail": "Hinzugefügt {added} · Zuletzt verwendet: {used}",
@@ -211,7 +211,7 @@
       "title": "Deine Aktivität",
       "description": "Was du auf AnyPlay tust, so wie deine Freunde es in ihrem Feed sehen.",
       "row": "Aktivität",
-      "detail": "Freunde sehen sie in ihrem Feed. Fremde sehen keinen Feed. {nobody} verbirgt, was dort steht, und stoppt neue Einträge."
+      "detail": "Freunde sehen sie in ihrem Feed. Fremde sehen keinen Feed. Wähle „{nobody}“, um zu verbergen, was dort steht, und neue Einträge zu stoppen."
     },
     "appearOffline": {
       "title": "Online-Status",

@@ -15,7 +15,7 @@
       "title": "Confirme que é você",
       "needed": "Esta alteração exige um login recente. Ele vale por 15 minutos.",
       "sent": "Enviamos um código de 6 dígitos para {hint}.",
-      "passkey": "Usar sua passkey",
+      "passkey": "Use sua chave de acesso",
       "sending": "Enviando…",
       "sendCode": "Enviar um código por e-mail"
     }
@@ -211,7 +211,7 @@
       "title": "Sua atividade",
       "description": "O que você faz no AnyPlay, como seus amigos veem no feed deles.",
       "row": "Atividade",
-      "detail": "Seus amigos veem no feed deles. Desconhecidos não veem feed. {nobody} esconde o que está lá e para novos itens."
+      "detail": "Seus amigos veem no feed deles. Desconhecidos não veem feed. Escolha “{nobody}” para esconder o que está lá e parar novos itens."
     },
     "appearOffline": {
       "title": "Status online",

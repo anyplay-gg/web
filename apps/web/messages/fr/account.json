@@ -15,7 +15,7 @@
       "title": "Confirme que c’est toi",
       "needed": "Ce changement demande une connexion récente. Elle reste valable 15 minutes.",
       "sent": "Nous avons envoyé un code à 6 chiffres à {hint}.",
-      "passkey": "Utiliser ta passkey",
+      "passkey": "Utilise ta clé d’accès",
       "sending": "Envoi…",
       "sendCode": "Envoyer un code par e-mail"
     }
@@ -79,7 +79,7 @@
     "dataDetail": "Tout ce que nous gardons sur toi",
     "launcher": {
       "title": "Récupère le launcher",
-      "description": "Connecte-toi au launcher avec ce compte, et tes amis, ta party et tes trophées y sont."
+      "description": "Connecte-toi au launcher avec ce compte, et tes amis, tes parties et tes trophées y sont."
     }
   },
   "profile": {
@@ -211,7 +211,7 @@
       "title": "Ton activité",
       "description": "Ce que tu fais sur AnyPlay, tel que tes amis le voient dans leur fil.",
       "row": "Activité",
-      "detail": "Tes amis la voient dans leur fil. Les inconnus ne voient aucun fil. {nobody} masque ce qui s’y trouve et arrête les nouveaux éléments."
+      "detail": "Tes amis la voient dans leur fil. Les inconnus ne voient aucun fil. Choisis « {nobody} » pour masquer ce qui s’y trouve et arrêter les nouveaux éléments."
     },
     "appearOffline": {
       "title": "Statut en ligne",
@@ -228,7 +228,7 @@
     },
     "playedWith": {
       "title": "Joué récemment avec",
-      "description": "Si tu le désactives, personne de nouveau n’est ajouté. La liste reste jusqu’à ce que tu la vides.",
+      "description": "Si tu le désactives, aucune nouvelle personne n’est ajoutée. La liste reste jusqu’à ce que tu la vides.",
       "label": "Retenir avec qui je joue",
       "detail": "Garde pendant 30 jours les personnes avec qui tu as partagé une party ou une session de jeu, jusqu’à 50. Toi seul vois la liste.",
       "clear": "Vider la liste",
@@ -382,7 +382,7 @@
       "empty": "Pas encore d’amis. Ajoute quelqu’un par son nom ci-dessus ; la personne apparaît ici une fois la demande acceptée.",
       "online": "En ligne",
       "offline": "Hors ligne",
-      "playing": "Joue à {title}",
+      "playing": "En train de jouer à {title}",
       "block": "Bloquer",
       "remove": "Retirer"
     },

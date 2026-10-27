@@ -211,7 +211,7 @@
       "title": "Your activity",
       "description": "What you do on AnyPlay, as your friends see it in their feed.",
       "row": "Activity",
-      "detail": "Friends see it in their feed. Strangers see no feed. {nobody} hides what is there and stops new items."
+      "detail": "Friends see it in their feed. Strangers see no feed. Choose “{nobody}” to hide what is there and stop new items."
     },
     "appearOffline": {
       "title": "Online status",

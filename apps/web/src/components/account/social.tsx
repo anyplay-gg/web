@@ -6,7 +6,7 @@ import { TrophyIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useCallback, useState } from "react";
-import { useDescribeError } from "@/i18n/errors";
+import { isTranslated, useDescribeError } from "@/i18n/errors";
 import { FormError, TextField } from "../auth/fields";
 import { LevelMeter } from "./level";
 import { Failed, Loading, useAction, useLoad } from "./pages";
@@ -262,7 +262,7 @@ function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
       setHandle("");
       await onSent();
     } catch (err) {
-      setError((isApiError(err) && err.fields.handle) || describeError(err));
+      setError((isApiError(err) && !isTranslated(err) && err.fields.handle) || describeError(err));
     } finally {
       setBusy(false);
     }
