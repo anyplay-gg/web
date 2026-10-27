@@ -5,6 +5,8 @@ import type {
 	LinkProvider,
 	Audience,
 	AccountView,
+	BoardPage,
+	BoardRead,
 	CompatList,
 	PushState,
 	PushDevice,
@@ -188,6 +190,12 @@ export interface PortalApi {
 	/** The public list of how games run, from the players' "How did it run?" answers. */
 	compatibility: {
 		list(): Promise<CompatList>;
+	};
+
+	/** Boards of best scores, read-only and public: a visitor sees what players show to everyone. */
+	boards: {
+		/** `not_found` when there is no such board or the cloud has leaderboards off. */
+		page(titleId: string, board: string, read?: BoardRead): Promise<BoardPage>;
 	};
 }
 

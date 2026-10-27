@@ -8,6 +8,8 @@ import type {
 	AccountView,
 	BanStatement,
 	BrowserSession,
+	BoardPage,
+	BoardRead,
 	CompatList,
 	Device,
 	Flow,
@@ -43,6 +45,8 @@ import {
 	seedDevices,
 	seedFriends,
 	seedIncoming,
+	DEMO_BOARD,
+	seedBoard,
 	seedCompatibility,
 	seedMe,
 	seedOutgoing,
@@ -808,6 +812,20 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 			// public: no session needed
 			list: () =>
 				call((): CompatList => (empty ? { titles: [] } : seedCompatibility()), { read: true, auth: false }),
+		},
+
+		boards: {
+			// public: no session needed for the top; the other views are about the viewer
+			page: (titleId, board, read) =>
+				call(
+					() => {
+						if (titleId !== DEMO_BOARD.titleId || board !== DEMO_BOARD.board) {
+							throw new ApiError("not_found", "There is nothing like that here.", { status: 404 });
+						}
+						return seedBoard(read, signedIn, empty);
+					},
+					{ read: true, auth: (read?.view ?? "top") !== "top" },
+				),
 		},
 
 		users: {

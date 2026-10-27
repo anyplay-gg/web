@@ -6,6 +6,8 @@ import type { PortalApi } from "./portal-api";
 import type {
 	LinkedAccount,
 	AccountView,
+	BoardPage,
+	BoardRead,
 	CompatList,
 	PushDevice,
 	PushState,
@@ -397,6 +399,17 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 			// The cloud route does not exist yet (the run reports are being built). Until it does,
 			// this answers `not_found` and the page says the list is not ready.
 			list: () => json<CompatList>("GET", "/compatibility"),
+		},
+
+		boards: {
+			page: (titleId, board, read = {}) => {
+				const query = new URLSearchParams();
+				if (read.view) query.set("view", read.view);
+				if (read.start) query.set("start", String(read.start));
+				if (read.count) query.set("count", String(read.count));
+				const text = query.toString();
+				return json<BoardPage>("GET", `/boards/${encodeURIComponent(titleId)}/${encodeURIComponent(board)}${text ? `?${text}` : ""}`);
+			},
 		},
 	};
 }

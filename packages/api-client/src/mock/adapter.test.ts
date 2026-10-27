@@ -175,6 +175,23 @@ describe("mock adapter", () => {
 		expect((await make({ scenario: "empty" }).compatibility.list()).titles).toEqual([]);
 	});
 
+	it("shows a board to a visitor, ties sharing a rank, and keeps the personal views for a session", async () => {
+		const visitor = make({ scenario: "signedout" });
+		const page = await visitor.boards.page("GAME00001", "7");
+		expect(page.view).toBe("top");
+		expect(page.entries.length).toBeGreaterThan(0);
+		expect(page.me).toBeUndefined();
+		expect(page.entries[0]!.rank).toBe(1);
+		expect(page.entries[1]!.rank).toBe(1);
+		expect(page.entries[2]!.rank).toBe(3);
+		await expect(visitor.boards.page("GAME00001", "7", { view: "friends" })).rejects.toMatchObject({ code: "unauthorized" });
+		await expect(visitor.boards.page("GAME00001", "nope")).rejects.toMatchObject({ code: "not_found" });
+		const member = await make().boards.page("GAME00001", "7", { view: "around", count: 5 });
+		expect(member.me?.handle).toBe("Quill");
+		expect(member.entries.some((e) => e.handle === "Quill")).toBe(true);
+		expect((await make({ scenario: "empty" }).boards.page("GAME00001", "7")).entries).toEqual([]);
+	});
+
 	it("keeps the public profile off until the player turns it on", async () => {
 		const api = make();
 		expect(await api.account.publicProfile()).toBe(false);
