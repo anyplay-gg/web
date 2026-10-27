@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 /**
  * Hardening, because the 2025-26 Next.js advisories are real and every self-hoster would have to
@@ -47,4 +48,7 @@ const config: NextConfig = {
   },
 };
 
-export default config;
+// The words come from messages/<language>/ (src/i18n); no language in the path, the proxy picks one.
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
+export default withNextIntl(config);

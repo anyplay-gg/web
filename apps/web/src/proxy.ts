@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { NextResponse, type NextRequest } from "next/server";
+import { LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, LOCALE_HEADER, parseLocale, resolveLocale } from "@/i18n/config";
 import { monitoringOrigin } from "@/lib/monitoring";
 
 /**
@@ -45,8 +46,17 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
   headers.set("content-security-policy", csp);
+  // The language: an explicit ?lang= (the launcher passes its own), else the cookie, else the browser.
+  const param = request.nextUrl.searchParams.get("lang");
+  const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
+  const locale = resolveLocale({ param, cookie, acceptLanguage: request.headers.get("accept-language") });
+  headers.set(LOCALE_HEADER, locale);
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("content-security-policy", csp);
+  // An explicit choice is remembered, so the next page opened without it keeps the language.
+  if (parseLocale(param) && parseLocale(cookie) !== locale) {
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: LOCALE_COOKIE_MAX_AGE, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
+  }
   return response;
 }
 
