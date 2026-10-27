@@ -183,6 +183,16 @@ describe("mock adapter", () => {
 		await expect(make({ scenario: "nosave" }).account.setPublicProfile(true)).rejects.toMatchObject({ code: "internal" });
 	});
 
+	it("keeps the played-with switch on by default, settable, and failing in the nosave scenario", async () => {
+		const api = make();
+		expect(await api.account.playedWithRemember()).toBe(true);
+		expect(await api.account.setPlayedWithRemember(false)).toBe(false);
+		expect(await api.account.playedWithRemember()).toBe(false);
+		await expect(api.account.clearPlayedWith()).resolves.toBeUndefined();
+		await expect(make({ scenario: "nosave" }).account.setPlayedWithRemember(false)).rejects.toMatchObject({ code: "internal" });
+		await expect(make({ scenario: "nosave" }).account.clearPlayedWith()).rejects.toMatchObject({ code: "internal" });
+	});
+
 	it("keeps appear offline apart from privacy, and fails to save in the nosave scenario", async () => {
 		const api = make();
 		expect(await api.account.appearOffline()).toBe(false);

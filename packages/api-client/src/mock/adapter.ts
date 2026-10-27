@@ -115,6 +115,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 	let signedIn = scenario !== "signedout" && scenario !== "handoff";
 	let me: Me = seedMe(t0);
 	let publicProfile = false;
+	let playedWithRemember = true;
 	let freshUntil = options.fresh ? t0 + FRESH_FOR : 0;
 	let passkeys: Passkey[] = empty ? [] : seedPasskeys(t0);
 	let devices: Device[] = empty ? [] : seedDevices(t0);
@@ -536,6 +537,22 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 					}
 					publicProfile = value;
 					return value;
+				}),
+			playedWithRemember: () => call(() => playedWithRemember, { read: true }),
+			setPlayedWithRemember: (value) =>
+				call(() => {
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
+					playedWithRemember = value;
+					return value;
+				}),
+			clearPlayedWith: () =>
+				call(() => {
+					// The mock holds no list (it is read in the launcher), so clearing only has to succeed or fail.
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
 				}),
 			privacy: () => call(() => privacy, { read: true }),
 			updatePrivacy: (input) =>

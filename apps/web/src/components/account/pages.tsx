@@ -855,6 +855,78 @@ function PublicProfileCard() {
   );
 }
 
+/**
+ * Played with recently: the cloud keeps a private list of the people the player shared a party or
+ * session with (ADR 0038). The list is read in the launcher; here the player decides whether it
+ * is kept and can empty it. Same optimistic switch as the others; clearing asks first.
+ */
+function PlayedWithCard() {
+  const { api } = useAccount();
+  const load = useCallback(() => api.account.playedWithRemember(), [api]);
+  const { data, error, reload, setData } = useLoad<boolean>(load);
+  const [problem, setProblem] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
+  const [cleared, setCleared] = useState(false);
+  const latest = useRef(0);
+  let body: ReactNode;
+  if (error) body = <Failed message={error} retry={reload} />;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else {
+    const set = async (value: boolean) => {
+      const before = data;
+      const mine = ++latest.current;
+      setData(value);
+      setProblem(null);
+      try {
+        const saved = await api.account.setPlayedWithRemember(value);
+        if (mine === latest.current) setData(saved);
+      } catch (e) {
+        if (mine !== latest.current) return;
+        setData(before);
+        setProblem(describeError(e));
+      }
+    };
+    body = (
+      <>
+        <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
+          <Switch label="Remember people I play with" detail="Keeps the people you shared a party or game session with for 30 days, up to 50. Only you see the list." checked={data} onChange={(on) => void set(on)} />
+        </div>
+        {problem && (
+          <div className="mt-4">
+            <FormError>{problem}</FormError>
+          </div>
+        )}
+      </>
+    );
+  }
+  return (
+    <Card
+      title="People you played with"
+      description="Turning it off adds no one new. The list stays until you clear it."
+      action={
+        <button type="button" className={smallDanger} onClick={() => { setCleared(false); setClearing(true); }}>
+          Clear the list
+        </button>
+      }
+    >
+      {body}
+      <p role="status" className="mt-4 text-[14px] text-ink-2 empty:hidden">{cleared ? "The list is empty." : ""}</p>
+      <Confirm
+        open={clearing}
+        onOpenChange={setClearing}
+        title="Clear the list?"
+        description="Everyone on your list of people you played with is removed. It does not change anyone else’s list, and you can’t undo it."
+        confirmLabel="Clear the list"
+        danger
+        onConfirm={async () => {
+          await api.account.clearPlayedWith();
+          setCleared(true);
+        }}
+      />
+    </Card>
+  );
+}
+
 export function PrivacyPage() {
   const { api } = useAccount();
   const load = useCallback(() => api.account.privacy(), [api]);
@@ -910,6 +982,7 @@ export function PrivacyPage() {
         </Card>
         <PublicProfileCard />
         <AppearOfflineCard />
+        <PlayedWithCard />
       </div>
     </div>
   );

@@ -297,6 +297,29 @@ describe("http adapter", () => {
 		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
 	});
 
+	it("reads, sets and clears the played-with list on its own", async () => {
+		const { api, call } = setup((url, init) =>
+			url.endsWith("/session")
+				? json(view())
+				: init.method === "DELETE"
+					? json({ ok: true })
+					: json({ remember_played_with: init.method === "PUT" }),
+		);
+		expect(await api.account.playedWithRemember()).toBe(false);
+		expect(call(0).url).toBe("/web/api/v1/me/played-with/remember");
+		expect(await api.account.setPlayedWithRemember(true)).toBe(true);
+		const put = call(2);
+		expect(put.url).toBe("/web/api/v1/me/played-with/remember");
+		expect(put.init.method).toBe("PUT");
+		expect(JSON.parse(String(put.init.body))).toEqual({ remember_played_with: true });
+		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
+		await api.account.clearPlayedWith();
+		const del = call(3);
+		expect(del.url).toBe("/web/api/v1/me/played-with");
+		expect(del.init.method).toBe("DELETE");
+		expect(headersOf(del.init)["X-CSRF-Token"]).toBe("tok-1");
+	});
+
 	it("reads and sets the public profile switch", async () => {
 		const { api, call } = setup((url, init) =>
 			url.endsWith("/session") ? json(view()) : json({ public_profile: init.method === "PUT" }),

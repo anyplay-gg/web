@@ -242,6 +242,18 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 						public_profile: value,
 					})
 				).publicProfile,
+			playedWithRemember: async () =>
+				(await json<{ rememberPlayedWith: boolean }>("GET", "/me/played-with/remember"))
+					.rememberPlayedWith,
+			setPlayedWithRemember: async (value) =>
+				(
+					await json<{ rememberPlayedWith: boolean }>("PUT", "/me/played-with/remember", {
+						remember_played_with: value,
+					})
+				).rememberPlayedWith,
+			clearPlayedWith: async () => {
+				await json("DELETE", "/me/played-with", {});
+			},
 		},
 
 		security: {

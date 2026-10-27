@@ -6,8 +6,8 @@
 // and every player is asked to accept the terms again.
 export const LEGAL = {
   version: "2",
-  changed: "2026-10-25",
-  changedText: "25 October 2026",
+  changed: "2026-10-27",
+  changedText: "27 October 2026",
   minimumAge: 16,
 } as const;
 
