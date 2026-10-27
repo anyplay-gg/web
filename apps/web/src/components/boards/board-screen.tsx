@@ -12,7 +12,7 @@ import { LandingProviders } from "../landing/providers";
  * A board of best scores, read-only. The page knows a title ID, the board ID the game passed, handles,
  * scores and ranks, and nothing else: names, units and art of a game stay in the game's files. A
  * visitor sees the entries whose owners show their scores to everyone; a signed-in player also sees
- * their friends and their own line (network ADR 0040).
+ * their friends and their own line (network ADR 0041).
  */
 
 const VIEWS: { view: BoardView; word: string }[] = [
