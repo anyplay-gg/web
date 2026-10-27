@@ -2,6 +2,7 @@
 "use client";
 
 import { m } from "@anyplay/ui/motion";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Wordmark } from "../landing/header";
@@ -19,6 +20,7 @@ import { DitherField } from "../landing/shaders";
  * must not sit next to a player who is "online" only in the picture).
  */
 export function AuthShell({ children, toasts = true }: { children: ReactNode; toasts?: boolean }) {
+  const t = useTranslations("auth.shell");
   const { discord } = useSite();
   return (
     <LandingProviders>
@@ -29,27 +31,30 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
           </WhenVisible>
           <span className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_15%,rgb(11_10_9/0.85),transparent)]" />
           <div className="relative flex h-full flex-col justify-between p-12 xl:p-16">
-            <span className="display max-w-[11ch] pt-24 text-[clamp(2.75rem,1.2rem+3vw,4.25rem)] leading-[1.04]">
-              Play your games{" "}
-              <span className="-mb-[0.16em] inline-block bg-linear-to-b from-[#ffb487] to-[#ff7a3d] bg-clip-text pb-[0.16em] text-transparent">
-                together.
-              </span>
+            <span className="display max-w-[12ch] pt-24 text-[clamp(2.75rem,1.2rem+3vw,4.25rem)] leading-[1.04] [overflow-wrap:anywhere]">
+              {t.rich("promise", {
+                accent: (chunks) => (
+                  <span className="-mb-[0.16em] inline-block bg-linear-to-b from-[#ffb487] to-[#ff7a3d] bg-clip-text pb-[0.16em] text-transparent">
+                    {chunks}
+                  </span>
+                ),
+              })}
             </span>
             {toasts && (
               <div className={`grid justify-items-start gap-3 text-white ${launcherFont}`}>
                 {(
                   [
-                    ["userCircle", "mira is online"],
-                    ["users", "kit joined your party"],
-                    ["trophyFill", "Trophy earned · Into the Ember"],
+                    ["userCircle", t("toastOnline")],
+                    ["users", t("toastParty")],
+                    ["trophyFill", t("toastTrophy")],
                   ] as const
                 ).map(([icon, text], i) => (
                   <m.div
-                    key={text}
+                    key={icon}
                     initial={{ opacity: 0, y: 14, scale: 0.97 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ type: "spring", duration: 0.6, bounce: 0.2, delay: 0.5 + i * 0.35 }}
-                    style={{ marginLeft: i * 28 }}
+                    style={{ marginInlineStart: i * 28 }}
                   >
                     <Toast icon={icon}>{text}</Toast>
                   </m.div>
@@ -60,15 +65,15 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
         </aside>
 
         <div className="flex min-h-dvh flex-col px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-          <header className="mx-auto flex min-h-20 w-full max-w-[400px] items-center justify-between lg:max-w-none">
-            <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
+          <header className="mx-auto flex min-h-20 w-full max-w-[400px] items-center justify-between gap-4 lg:max-w-none">
+            <Link href="/" aria-label={t("home")} className="-mx-2 inline-flex min-h-11 shrink-0 items-center rounded-full px-2">
               <Wordmark />
             </Link>
             <Link
               href="/"
-              className="inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+              className="inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 py-1.5 text-end text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
             >
-              Back to the start
+              {t("back")}
             </Link>
           </header>
           <main id="main" className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-12">
@@ -77,24 +82,24 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
           <footer className="mx-auto w-full max-w-[400px] pb-8 text-[13px] text-ink-3">
             {discord && (
               <p>
-                Need help?{" "}
+                {t("help")}{" "}
                 <a href={discord} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-                  Ask on Discord
+                  {t("helpLink")}
                 </a>
               </p>
             )}
-            <nav aria-label="Legal">
+            <nav aria-label={t("legalNav")}>
               <ul className="flex flex-wrap gap-x-6">
                 {(
                   [
-                    ["Legal notice", LINKS.legal],
-                    ["Privacy notice", LINKS.privacy],
-                    ["Terms of use", LINKS.terms],
+                    ["legalNotice", LINKS.legal],
+                    ["privacyNotice", LINKS.privacy],
+                    ["termsOfUse", LINKS.terms],
                   ] as const
                 ).map(([label, href]) => (
                   <li key={label}>
-                    <a href={href} className="inline-flex min-h-11 items-center text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-                      {label}
+                    <a href={href} className="inline-flex min-h-11 items-center py-1 text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
+                      {t(label)}
                     </a>
                   </li>
                 ))}

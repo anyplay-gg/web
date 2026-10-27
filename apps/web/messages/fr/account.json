@@ -1,1 +1,461 @@
-{}
+{
+  "ui": {
+    "never": "jamais",
+    "on": "Activé",
+    "off": "Désactivé",
+    "cancel": "Annuler",
+    "working": "En cours…",
+    "typeToConfirm": "Saisis {word} pour confirmer",
+    "audience": {
+      "everyone": "Tout le monde",
+      "friends": "Amis",
+      "nobody": "Moi seul"
+    },
+    "stepUp": {
+      "title": "Confirme que c’est toi",
+      "needed": "Ce changement demande une connexion récente. Elle reste valable 15 minutes.",
+      "sent": "Nous avons envoyé un code à 6 chiffres à {hint}.",
+      "passkey": "Utiliser ta passkey",
+      "sending": "Envoi…",
+      "sendCode": "Envoyer un code par e-mail"
+    }
+  },
+  "shell": {
+    "home": "AnyPlay, accueil",
+    "signOut": "Se déconnecter",
+    "nav": "Compte",
+    "nav_overview": "Aperçu",
+    "nav_profile": "Profil",
+    "nav_friends": "Amis",
+    "nav_trophies": "Trophées",
+    "nav_security": "Sécurité",
+    "nav_notifications": "Notifications",
+    "nav_privacy": "Confidentialité",
+    "nav_connections": "Connexions",
+    "nav_data": "Tes données",
+    "unreachable": "Impossible de joindre AnyPlay. Vérifie ta connexion et <retry>réessaie</retry>.",
+    "loading": "Chargement"
+  },
+  "level": {
+    "top": "Niveau maximal atteint",
+    "toNext": "{count, plural, one {# point} other {# points}} pour le niveau {level}",
+    "level": "Niveau {level}",
+    "points": "{count, plural, one {# point} other {# points}}",
+    "progress": "Progression du niveau",
+    "progressTo": "Progression vers le niveau {level}"
+  },
+  "meta": {
+    "title": "Ton compte",
+    "template": "%s · Ton compte · AnyPlay"
+  },
+  "state": {
+    "loading": "Chargement",
+    "tryAgain": "Réessayer"
+  },
+  "overview": {
+    "label": "Ton compte",
+    "memberSince": "Membre depuis le {date}",
+    "appearingOffline": "Tu apparais hors ligne",
+    "deletion": "Ton compte sera supprimé le {date}. <keep>Garder mon compte</keep>",
+    "passkeys": "{count, plural, one {# clé d’accès} other {# clés d’accès}}",
+    "noPasskey": "Pas encore de clé d’accès",
+    "launchersBrowsers": "{launchers, plural, one {# launcher} other {# launchers}} · {browsers, plural, one {# navigateur} other {# navigateurs}}",
+    "trophiesAudience": "Trophées : {audience}",
+    "pictureAudience": "Photo de profil : {audience}",
+    "audience": {
+      "everyone": "Tout le monde",
+      "friends": "Amis",
+      "nobody": "Toi seul"
+    },
+    "audienceInline": {
+      "everyone": "tout le monde",
+      "friends": "amis",
+      "nobody": "toi seul"
+    },
+    "linked": "{count} liés",
+    "nothingLinked": "Rien de lié",
+    "connectionsDetail": "Discord, Steam",
+    "dataValue": "Exporter ou supprimer",
+    "dataDetail": "Tout ce que nous gardons sur toi",
+    "launcher": {
+      "title": "Récupère le launcher",
+      "description": "Connecte-toi au launcher avec ce compte, et tes amis, ta party et tes trophées y sont."
+    }
+  },
+  "profile": {
+    "lead": "Ce que tes amis voient quand ils ouvrent ton profil. Qui voit chaque partie, tu le choisis sur la page Confidentialité.",
+    "avatar": {
+      "title": "Photo",
+      "description": "PNG ou JPEG, jusqu’à 1 Mo. Elle s’affiche en rond, alors garde le visage au centre.",
+      "uploading": "Envoi…",
+      "change": "Changer la photo",
+      "upload": "Envoyer une photo",
+      "remove": "Retirer"
+    },
+    "about": {
+      "title": "À propos",
+      "description": "Une ou deux lignes sur toi : à quoi tu joues, quand tu es là.",
+      "placeholder": "En coop quand je peux, en solo sinon.",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "save": "Enregistrer"
+    },
+    "favourites": {
+      "title": "Jeux favoris",
+      "description": "Jusqu’à {max}, par ID de titre. Ce site affiche l’ID. Le launcher affiche le nom de chaque jeu à partir de ta propre copie.",
+      "empty": "Pas encore de jeux favoris. Ajoute un ID de titre ci-dessous.",
+      "listLabel": "Tes jeux favoris",
+      "remove": "Retirer {id}",
+      "fieldLabel": "ID de titre",
+      "full": "Tu as {max} jeux. Retire-en un pour en ajouter un autre.",
+      "add": "Ajouter un jeu",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "save": "Enregistrer",
+      "badId": "Utilise uniquement des lettres, des chiffres, des traits d’union et des tirets bas.",
+      "duplicate": "{id} est déjà dans la liste."
+    }
+  },
+  "security": {
+    "lead": "Comment tu te connectes, et chaque launcher et navigateur connecté à ton compte.",
+    "email": {
+      "title": "E-mail",
+      "description": "L’adresse où arrivent tes codes de connexion. Pour la changer, il faut un code envoyé à la nouvelle adresse.",
+      "change": "Changer",
+      "invalid": "Saisis la nouvelle adresse, par exemple nom@exemple.com.",
+      "done": "Ton adresse de connexion est maintenant {email}.",
+      "newAddress": "Nouvelle adresse",
+      "sending": "Envoi…",
+      "send": "Envoyer le code",
+      "cancel": "Annuler",
+      "sentTo": "Nous avons envoyé un code à 6 chiffres à <b>{email}</b>."
+    },
+    "passkeys": {
+      "title": "Clés d’accès",
+      "description": "Connecte-toi avec ton empreinte, ton visage ou le code PIN de l’appareil au lieu d’un code. Personne ne peut hameçonner une clé d’accès.",
+      "add": "Ajouter une clé d’accès",
+      "waiting": "En attente de ton appareil…",
+      "detail": "Ajoutée {added} · Dernière utilisation : {used}",
+      "remove": "Retirer",
+      "empty": "Pas encore de clé d’accès. Ajoutes-en une et te connecter ne prend qu’une touche, au lieu d’un code par e-mail.",
+      "full": "Tu as le maximum de clés d’accès qu’un compte peut garder ({max}). Retires-en une pour en ajouter une autre.",
+      "confirmTitle": "Retirer cette clé d’accès ?",
+      "confirmDescription": "Cet appareil ne pourra plus te connecter avec elle. Tu peux toujours te connecter avec un code par e-mail.",
+      "confirmLabel": "Retirer la clé d’accès",
+      "defaultName": "Clé d’accès sur {system}",
+      "thisDevice": "cet appareil"
+    },
+    "devices": {
+      "title": "Launchers",
+      "description": "Chaque PC où le launcher est connecté à ton compte.",
+      "detail": "{platform} · Dernière utilisation : {used}",
+      "signOut": "Se déconnecter",
+      "empty": "Aucun launcher n’est encore connecté.",
+      "confirmTitle": "Déconnecter ce launcher ?",
+      "confirmDescription": "Il passe hors ligne jusqu’à ce que quelqu’un se reconnecte sur ce PC.",
+      "confirmLabel": "Déconnecter le launcher"
+    },
+    "browsers": {
+      "title": "Navigateurs",
+      "description": "Chaque navigateur connecté à cette page de compte. Nous ne gardons rien d’autre à leur sujet que le moment où ils ont servi.",
+      "thisBrowser": "Ce navigateur",
+      "here": "Tu es ici",
+      "other": "Autre navigateur",
+      "detail": "Connecté {created} · Dernière utilisation : {used}",
+      "signOut": "Se déconnecter",
+      "confirmThisTitle": "Se déconnecter de ce navigateur ?",
+      "confirmOtherTitle": "Déconnecter ce navigateur ?",
+      "confirmThisDescription": "Tu reviens à l’accueil et tu te reconnectes la prochaine fois.",
+      "confirmOtherDescription": "Il doit se reconnecter pour ouvrir ton compte.",
+      "confirmLabel": "Se déconnecter"
+    },
+    "everywhere": {
+      "title": "Se déconnecter partout",
+      "description": "Chaque launcher et chaque navigateur, celui-ci compris. Utilise-le si un appareil est perdu ou si quelqu’un d’autre a pu se connecter.",
+      "button": "Se déconnecter partout",
+      "confirmTitle": "Se déconnecter partout ?",
+      "confirmDescription": "Chaque launcher et chaque navigateur est déconnecté d’un coup, celui-ci compris.",
+      "confirmLabel": "Se déconnecter partout"
+    }
+  },
+  "privacy": {
+    "lead": "Qui voit ton profil et ton activité. Ton nom est toujours visible, pour que tes amis puissent te trouver.",
+    "profile": {
+      "title": "Ton profil",
+      "description": "Les changements comptent tout de suite, dans le launcher aussi."
+    },
+    "parts": {
+      "trophies": {
+        "title": "Trophées",
+        "detail": "Ton nombre de trophées, tes points et ton niveau"
+      },
+      "playtime": {
+        "title": "Temps de jeu",
+        "detail": "Combien de temps tu as joué, par jeu"
+      },
+      "about": {
+        "title": "À propos",
+        "detail": "La ligne de ton profil"
+      },
+      "favourites": {
+        "title": "Jeux favoris",
+        "detail": "Jusqu’à trois jeux que tu épingles"
+      },
+      "avatar": {
+        "title": "Photo",
+        "detail": "Ta photo de profil"
+      }
+    },
+    "whoSees": "Qui voit : {part}",
+    "activity": {
+      "title": "Ton activité",
+      "description": "Ce que tu fais sur AnyPlay, tel que tes amis le voient dans leur fil.",
+      "row": "Activité",
+      "detail": "Tes amis la voient dans leur fil. Les inconnus ne voient aucun fil. {nobody} masque ce qui s’y trouve et arrête les nouveaux éléments."
+    },
+    "appearOffline": {
+      "title": "Statut en ligne",
+      "description": "S’applique à chaque launcher et navigateur connecté à ton compte.",
+      "label": "Apparaître hors ligne",
+      "detail": "Tes amis te voient hors ligne. Tu peux quand même jouer, discuter et rejoindre."
+    },
+    "publicProfile": {
+      "title": "Profil public",
+      "description": "Désactivé tant que tu ne l’actives pas. S’applique à chaque launcher et navigateur connecté à ton compte.",
+      "label": "Afficher un profil public",
+      "detail": "Toute personne qui a le lien voit ton niveau, tes trophées et les jeux auxquels tu as joué. Il n’indique jamais si tu es en ligne.",
+      "page": "Ta page : <link>{url}</link>"
+    },
+    "playedWith": {
+      "title": "Joué récemment avec",
+      "description": "Si tu le désactives, personne de nouveau n’est ajouté. La liste reste jusqu’à ce que tu la vides.",
+      "label": "Retenir avec qui je joue",
+      "detail": "Garde pendant 30 jours les personnes avec qui tu as partagé une party ou une session de jeu, jusqu’à 50. Toi seul vois la liste.",
+      "clear": "Vider la liste",
+      "cleared": "La liste est vide.",
+      "confirmTitle": "Vider la liste ?",
+      "confirmDescription": "Tout le monde est retiré de ta liste des personnes avec qui tu as joué. La liste des autres ne change pas, et tu ne peux pas annuler."
+    }
+  },
+  "connections": {
+    "lead": "Lie les comptes avec lesquels tu joues déjà, pour que tes amis te trouvent et voient où tu es aussi.",
+    "result": {
+      "linked": "{name} est lié à ton compte.",
+      "denied": "{name} n’a pas été lié : la demande a été refusée là-bas.",
+      "expired": "La liaison de {name} a pris trop de temps. Recommence.",
+      "fresh": "La liaison de {name} demande une connexion récente. Recommence et confirme que c’est bien toi.",
+      "taken": "Ce compte {name} est déjà lié à un autre compte AnyPlay.",
+      "exists": "Tu as déjà un compte {name} lié. Dissocie-le d’abord.",
+      "failed": "La liaison de {name} a échoué. Réessaie dans une minute."
+    },
+    "whoSees": "Qui voit ton compte {name}",
+    "linkedAgo": "Lié {ago}",
+    "unlink": "Dissocier",
+    "link": "Lier {name}",
+    "opening": "Ouverture…",
+    "soon": "Bientôt",
+    "notLinked": "Non lié",
+    "arrivesSoon": "La liaison arrive bientôt",
+    "confirmTitle": "Dissocier {name} ?",
+    "confirmDescription": "Ton compte {name} n’apparaît plus sur ton profil. Tu peux le lier de nouveau quand tu veux.",
+    "confirmLabel": "Dissocier {name}"
+  },
+  "data": {
+    "lead": "Tout ce qu’AnyPlay garde sur toi est à toi : prends-en une copie, ou supprime le compte.",
+    "export": {
+      "title": "Télécharger tes données",
+      "description": "Ton compte, ton profil, tes amis, tes trophées, ton temps de jeu et tes comptes liés, dans un seul fichier JSON.",
+      "preparing": "Préparation…",
+      "button": "Télécharger"
+    },
+    "scheduled": {
+      "title": "Suppression programmée",
+      "description": "Ton compte et tout ce qu’il contient seront supprimés le {date}. D’ici là, tu peux le garder.",
+      "keep": "Garder mon compte"
+    },
+    "delete": {
+      "title": "Supprimer ton compte",
+      "description": "Ton compte est supprimé au bout de 30 jours ; d’ici là, tu peux changer d’avis. Ensuite, il a disparu, avec tes amis, tes trophées et ton temps de jeu.",
+      "button": "Supprimer le compte"
+    },
+    "confirm": {
+      "title": "Supprimer ton compte ?",
+      "description": "Il est supprimé dans 30 jours. Chaque launcher et chaque navigateur est déconnecté maintenant."
+    }
+  },
+  "compare": {
+    "title": "Comparer les trophées",
+    "description": "Tes trophées à côté de ceux de {handle}.",
+    "descriptionShared": "Toi et {handle}, dans un jeu que vous avez tous les deux.",
+    "signInDescription": "Vois comment tes trophées se comparent à ceux de {handle}.",
+    "signIn": "Connecte-toi pour comparer les trophées",
+    "hidden": "Les trophées de {handle} ne sont pas disponibles pour la comparaison.",
+    "loading": "Chargement",
+    "loadingComparison": "Chargement de la comparaison",
+    "empty": "Toi et {handle}, vous n’avez pas encore de jeu en commun. Joue à un jeu auquel {handle} a joué et il apparaîtra ici.",
+    "game": "Jeu",
+    "gameNamed": "Jeu <id>{title}</id>",
+    "verdictNone": "Aucun de vous n’a encore obtenu de trophée dans ce jeu.",
+    "verdictLevel": "Vous êtes à égalité de points dans ce jeu.",
+    "verdictAhead": "Tu as {count, plural, one {# point} other {# points}} d’avance dans ce jeu.",
+    "verdictBehind": "{handle} a {count, plural, one {# point} other {# points}} d’avance dans ce jeu.",
+    "caption": "Trophées dans {titleId} : toi à côté de {handle}",
+    "stat": "Catégorie",
+    "you": "Toi",
+    "ahead": "(devant)",
+    "rowTrophies": "Trophées",
+    "rowPoints": "Points dans ce jeu",
+    "rowLevel": "Niveau global",
+    "grade": {
+      "platinum": "Platine",
+      "gold": "Or",
+      "silver": "Argent",
+      "bronze": "Bronze"
+    },
+    "both": "Obtenus par les deux",
+    "onlyYou": "Toi seul",
+    "onlyThem": "{handle} seul"
+  },
+  "publicProfile": {
+    "home": "AnyPlay, accueil",
+    "yourAccount": "Ton compte",
+    "signIn": "Se connecter",
+    "loading": "Chargement",
+    "missingTitle": "Aucun joueur nommé {handle}",
+    "missingBody": "Vérifie l’orthographe du pseudo ou demande au joueur de te le renvoyer.",
+    "goHome": "Aller sur AnyPlay",
+    "player": "Joueur",
+    "trophies": "Trophées",
+    "trophiesEarned": "{count, number} obtenus.",
+    "noTrophies": "{handle} n’a pas encore obtenu de trophée.",
+    "favourites": "Jeux favoris",
+    "favouritesNote": "Affichés par ID de titre.",
+    "game": "Jeu",
+    "connections": "Connexions",
+    "playtime": "Jeux joués",
+    "playtimeNote": "{count, plural, one {# jeu} other {# jeux}}, {total} au total.",
+    "nothing": "Il n’y a encore rien d’autre à montrer de {handle}.",
+    "openProfile": "Ouvrir le profil",
+    "openProfileOn": "sur {brand} (s’ouvre dans un nouvel onglet)",
+    "signInToAdd": "Connecte-toi pour ajouter {handle}",
+    "editProfile": "Modifier ton profil",
+    "blocked": "Bloqué",
+    "friends": "Amis",
+    "requestSent": "Demande envoyée",
+    "accepting": "Acceptation…",
+    "accept": "Accepter la demande",
+    "sending": "Envoi…",
+    "addFriend": "Ajouter un ami",
+    "addInAnyPlay": "Ajouter un ami dans AnyPlay",
+    "minutes": "{n} min",
+    "hours": "{n} h"
+  },
+  "friends": {
+    "title": "Amis",
+    "lead": "Ajoute les personnes avec qui tu joues, réponds aux demandes et décide qui reste dehors.",
+    "add": {
+      "title": "Ajouter un ami",
+      "description": "Saisis le nom d’un joueur pour lui envoyer une demande.",
+      "handle": "Nom",
+      "hint": "Son nom, avec ou sans le @.",
+      "send": "Envoyer la demande",
+      "sending": "Envoi…",
+      "enterHandle": "Saisis le nom du joueur que tu veux ajouter.",
+      "nowFriends": "Toi et @{handle} êtes maintenant amis.",
+      "sent": "Demande envoyée à @{handle}. Vous serez amis dès qu’elle sera acceptée."
+    },
+    "requests": {
+      "title": "Demandes",
+      "description": "Les joueurs qui veulent devenir tes amis et les demandes que tu as envoyées.",
+      "empty": "Aucune demande en cours. Quand quelqu’un t’ajoute, la demande apparaît ici.",
+      "received": "Reçues",
+      "sent": "Envoyées",
+      "receivedAgo": "Reçue {when}",
+      "sentAgo": "Envoyée {when}",
+      "decline": "Refuser",
+      "accept": "Accepter",
+      "withdraw": "Retirer"
+    },
+    "list": {
+      "title": "Tes amis",
+      "description": "Vois qui est en ligne et à quoi la personne joue.",
+      "empty": "Pas encore d’amis. Ajoute quelqu’un par son nom ci-dessus ; la personne apparaît ici une fois la demande acceptée.",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "playing": "Joue à {title}",
+      "block": "Bloquer",
+      "remove": "Retirer"
+    },
+    "blocked": {
+      "title": "Bloqués",
+      "description": "Les joueurs bloqués sont retirés de tes amis et de tes demandes.",
+      "empty": "Tu n’as bloqué personne. Bloque un joueur depuis ta liste d’amis quand tu en as besoin.",
+      "unblock": "Débloquer"
+    },
+    "confirm": {
+      "blockTitle": "Bloquer @{handle} ?",
+      "removeTitle": "Retirer @{handle} de tes amis ?",
+      "blockText": "Vous n’êtes plus amis et toute demande en cours est supprimée. Tu peux débloquer cette personne à tout moment.",
+      "removeText": "Vous ne verrez plus quand l’autre est en ligne. Tu pourras envoyer une nouvelle demande plus tard.",
+      "blockLabel": "Bloquer le joueur",
+      "removeLabel": "Retirer l’ami"
+    }
+  },
+  "trophies": {
+    "title": "Trophées",
+    "lead": "Ce que tu as obtenu dans tes jeux. AnyPlay garde des totaux par jeu et par niveau, jamais les noms ni les visuels des trophées.",
+    "totals": {
+      "title": "Totaux",
+      "description": "{total} obtenus dans {games, plural, one {# jeu} other {# jeux}}.",
+      "empty": "Pas encore de trophées. Joue à un jeu avec AnyPlay et ceux que tu obtiens sont comptés ici."
+    },
+    "byGame": {
+      "title": "Par jeu",
+      "description": "Les jeux sont classés par ID de titre, les plus récents d’abord.",
+      "detail": "{earned, plural, one {# trophée} other {# trophées}} · dernier obtenu : {when}"
+    },
+    "grades": {
+      "platinum": "Platine",
+      "gold": "Or",
+      "silver": "Argent",
+      "bronze": "Bronze"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "lead": "Reçois une notification sur cet appareil quand un ami t’envoie une demande, t’invite dans une party ou t’écrit.",
+    "device": {
+      "title": "Cet appareil",
+      "description": "Chaque navigateur ou téléphone se règle séparément. Active l’option là où tu veux être prévenu.",
+      "notEnabled": "Ce cloud n’envoie pas de notifications.",
+      "checking": "Vérification de cet appareil…",
+      "unsupported": "Ce navigateur ne peut pas recevoir de notifications. Utilise une version récente de Chrome, Edge, Firefox ou Safari.",
+      "needsInstall": "Sur iPhone et iPad, les notifications demandent qu’AnyPlay soit sur ton écran d’accueil. Touche Partager, choisis Sur l’écran d’accueil, puis ouvre AnyPlay depuis là.",
+      "blocked": "Les notifications sont bloquées pour ce site. Autorise-les dans les réglages du site de ton navigateur, puis reviens.",
+      "switch": "Notifier cet appareil",
+      "others": "{count, plural, one {Un autre appareil reçoit aussi les notifications. Désactive-les sur cet appareil.} other {# autres appareils reçoivent aussi les notifications. Désactive-les sur ces appareils.}}"
+    },
+    "kinds": {
+      "title": "Sujets des notifications",
+      "description": "Pour cet appareil uniquement.",
+      "friend_request": {
+        "label": "Demandes d’ami",
+        "detail": "Quelqu’un veut devenir ton ami."
+      },
+      "party_invite": {
+        "label": "Invitations à une party",
+        "detail": "Un ami t’invite dans une party."
+      },
+      "message": {
+        "label": "Messages",
+        "detail": "Un ami t’écrit. Le message lui-même n’apparaît pas dans la notification."
+      }
+    },
+    "errors": {
+      "timeout": "Le service de notifications de ton navigateur n’a pas répondu. Vérifie ta connexion et réessaie.",
+      "noKey": "Ce cloud n’a pas de clé pour envoyer des notifications.",
+      "lostSubscription": "Ce navigateur a perdu son abonnement. Désactive les notifications puis réactive-les.",
+      "notAllowed": "Ce navigateur n’a pas autorisé les notifications. Elles ne fonctionnent pas en navigation privée ; sinon, vérifie les réglages du site."
+    }
+  }
+}

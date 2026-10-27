@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type PortalApi, type PushDevice, type PushKind, type PushState, describeError, isApiError } from "@anyplay/api-client";
+import { type PortalApi, type PushDevice, type PushKind, type PushState, isApiError } from "@anyplay/api-client";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
+import { useDescribeError } from "@/i18n/errors";
 import { deviceLabel, keyBytes, pushSupport } from "@/lib/push";
 import { FormError } from "../auth/fields";
 import { Failed, Loading, useLoad } from "./pages";
@@ -16,11 +18,6 @@ import { Card, CheckRow, Notice, PageTitle, Switch } from "./ui";
  */
 
 const ALL: PushKind[] = ["friend_request", "party_invite", "message"];
-const KINDS: { kind: PushKind; label: string; detail: string }[] = [
-  { kind: "friend_request", label: "Friend requests", detail: "Someone asks to be your friend." },
-  { kind: "party_invite", label: "Party invitations", detail: "A friend invites you to a party." },
-  { kind: "message", label: "Messages", detail: "A friend writes to you. The message itself stays out of the notification." },
-];
 
 /** What this browser can do right now, apart from what the person chose. */
 type Here =
@@ -63,9 +60,9 @@ function toInput(sub: PushSubscription, kinds?: PushKind[]) {
 }
 
 /** The browser's push service can hang when it cannot be reached; say so instead of waiting for ever. */
-function withTimeout<T>(work: Promise<T>, ms = 20_000): Promise<T> {
+function withTimeout<T>(work: Promise<T>, message: string, ms = 20_000): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("Your browser’s notification service did not answer. Check your connection and try again.")), ms);
+    const timer = setTimeout(() => reject(new Error(message)), ms);
     work.then(
       (v) => {
         clearTimeout(timer);
@@ -80,14 +77,19 @@ function withTimeout<T>(work: Promise<T>, ms = 20_000): Promise<T> {
 }
 
 /** An API error says what happened in its own words; anything else here is a browser error. */
-const say = (e: unknown) => {
-  if (isApiError(e)) return describeError(e);
-  // The browser says no without a reason; a private window is the usual one.
-  if (e instanceof DOMException && e.name === "NotAllowedError") return "This browser did not allow notifications. They don’t work in a private window; otherwise check the site settings.";
-  return e instanceof Error ? e.message : describeError(e);
-};
+function useSay(): (e: unknown) => string {
+  const t = useTranslations("account.notifications.errors");
+  const describeError = useDescribeError();
+  return (e) => {
+    if (isApiError(e)) return describeError(e);
+    // The browser says no without a reason; a private window is the usual one.
+    if (e instanceof DOMException && e.name === "NotAllowedError") return t("notAllowed");
+    return e instanceof Error ? e.message : describeError(e);
+  };
+}
 
 export function NotificationsPage() {
+  const t = useTranslations("account.notifications");
   const { api } = useAccount();
   const load = useCallback(() => api.push.get(), [api]);
   const { data, error, reload, setData } = useLoad<PushState>(load);
@@ -95,13 +97,15 @@ export function NotificationsPage() {
   if (!data) return <Loading />;
   return (
     <div>
-      <PageTitle title="Notifications" lead="Get a notification on this device when a friend asks to be your friend, invites you to a party or writes to you." />
+      <PageTitle title={t("title")} lead={t("lead")} />
       <Device api={api} state={data} onState={setData} />
     </div>
   );
 }
 
 function Device({ api, state, onState }: { api: PortalApi; state: PushState; onState: (s: PushState) => void }) {
+  const t = useTranslations("account.notifications");
+  const say = useSay();
   const [here, setHere] = useState<Here>({ status: "checking" });
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -152,10 +156,10 @@ function Device({ api, state, onState }: { api: PortalApi; state: PushState; onS
         setHere({ status: permission === "denied" ? "blocked" : "off" });
         return;
       }
-      if (!state.publicKey) throw new Error("This cloud has no key to send notifications with.");
+      if (!state.publicKey) throw new Error(t("errors.noKey"));
       const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       await navigator.serviceWorker.ready;
-      const sub = (await reg.pushManager.getSubscription()) ?? (await withTimeout(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(state.publicKey) })));
+      const sub = (await reg.pushManager.getSubscription()) ?? (await withTimeout(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(state.publicKey) }), t("errors.timeout")));
       try {
         const device = await api.push.subscribe(toInput(sub));
         storeId(device.id);
@@ -199,7 +203,7 @@ function Device({ api, state, onState }: { api: PortalApi; state: PushState; onS
     setProblem(null);
     try {
       const sub = await currentSubscription();
-      if (!sub) throw new Error("This browser lost its subscription. Turn notifications off and on again.");
+      if (!sub) throw new Error(t("errors.lostSubscription"));
       replace(await api.push.subscribe(toInput(sub, kinds)));
     } catch (e) {
       setHere(before);
@@ -211,22 +215,22 @@ function Device({ api, state, onState }: { api: PortalApi; state: PushState; onS
 
   return (
     <div className="grid gap-6">
-      <Card title="This device" description="Each browser or phone is set up on its own. Turn this on where you want to be notified.">
+      <Card title={t("device.title")} description={t("device.description")}>
         {!state.enabled ? (
-          <Notice>This cloud does not send notifications.</Notice>
+          <Notice>{t("device.notEnabled")}</Notice>
         ) : here.status === "checking" ? (
           <p role="status" className="text-[14px] text-ink-3">
-            Checking this device…
+            {t("device.checking")}
           </p>
         ) : here.status === "unsupported" ? (
-          <Notice>This browser can’t receive notifications. Use a current Chrome, Edge, Firefox or Safari.</Notice>
+          <Notice>{t("device.unsupported")}</Notice>
         ) : here.status === "needs-install" ? (
-          <Notice>On iPhone and iPad, notifications need AnyPlay on your Home Screen. Tap Share, choose Add to Home Screen, then open AnyPlay from there.</Notice>
+          <Notice>{t("device.needsInstall")}</Notice>
         ) : here.status === "blocked" ? (
-          <Notice tone="warn">Notifications are blocked for this site. Allow them in your browser’s site settings, then come back.</Notice>
+          <Notice tone="warn">{t("device.blocked")}</Notice>
         ) : (
           <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
-            <Switch label="Notify this device" checked={here.status === "on"} disabled={busy} onChange={(on) => void (on ? turnOn() : turnOff())} />
+            <Switch label={t("device.switch")} checked={here.status === "on"} disabled={busy} onChange={(on) => void (on ? turnOn() : turnOff())} />
           </div>
         )}
         {problem && (
@@ -236,21 +240,21 @@ function Device({ api, state, onState }: { api: PortalApi; state: PushState; onS
         )}
         {here.status === "on" && others > 0 && (
           <p className="mt-4 text-[13px] text-ink-3">
-            {others === 1 ? "One other device also gets" : `${others} other devices also get`} notifications. Turn them off on that device.
+            {t("device.others", { count: others })}
           </p>
         )}
       </Card>
 
       {here.status === "on" && (
-        <Card title="What to notify about" description="For this device only.">
+        <Card title={t("kinds.title")} description={t("kinds.description")}>
           <ul className="divide-y divide-white/[0.06] rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
-            {KINDS.map((k) => (
-              <li key={k.kind}>
+            {ALL.map((kind) => (
+              <li key={kind}>
                 <CheckRow
-                  label={k.label}
-                  detail={k.detail}
-                  checked={here.kinds.includes(k.kind)}
-                  onChange={(on) => void setKinds(ALL.filter((x) => (x === k.kind ? on : here.kinds.includes(x))))}
+                  label={t(`kinds.${kind}.label`)}
+                  detail={t(`kinds.${kind}.detail`)}
+                  checked={here.kinds.includes(kind)}
+                  onChange={(on) => void setKinds(ALL.filter((x) => (x === kind ? on : here.kinds.includes(x))))}
                 />
               </li>
             ))}

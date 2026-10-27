@@ -1,1 +1,461 @@
-{}
+{
+  "ui": {
+    "never": "never",
+    "on": "On",
+    "off": "Off",
+    "cancel": "Cancel",
+    "working": "Working…",
+    "typeToConfirm": "Type {word} to confirm",
+    "audience": {
+      "everyone": "Everyone",
+      "friends": "Friends",
+      "nobody": "Only me"
+    },
+    "stepUp": {
+      "title": "Confirm it’s you",
+      "needed": "This change needs a recent sign-in. It lasts 15 minutes.",
+      "sent": "We sent a 6-digit code to {hint}.",
+      "passkey": "Use your passkey",
+      "sending": "Sending…",
+      "sendCode": "Send a code by e-mail"
+    }
+  },
+  "shell": {
+    "home": "AnyPlay, home",
+    "signOut": "Sign out",
+    "nav": "Account",
+    "nav_overview": "Overview",
+    "nav_profile": "Profile",
+    "nav_friends": "Friends",
+    "nav_trophies": "Trophies",
+    "nav_security": "Security",
+    "nav_notifications": "Notifications",
+    "nav_privacy": "Privacy",
+    "nav_connections": "Connections",
+    "nav_data": "Your data",
+    "unreachable": "Can’t reach AnyPlay. Check your connection and <retry>try again</retry>.",
+    "loading": "Loading"
+  },
+  "level": {
+    "top": "Top level reached",
+    "toNext": "{count, plural, one {# point} other {# points}} to level {level}",
+    "level": "Level {level}",
+    "points": "{count, plural, one {# point} other {# points}}",
+    "progress": "Level progress",
+    "progressTo": "Progress to level {level}"
+  },
+  "meta": {
+    "title": "Your account",
+    "template": "%s · Your account · AnyPlay"
+  },
+  "state": {
+    "loading": "Loading",
+    "tryAgain": "Try again"
+  },
+  "overview": {
+    "label": "Your account",
+    "memberSince": "Member since {date}",
+    "appearingOffline": "Appearing offline",
+    "deletion": "Your account will be deleted on {date}. <keep>Keep my account</keep>",
+    "passkeys": "{count, plural, one {# passkey} other {# passkeys}}",
+    "noPasskey": "No passkey yet",
+    "launchersBrowsers": "{launchers, plural, one {# launcher} other {# launchers}} · {browsers, plural, one {# browser} other {# browsers}}",
+    "trophiesAudience": "Trophies: {audience}",
+    "pictureAudience": "Profile picture: {audience}",
+    "audience": {
+      "everyone": "Everyone",
+      "friends": "Friends",
+      "nobody": "Only you"
+    },
+    "audienceInline": {
+      "everyone": "everyone",
+      "friends": "friends",
+      "nobody": "only you"
+    },
+    "linked": "{count} linked",
+    "nothingLinked": "Nothing linked",
+    "connectionsDetail": "Discord, Steam",
+    "dataValue": "Export or delete",
+    "dataDetail": "Everything we keep about you",
+    "launcher": {
+      "title": "Get the launcher",
+      "description": "Sign in to the launcher with this account, and your friends, parties and trophies are there."
+    }
+  },
+  "profile": {
+    "lead": "What your friends see when they open your profile. Who sees each part is up to you on the Privacy page.",
+    "avatar": {
+      "title": "Picture",
+      "description": "PNG or JPEG, up to 1 MB. It shows round, so keep the face in the middle.",
+      "uploading": "Uploading…",
+      "change": "Change picture",
+      "upload": "Upload picture",
+      "remove": "Remove"
+    },
+    "about": {
+      "title": "About",
+      "description": "A line or two about you: what you play, when you're around.",
+      "placeholder": "Co-op when I can, solo when I can't.",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "save": "Save"
+    },
+    "favourites": {
+      "title": "Favourite games",
+      "description": "Up to {max}, by title ID. This site shows the ID. The launcher shows each game's name from your own copy.",
+      "empty": "No favourite games yet. Add a title ID below.",
+      "listLabel": "Your favourite games",
+      "remove": "Remove {id}",
+      "fieldLabel": "Title ID",
+      "full": "You have {max} games. Remove one to add another.",
+      "add": "Add game",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "save": "Save",
+      "badId": "Use only letters, numbers, hyphens and underscores.",
+      "duplicate": "{id} is on the list already."
+    }
+  },
+  "security": {
+    "lead": "How you sign in, and every launcher and browser that is signed in to your account.",
+    "email": {
+      "title": "E-mail",
+      "description": "Where your sign-in codes go. Changing it needs a code sent to the new address.",
+      "change": "Change",
+      "invalid": "Enter the new address, like name@example.com.",
+      "done": "Your sign-in address is now {email}.",
+      "newAddress": "New address",
+      "sending": "Sending…",
+      "send": "Send code",
+      "cancel": "Cancel",
+      "sentTo": "We sent a 6-digit code to <b>{email}</b>."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Sign in with your fingerprint, face or device PIN instead of a code. Nobody can phish a passkey.",
+      "add": "Add a passkey",
+      "waiting": "Waiting for your device…",
+      "detail": "Added {added} · Last used {used}",
+      "remove": "Remove",
+      "empty": "No passkey yet. Add one and signing in takes a touch instead of an e-mail code.",
+      "full": "You have the most passkeys an account can keep ({max}). Remove one to add another.",
+      "confirmTitle": "Remove this passkey?",
+      "confirmDescription": "That device can no longer sign you in with it. You can always sign in with a code by e-mail.",
+      "confirmLabel": "Remove passkey",
+      "defaultName": "Passkey on {system}",
+      "thisDevice": "this device"
+    },
+    "devices": {
+      "title": "Launchers",
+      "description": "Every PC where the launcher is signed in to your account.",
+      "detail": "{platform} · Last used {used}",
+      "signOut": "Sign out",
+      "empty": "No launcher is signed in yet.",
+      "confirmTitle": "Sign out this launcher?",
+      "confirmDescription": "It goes offline until someone signs in on that PC again.",
+      "confirmLabel": "Sign out launcher"
+    },
+    "browsers": {
+      "title": "Browsers",
+      "description": "Every browser signed in to this account page. We keep no more about them than when they were used.",
+      "thisBrowser": "This browser",
+      "here": "You are here",
+      "other": "Other browser",
+      "detail": "Signed in {created} · Last used {used}",
+      "signOut": "Sign out",
+      "confirmThisTitle": "Sign out of this browser?",
+      "confirmOtherTitle": "Sign out that browser?",
+      "confirmThisDescription": "You go back to the start and sign in again next time.",
+      "confirmOtherDescription": "It has to sign in again to open your account.",
+      "confirmLabel": "Sign out"
+    },
+    "everywhere": {
+      "title": "Sign out everywhere",
+      "description": "Every launcher and every browser, this one too. Use it when a device was lost or someone else might have signed in.",
+      "button": "Sign out everywhere",
+      "confirmTitle": "Sign out everywhere?",
+      "confirmDescription": "Every launcher and browser is signed out at once, this one too.",
+      "confirmLabel": "Sign out everywhere"
+    }
+  },
+  "privacy": {
+    "lead": "Who sees your profile and your activity. Your handle is always visible, so friends can find you.",
+    "profile": {
+      "title": "Your profile",
+      "description": "Changes count at once, in the launcher too."
+    },
+    "parts": {
+      "trophies": {
+        "title": "Trophies",
+        "detail": "Your trophy counts, points and level"
+      },
+      "playtime": {
+        "title": "Playtime",
+        "detail": "How long you played, per game"
+      },
+      "about": {
+        "title": "About",
+        "detail": "The line on your profile"
+      },
+      "favourites": {
+        "title": "Favourite games",
+        "detail": "Up to three games you pin"
+      },
+      "avatar": {
+        "title": "Picture",
+        "detail": "Your profile picture"
+      }
+    },
+    "whoSees": "Who sees: {part}",
+    "activity": {
+      "title": "Your activity",
+      "description": "What you do on AnyPlay, as your friends see it in their feed.",
+      "row": "Activity",
+      "detail": "Friends see it in their feed. Strangers see no feed. {nobody} hides what is there and stops new items."
+    },
+    "appearOffline": {
+      "title": "Online status",
+      "description": "Applies to every launcher and browser signed in to your account.",
+      "label": "Appear offline",
+      "detail": "Friends see you as offline. You can still play, chat and join."
+    },
+    "publicProfile": {
+      "title": "Public profile",
+      "description": "Off until you turn it on. Applies to every launcher and browser signed in to your account.",
+      "label": "Show a public profile",
+      "detail": "Anyone with the link sees your level, trophies and games played. It never shows whether you are online.",
+      "page": "Your page: <link>{url}</link>"
+    },
+    "playedWith": {
+      "title": "People you played with",
+      "description": "Turning it off adds no one new. The list stays until you clear it.",
+      "label": "Remember people I play with",
+      "detail": "Keeps the people you shared a party or game session with for 30 days, up to 50. Only you see the list.",
+      "clear": "Clear the list",
+      "cleared": "The list is empty.",
+      "confirmTitle": "Clear the list?",
+      "confirmDescription": "Everyone on your list of people you played with is removed. It does not change anyone else’s list, and you can’t undo it."
+    }
+  },
+  "connections": {
+    "lead": "Link the accounts you already play with, so friends can find you and see where else you are.",
+    "result": {
+      "linked": "{name} is linked to your account.",
+      "denied": "{name} was not linked: the request was declined there.",
+      "expired": "Linking {name} took too long. Start again.",
+      "fresh": "Linking {name} needs a recent sign-in. Start again and confirm it's you.",
+      "taken": "That {name} account is already linked to another AnyPlay account.",
+      "exists": "You already have a {name} account linked. Unlink it first.",
+      "failed": "Linking {name} failed. Try again in a minute."
+    },
+    "whoSees": "Who sees your {name} account",
+    "linkedAgo": "Linked {ago}",
+    "unlink": "Unlink",
+    "link": "Link {name}",
+    "opening": "Opening…",
+    "soon": "Soon",
+    "notLinked": "Not linked",
+    "arrivesSoon": "Linking arrives soon",
+    "confirmTitle": "Unlink {name}?",
+    "confirmDescription": "Your {name} account no longer shows on your profile. You can link it again any time.",
+    "confirmLabel": "Unlink {name}"
+  },
+  "data": {
+    "lead": "Everything AnyPlay keeps about you is yours: take a copy, or delete the account.",
+    "export": {
+      "title": "Download your data",
+      "description": "Your account, profile, friends, trophies, playtime and linked accounts, as one JSON file.",
+      "preparing": "Preparing…",
+      "button": "Download"
+    },
+    "scheduled": {
+      "title": "Deletion scheduled",
+      "description": "Your account and everything in it will be deleted on {date}. Until then you can keep it.",
+      "keep": "Keep my account"
+    },
+    "delete": {
+      "title": "Delete your account",
+      "description": "Your account is deleted after 30 days; until then you can change your mind. After that it is gone, with your friends, trophies and playtime.",
+      "button": "Delete account"
+    },
+    "confirm": {
+      "title": "Delete your account?",
+      "description": "It is deleted in 30 days. Every launcher and browser is signed out now."
+    }
+  },
+  "compare": {
+    "title": "Compare trophies",
+    "description": "Your trophies next to {handle}’s.",
+    "descriptionShared": "You and {handle}, in a game you both have.",
+    "signInDescription": "See how your trophies stack up against {handle}.",
+    "signIn": "Sign in to compare trophies",
+    "hidden": "{handle}’s trophies aren’t available to compare.",
+    "loading": "Loading",
+    "loadingComparison": "Loading the comparison",
+    "empty": "You and {handle} have no game in common yet. Play a game {handle} has played and it shows up here.",
+    "game": "Game",
+    "gameNamed": "Game <id>{title}</id>",
+    "verdictNone": "Neither of you has earned a trophy in this game.",
+    "verdictLevel": "You are level on points in this game.",
+    "verdictAhead": "You are ahead by {count, plural, one {# point} other {# points}} in this game.",
+    "verdictBehind": "{handle} is ahead by {count, plural, one {# point} other {# points}} in this game.",
+    "caption": "Trophies in {titleId}, you next to {handle}",
+    "stat": "Stat",
+    "you": "You",
+    "ahead": "(ahead)",
+    "rowTrophies": "Trophies",
+    "rowPoints": "Points in this game",
+    "rowLevel": "Level overall",
+    "grade": {
+      "platinum": "Platinum",
+      "gold": "Gold",
+      "silver": "Silver",
+      "bronze": "Bronze"
+    },
+    "both": "Earned by both",
+    "onlyYou": "Only you",
+    "onlyThem": "Only {handle}"
+  },
+  "publicProfile": {
+    "home": "AnyPlay, home",
+    "yourAccount": "Your account",
+    "signIn": "Sign in",
+    "loading": "Loading",
+    "missingTitle": "No player named {handle}",
+    "missingBody": "Check the spelling of the handle, or ask the player to send it again.",
+    "goHome": "Go to AnyPlay",
+    "player": "Player",
+    "trophies": "Trophies",
+    "trophiesEarned": "{count, number} earned.",
+    "noTrophies": "{handle} has not earned a trophy yet.",
+    "favourites": "Favourite games",
+    "favouritesNote": "Shown by title ID.",
+    "game": "Game",
+    "connections": "Connections",
+    "playtime": "Games played",
+    "playtimeNote": "{count, plural, one {# game} other {# games}}, {total} in total.",
+    "nothing": "There is nothing more to show of {handle} yet.",
+    "openProfile": "Open profile",
+    "openProfileOn": "on {brand} (opens in a new tab)",
+    "signInToAdd": "Sign in to add {handle}",
+    "editProfile": "Edit your profile",
+    "blocked": "Blocked",
+    "friends": "Friends",
+    "requestSent": "Request sent",
+    "accepting": "Accepting…",
+    "accept": "Accept request",
+    "sending": "Sending…",
+    "addFriend": "Add friend",
+    "addInAnyPlay": "Add friend in AnyPlay",
+    "minutes": "{n} min",
+    "hours": "{n} h"
+  },
+  "friends": {
+    "title": "Friends",
+    "lead": "Add the people you play with, answer requests and decide who stays out.",
+    "add": {
+      "title": "Add a friend",
+      "description": "Enter a player’s handle to send them a request.",
+      "handle": "Handle",
+      "hint": "Their handle, with or without the @.",
+      "send": "Send request",
+      "sending": "Sending…",
+      "enterHandle": "Enter the handle of the player you want to add.",
+      "nowFriends": "You and @{handle} are now friends.",
+      "sent": "Request sent to @{handle}. You are friends once they accept."
+    },
+    "requests": {
+      "title": "Requests",
+      "description": "Players who want to be your friend, and the requests you sent.",
+      "empty": "No open requests. When someone adds you, the request shows up here.",
+      "received": "Received",
+      "sent": "Sent",
+      "receivedAgo": "Received {when}",
+      "sentAgo": "Sent {when}",
+      "decline": "Decline",
+      "accept": "Accept",
+      "withdraw": "Withdraw"
+    },
+    "list": {
+      "title": "Your friends",
+      "description": "See who is online and what they are playing.",
+      "empty": "No friends yet. Add someone by their handle above; they show up here once they accept.",
+      "online": "Online",
+      "offline": "Offline",
+      "playing": "Playing {title}",
+      "block": "Block",
+      "remove": "Remove"
+    },
+    "blocked": {
+      "title": "Blocked",
+      "description": "Blocked players are removed from your friends and requests.",
+      "empty": "You have not blocked anyone. Block a player from your friends list when you need to.",
+      "unblock": "Unblock"
+    },
+    "confirm": {
+      "blockTitle": "Block @{handle}?",
+      "removeTitle": "Remove @{handle} from your friends?",
+      "blockText": "You are no longer friends and any open request is dropped. You can unblock them any time.",
+      "removeText": "You stop seeing when each other is online. You can send a new request later.",
+      "blockLabel": "Block player",
+      "removeLabel": "Remove friend"
+    }
+  },
+  "trophies": {
+    "title": "Trophies",
+    "lead": "What you earned in your games. AnyPlay keeps counts per game and grade, never trophy names or art.",
+    "totals": {
+      "title": "Totals",
+      "description": "{total} earned across {games, plural, one {# game} other {# games}}.",
+      "empty": "No trophies yet. Play a game through AnyPlay and the ones you earn are counted here."
+    },
+    "byGame": {
+      "title": "By game",
+      "description": "Games are listed by title id, the most recent first.",
+      "detail": "{earned, plural, one {# trophy} other {# trophies}} · last earned {when}"
+    },
+    "grades": {
+      "platinum": "Platinum",
+      "gold": "Gold",
+      "silver": "Silver",
+      "bronze": "Bronze"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "lead": "Get a notification on this device when a friend asks to be your friend, invites you to a party or writes to you.",
+    "device": {
+      "title": "This device",
+      "description": "Each browser or phone is set up on its own. Turn this on where you want to be notified.",
+      "notEnabled": "This cloud does not send notifications.",
+      "checking": "Checking this device…",
+      "unsupported": "This browser can’t receive notifications. Use a current Chrome, Edge, Firefox or Safari.",
+      "needsInstall": "On iPhone and iPad, notifications need AnyPlay on your Home Screen. Tap Share, choose Add to Home Screen, then open AnyPlay from there.",
+      "blocked": "Notifications are blocked for this site. Allow them in your browser’s site settings, then come back.",
+      "switch": "Notify this device",
+      "others": "{count, plural, one {One other device also gets notifications. Turn them off on that device.} other {# other devices also get notifications. Turn them off on that device.}}"
+    },
+    "kinds": {
+      "title": "What to notify about",
+      "description": "For this device only.",
+      "friend_request": {
+        "label": "Friend requests",
+        "detail": "Someone asks to be your friend."
+      },
+      "party_invite": {
+        "label": "Party invitations",
+        "detail": "A friend invites you to a party."
+      },
+      "message": {
+        "label": "Messages",
+        "detail": "A friend writes to you. The message itself stays out of the notification."
+      }
+    },
+    "errors": {
+      "timeout": "Your browser’s notification service did not answer. Check your connection and try again.",
+      "noKey": "This cloud has no key to send notifications with.",
+      "lostSubscription": "This browser lost its subscription. Turn notifications off and on again.",
+      "notAllowed": "This browser did not allow notifications. They don’t work in a private window; otherwise check the site settings."
+    }
+  }
+}

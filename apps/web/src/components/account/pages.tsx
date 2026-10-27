@@ -9,12 +9,13 @@ import {
   type Privacy,
   type Profile,
   type PrivacyKey,
-  describeError,
 } from "@anyplay/api-client";
 import { ArrowDownTrayIcon, ArrowRightIcon, ComputerDesktopIcon, GlobeAltIcon, KeyIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useDescribeError } from "@/i18n/errors";
 import { CodeField, FormError, TextField } from "../auth/fields";
 import { DownloadMenu } from "../landing/download-button";
 import { FALLBACK } from "../landing/release";
@@ -33,18 +34,19 @@ import {
   PageTitle,
   Row,
   Rows,
-  ago,
-  date,
   isCancelled,
   smallButton,
   smallDanger,
   smallPrimary,
   Switch,
+  useAgo,
+  useDate,
   useStepUp,
 } from "./ui";
 
 /** Loads once and on demand; the page shows a skeleton until the first answer. */
 export function useLoad<T>(load: () => Promise<T>) {
+  const describeError = useDescribeError();
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reload = useCallback(async () => {
@@ -54,7 +56,7 @@ export function useLoad<T>(load: () => Promise<T>) {
     } catch (e) {
       setError(describeError(e));
     }
-  }, [load]);
+  }, [load, describeError]);
   useEffect(() => {
     let alive = true;
     load().then(
@@ -68,14 +70,17 @@ export function useLoad<T>(load: () => Promise<T>) {
     return () => {
       alive = false;
     };
+    // describeError only words an error; a change of language must not reload the data
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
   return { data, error, reload, setData };
 }
 
 export function Loading() {
+  const t = useTranslations("account.state");
   return (
     <div aria-busy role="status" className="grid gap-4">
-      <span className="sr-only">Loading</span>
+      <span className="sr-only">{t("loading")}</span>
       <span className="h-36 animate-pulse rounded-[24px] bg-white/[0.04]" />
       <span className="h-36 animate-pulse rounded-[24px] bg-white/[0.04]" />
     </div>
@@ -83,11 +88,12 @@ export function Loading() {
 }
 
 export function Failed({ message, retry }: { message: string; retry: () => void }) {
+  const t = useTranslations("account.state");
   return (
     <div role="alert" className="grid justify-items-start gap-3 text-[15px] text-ink-2">
       {message}
       <button type="button" className={smallButton} onClick={retry}>
-        Try again
+        {t("tryAgain")}
       </button>
     </div>
   );
@@ -96,6 +102,7 @@ export function Failed({ message, retry }: { message: string; retry: () => void 
 /** A write that shows its own problem under the control, and none when the person closed the step-up. */
 export function useAction() {
   const stepUp = useStepUp();
+  const describeError = useDescribeError();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const run = async (action: () => Promise<void>) => {
@@ -115,6 +122,9 @@ export function useAction() {
 /* ───────────────────────────── Overview ───────────────────────────── */
 
 export function OverviewPage() {
+  const t = useTranslations("account.overview");
+  const tNav = useTranslations("account.shell");
+  const date = useDate();
   const { api, session } = useAccount();
   const load = useCallback(
     // The level is a nicety: if the trophies fail to load, the overview still opens without it
@@ -130,17 +140,17 @@ export function OverviewPage() {
 
   return (
     <div className="grid gap-6">
-      <section aria-label="Your account" className="relative overflow-hidden rounded-[28px] bg-[#120f0d] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
+      <section aria-label={t("label")} className="relative overflow-hidden rounded-[28px] bg-[#120f0d] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
         <DitherField className="absolute inset-y-0 right-0 h-full w-[70%] opacity-60 [mask-image:linear-gradient(to_left,black_10%,transparent_80%)]" />
         <div className="relative flex flex-wrap items-center gap-5 p-7 sm:p-9">
           <Initial handle={me.handle} size={72} />
           <div className="min-w-0">
             <h1 className="display truncate text-[clamp(1.9rem,1.4rem+1.6vw,2.6rem)] leading-[1.05]">{me.handle}</h1>
             <p className="mt-1.5 truncate text-[15px] text-ink-2">{me.email}</p>
-            <p className="mt-1 text-[13px] text-ink-3">Member since {date(me.created)}</p>
+            <p className="mt-1 text-[13px] text-ink-3">{t("memberSince", { date: date(me.created) })}</p>
             {view.account.appearOffline && (
               <p className="mt-3">
-                <Badge>Appearing offline</Badge>
+                <Badge>{t("appearingOffline")}</Badge>
               </p>
             )}
             {trophies?.level && <LevelMeter level={trophies.level} className="mt-5 -mx-3 w-[min(19rem,calc(100vw-6rem))] rounded-[16px] bg-[#120f0d]/90 p-3" />}
@@ -150,32 +160,41 @@ export function OverviewPage() {
 
       {view.deletion && (
         <Notice tone="warn">
-          Your account will be deleted on {date(view.deletion.at)}.{" "}
-          <Link href="/account/data" className="font-semibold underline underline-offset-4">
-            Keep my account
-          </Link>
+          {t.rich("deletion", {
+            date: date(view.deletion.at),
+            keep: (chunks) => (
+              <Link href="/account/data" className="font-semibold underline underline-offset-4">
+                {chunks}
+              </Link>
+            ),
+          })}
         </Notice>
       )}
 
       <ul className="grid gap-4 sm:grid-cols-2">
         <Tile
           href="/account/security"
-          title="Security"
-          value={view.passkeys.length ? `${view.passkeys.length} passkey${view.passkeys.length > 1 ? "s" : ""}` : "No passkey yet"}
-          detail={`${view.devices.length} launcher${view.devices.length === 1 ? "" : "s"} · ${view.sessions.length} browser${view.sessions.length === 1 ? "" : "s"}`}
+          title={tNav("nav_security")}
+          value={view.passkeys.length ? t("passkeys", { count: view.passkeys.length }) : t("noPasskey")}
+          detail={t("launchersBrowsers", { launchers: view.devices.length, browsers: view.sessions.length })}
           tone={view.passkeys.length ? undefined : "brand"}
         />
-        <Tile href="/account/privacy" title="Privacy" value={`Trophies: ${AUDIENCE_WORD[privacy.trophies]}`} detail={`Profile picture: ${AUDIENCE_WORD[privacy.avatar].toLowerCase()}`} />
-        <Tile href="/account/connections" title="Connections" value={linked ? `${linked} linked` : "Nothing linked"} detail="Discord, Steam" />
-        <Tile href="/account/data" title="Your data" value="Export or delete" detail="Everything we keep about you" />
+        <Tile
+          href="/account/privacy"
+          title={tNav("nav_privacy")}
+          value={t("trophiesAudience", { audience: t(`audience.${privacy.trophies}`) })}
+          detail={t("pictureAudience", { audience: t(`audienceInline.${privacy.avatar}`) })}
+        />
+        <Tile href="/account/connections" title={tNav("nav_connections")} value={linked ? t("linked", { count: linked }) : t("nothingLinked")} detail={t("connectionsDetail")} />
+        <Tile href="/account/data" title={tNav("nav_data")} value={t("dataValue")} detail={t("dataDetail")} />
       </ul>
 
       {view.devices.length === 0 && (
-        <Card title="Get the launcher" description="Sign in to the launcher with this account, and your friends, parties and trophies are there.">
+        <Card title={t("launcher.title")} description={t("launcher.description")}>
           <DownloadMenu
             downloads={DOWNLOADS}
             size="sm"
-            className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[#f6f5f1] px-4 text-[14px] font-semibold text-[#161513]"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[#f6f5f1] px-4 py-1.5 text-[14px] font-semibold text-[#161513]"
           />
         </Card>
       )}
@@ -184,8 +203,6 @@ export function OverviewPage() {
 }
 
 const DOWNLOADS = FALLBACK;
-
-const AUDIENCE_WORD: Record<Audience, string> = { everyone: "Everyone", friends: "Friends", nobody: "Only you" };
 
 function Tile({ href, title, value, detail, tone }: { href: string; title: string; value: string; detail: string; tone?: "brand" }) {
   return (
@@ -196,8 +213,8 @@ function Tile({ href, title, value, detail, tone }: { href: string; title: strin
       >
         <span className="min-w-0">
           <span className="block text-[13px] text-ink-3">{title}</span>
-          <span className={`mt-1 block truncate text-[17px] font-semibold ${tone === "brand" ? "text-brand-text" : ""}`}>{value}</span>
-          <span className="mt-0.5 block truncate text-[13px] text-ink-3">{detail}</span>
+          <span className={`mt-1 block text-[17px] font-semibold break-words ${tone === "brand" ? "text-brand-text" : ""}`}>{value}</span>
+          <span className="mt-0.5 block text-[13px] text-ink-3 break-words">{detail}</span>
         </span>
         <ArrowRightIcon aria-hidden className="size-4 shrink-0 text-ink-3 transition-transform duration-[var(--duration-quick)] [@media(hover:hover)]:group-hover:translate-x-0.5" />
       </Link>
@@ -211,6 +228,8 @@ function Tile({ href, title, value, detail, tone }: { href: string; title: strin
 const ABOUT_MAX = 160;
 
 export function ProfilePage() {
+  const t = useTranslations("account.profile");
+  const tNav = useTranslations("account.shell");
   const { api, session } = useAccount();
   const load = useCallback(() => api.account.profile(), [api]);
   const { data, error, reload, setData } = useLoad<Profile>(load);
@@ -218,7 +237,7 @@ export function ProfilePage() {
   if (!data) return <Loading />;
   return (
     <div>
-      <PageTitle title="Profile" lead="What your friends see when they open your profile. Who sees each part is up to you on the Privacy page." />
+      <PageTitle title={tNav("nav_profile")} lead={t("lead")} />
       <div className="grid gap-6">
         <AvatarCard profile={data} handle={session.account!.handle} onChange={setData} />
         <AboutCard profile={data} onChange={setData} />
@@ -229,11 +248,12 @@ export function ProfilePage() {
 }
 
 function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: string; onChange: (p: Profile) => void }) {
+  const t = useTranslations("account.profile.avatar");
   const { api } = useAccount();
   const { busy, error, run } = useAction();
   const input = useRef<HTMLInputElement>(null);
   return (
-    <Card title="Picture" description="PNG or JPEG, up to 1 MB. It shows round, so keep the face in the middle.">
+    <Card title={t("title")} description={t("description")}>
       <div className="flex flex-wrap items-center gap-5">
         {profile.avatar ? (
           // eslint-disable-next-line @next/next/no-img-element -- the image optimizer is off on purpose
@@ -256,7 +276,7 @@ function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: s
             }}
           />
           <button type="button" className={smallPrimary} disabled={busy} onClick={() => input.current?.click()}>
-            {busy ? "Uploading…" : profile.avatar ? "Change picture" : "Upload picture"}
+            {busy ? t("uploading") : profile.avatar ? t("change") : t("upload")}
           </button>
           {profile.avatar && (
             <button
@@ -270,7 +290,7 @@ function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: s
                 })
               }
             >
-              Remove
+              {t("remove")}
             </button>
           )}
         </div>
@@ -285,6 +305,7 @@ function AvatarCard({ profile, handle, onChange }: { profile: Profile; handle: s
 }
 
 function AboutCard({ profile, onChange }: { profile: Profile; onChange: (p: Profile) => void }) {
+  const t = useTranslations("account.profile.about");
   const { api } = useAccount();
   const { busy, error, run } = useAction();
   const [about, setAbout] = useState(profile.about ?? "");
@@ -299,10 +320,10 @@ function AboutCard({ profile, onChange }: { profile: Profile; onChange: (p: Prof
     });
   };
   return (
-    <Card id="profile-about" title="About" description="A line or two about you: what you play, when you're around.">
+    <Card id="profile-about" title={t("title")} description={t("description")}>
       <form onSubmit={submit} className="grid gap-3">
         <label htmlFor="about" className="sr-only">
-          About
+          {t("title")}
         </label>
         <textarea
           id="about"
@@ -314,20 +335,20 @@ function AboutCard({ profile, onChange }: { profile: Profile; onChange: (p: Prof
             setSaved(false);
           }}
           className="w-full resize-none rounded-[14px] bg-white/[0.04] px-4 py-3 text-[16px] leading-[1.5] text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)] outline-none placeholder:text-ink-3 focus:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.22),0_0_0_3px_rgb(255_122_61/0.35)]"
-          placeholder="Co-op when I can, solo when I can't."
+          placeholder={t("placeholder")}
         />
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-[13px] text-ink-3 tabular-nums">
             {about.length}/{ABOUT_MAX}
           </span>
           <span className="flex items-center gap-3">
             {saved && !dirty && (
               <span role="status" className="text-[13px] text-[#7fe3b0]">
-                Saved
+                {t("saved")}
               </span>
             )}
             <button type="submit" className={smallPrimary} disabled={busy || !dirty}>
-              {busy ? "Saving…" : "Save"}
+              {busy ? t("saving") : t("save")}
             </button>
           </span>
         </div>
@@ -342,6 +363,7 @@ const FAVOURITES_MAX = 3;
 const TITLE_ID = /^[A-Za-z0-9_-]{1,64}$/;
 
 function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p: Profile) => void }) {
+  const t = useTranslations("account.profile.favourites");
   const { api } = useAccount();
   const { busy, error, run } = useAction();
   const saved = profile.favourites ?? [];
@@ -356,8 +378,8 @@ function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p:
     e.preventDefault();
     const id = draft.trim();
     if (!id) return;
-    if (!TITLE_ID.test(id)) return setProblem("Use only letters, numbers, hyphens and underscores.");
-    if (list.includes(id)) return setProblem(`${id} is on the list already.`);
+    if (!TITLE_ID.test(id)) return setProblem(t("badId"));
+    if (list.includes(id)) return setProblem(t("duplicate", { id }));
     setList([...list, id]);
     setDraft("");
     setProblem(null);
@@ -374,23 +396,23 @@ function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p:
   return (
     <Card
       id="profile-favourites"
-      title="Favourite games"
-      description={`Up to ${FAVOURITES_MAX}, by title ID. This site shows the ID. The launcher shows each game's name from your own copy.`}
+      title={t("title")}
+      description={t("description", { max: FAVOURITES_MAX })}
     >
       <div className="grid gap-4">
         {list.length === 0 ? (
-          <Empty>No favourite games yet. Add a title ID below.</Empty>
+          <Empty>{t("empty")}</Empty>
         ) : (
-          <ul aria-label="Your favourite games" className="flex flex-wrap gap-3">
+          <ul aria-label={t("listLabel")} className="flex flex-wrap gap-3">
             {list.map((id) => (
               <li
                 key={id}
-                className="inline-flex h-9 items-center gap-1 rounded-full bg-white/[0.05] pr-1 pl-4 text-[14px] font-medium tabular-nums shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] [@media(pointer:coarse)]:h-11"
+                className="inline-flex min-h-9 items-center gap-1 rounded-full bg-white/[0.05] pr-1 pl-4 text-[14px] font-medium tabular-nums shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] [@media(pointer:coarse)]:min-h-11"
               >
                 {id}
                 <button
                   type="button"
-                  aria-label={`Remove ${id}`}
+                  aria-label={t("remove", { id })}
                   onClick={() => {
                     setList(list.filter((x) => x !== id));
                     setDone(false);
@@ -405,7 +427,7 @@ function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p:
         )}
         <form onSubmit={add} className="flex flex-wrap items-end gap-3">
           <TextField
-            label="Title ID"
+            label={t("fieldLabel")}
             className="min-w-[12rem] flex-1"
             value={draft}
             disabled={full}
@@ -415,24 +437,24 @@ function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p:
             spellCheck={false}
             maxLength={64}
             error={problem}
-            hint={full ? `You have ${FAVOURITES_MAX} games. Remove one to add another.` : undefined}
+            hint={full ? t("full", { max: FAVOURITES_MAX }) : undefined}
             onChange={(e) => {
               setDraft(e.target.value);
               setProblem(null);
             }}
           />
           <button type="submit" className={smallButton} disabled={full || !draft.trim()}>
-            Add game
+            {t("add")}
           </button>
         </form>
         <div className="flex items-center justify-end gap-3">
           {done && !dirty && (
             <span role="status" className="text-[13px] text-[#7fe3b0]">
-              Saved
+              {t("saved")}
             </span>
           )}
           <button type="button" className={smallPrimary} disabled={busy || !dirty} onClick={save}>
-            {busy ? "Saving…" : "Save"}
+            {busy ? t("saving") : t("save")}
           </button>
         </div>
         {error && <FormError>{error}</FormError>}
@@ -444,6 +466,8 @@ function FavouritesCard({ profile, onChange }: { profile: Profile; onChange: (p:
 /* ───────────────────────────── Security ───────────────────────────── */
 
 export function SecurityPage() {
+  const t = useTranslations("account.security");
+  const tNav = useTranslations("account.shell");
   const { api } = useAccount();
   const load = useCallback(() => api.account.get(), [api]);
   const { data, error, reload, setData } = useLoad<AccountView>(load);
@@ -451,7 +475,7 @@ export function SecurityPage() {
   if (!data) return <Loading />;
   return (
     <div>
-      <PageTitle title="Security" lead="How you sign in, and every launcher and browser that is signed in to your account." />
+      <PageTitle title={tNav("nav_security")} lead={t("lead")} />
       <div className="grid gap-6">
         <EmailCard view={data} onChange={reload} />
         <PasskeysCard view={data} onChange={setData} />
@@ -464,6 +488,7 @@ export function SecurityPage() {
 }
 
 function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Promise<void> }) {
+  const t = useTranslations("account.security.email");
   const { api } = useAccount();
   const { busy, error, run, setError } = useAction();
   const [editing, setEditing] = useState(false);
@@ -476,7 +501,7 @@ function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Prom
     e.preventDefault();
     const value = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setError("Enter the new address, like name@example.com.");
+      setError(t("invalid"));
       return;
     }
     void run(async () => {
@@ -499,28 +524,28 @@ function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Prom
   return (
     <Card
       id="email"
-      title="E-mail"
-      description="Where your sign-in codes go. Changing it needs a code sent to the new address."
+      title={t("title")}
+      description={t("description")}
       action={
         !editing && !sentTo ? (
           <button type="button" className={smallButton} onClick={() => setEditing(true)}>
-            Change
+            {t("change")}
           </button>
         ) : undefined
       }
     >
       <div className="grid gap-4">
         <p className="text-[16px] font-medium">{view.account.email}</p>
-        {done && <Notice tone="ok">Your sign-in address is now {done}.</Notice>}
+        {done && <Notice tone="ok">{t("done", { email: done })}</Notice>}
         {editing && (
           <form onSubmit={send} noValidate className="grid gap-3">
-            <TextField label="New address" type="email" autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="send" value={email} onChange={(e) => setEmail(e.target.value)} error={error} autoFocus />
-            <div className="flex gap-2">
+            <TextField label={t("newAddress")} type="email" autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="send" value={email} onChange={(e) => setEmail(e.target.value)} error={error} autoFocus />
+            <div className="flex flex-wrap gap-2">
               <button type="submit" className={smallPrimary} disabled={busy}>
-                {busy ? "Sending…" : "Send code"}
+                {busy ? t("sending") : t("send")}
               </button>
               <button type="button" className={smallButton} onClick={() => setEditing(false)}>
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </form>
@@ -528,7 +553,7 @@ function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Prom
         {sentTo && (
           <div className="grid gap-3">
             <p className="text-[14px] text-ink-2">
-              We sent a 6-digit code to <strong className="font-semibold text-ink">{sentTo}</strong>.
+              {t.rich("sentTo", { email: sentTo, b: (chunks) => <strong className="font-semibold text-ink break-all">{chunks}</strong> })}
             </p>
             <CodeField
               value={code}
@@ -547,6 +572,8 @@ function EmailCard({ view, onChange }: { view: AccountView; onChange: () => Prom
 }
 
 function PasskeysCard({ view, onChange }: { view: AccountView; onChange: (v: AccountView) => void }) {
+  const t = useTranslations("account.security.passkeys");
+  const ago = useAgo();
   const { api } = useAccount();
   const stepUp = useStepUp();
   const { busy, error, run } = useAction();
@@ -554,17 +581,17 @@ function PasskeysCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
   const full = view.passkeys.length >= view.maxPasskeys;
   const add = () =>
     void run(async () => {
-      const key = await api.security.addPasskey(defaultPasskeyName());
+      const key = await api.security.addPasskey(defaultPasskeyName(t));
       onChange({ ...view, passkeys: [...view.passkeys, key] });
     });
   return (
     <Card
       id="passkeys"
-      title="Passkeys"
-      description="Sign in with your fingerprint, face or device PIN instead of a code. Nobody can phish a passkey."
+      title={t("title")}
+      description={t("description")}
       action={
         <button type="button" className={smallPrimary} onClick={add} disabled={busy || full}>
-          <KeyIcon aria-hidden className="size-4" /> {busy ? "Waiting for your device…" : "Add a passkey"}
+          <KeyIcon aria-hidden className="size-4" /> {busy ? t("waiting") : t("add")}
         </button>
       }
     >
@@ -575,19 +602,19 @@ function PasskeysCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
               key={p.id}
               icon={<KeyIcon className="size-5" strokeWidth={1.6} />}
               title={p.name}
-              detail={`Added ${ago(p.created)} · Last used ${ago(p.lastUsed)}`}
+              detail={t("detail", { added: ago(p.created), used: ago(p.lastUsed) })}
               trailing={
                 <button type="button" className={smallButton} onClick={() => setRemoving(p.id)}>
-                  Remove
+                  {t("remove")}
                 </button>
               }
             />
           ))}
         </Rows>
       ) : (
-        <Empty>No passkey yet. Add one and signing in takes a touch instead of an e-mail code.</Empty>
+        <Empty>{t("empty")}</Empty>
       )}
-      {full && <p className="mt-3 text-[13px] text-ink-3">You have the most passkeys an account can keep ({view.maxPasskeys}). Remove one to add another.</p>}
+      {full && <p className="mt-3 text-[13px] text-ink-3">{t("full", { max: view.maxPasskeys })}</p>}
       {error && (
         <div className="mt-4">
           <FormError>{error}</FormError>
@@ -596,9 +623,9 @@ function PasskeysCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
       <Confirm
         open={removing !== null}
         onOpenChange={(o) => !o && setRemoving(null)}
-        title="Remove this passkey?"
-        description="That device can no longer sign you in with it. You can always sign in with a code by e-mail."
-        confirmLabel="Remove passkey"
+        title={t("confirmTitle")}
+        description={t("confirmDescription")}
+        confirmLabel={t("confirmLabel")}
         danger
         onConfirm={async () => {
           const id = removing!;
@@ -612,18 +639,21 @@ function PasskeysCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
 
 const PLATFORM: Record<string, string> = { windows: "Windows", linux: "Linux", macos: "macOS", mac: "macOS" };
 
-function defaultPasskeyName(): string {
+/** The name a new passkey gets, in the visitor's language: "Passkey on Windows". */
+function defaultPasskeyName(t: (key: "defaultName" | "thisDevice", values?: { system: string }) => string): string {
   const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
-  const system = /Windows/.test(ua) ? "Windows" : /Mac/.test(ua) ? "Mac" : /iPhone|iPad/.test(ua) ? "iPhone" : /Android/.test(ua) ? "Android" : /Linux/.test(ua) ? "Linux" : "this device";
-  return `Passkey on ${system}`;
+  const system = /Windows/.test(ua) ? "Windows" : /Mac/.test(ua) ? "Mac" : /iPhone|iPad/.test(ua) ? "iPhone" : /Android/.test(ua) ? "Android" : /Linux/.test(ua) ? "Linux" : t("thisDevice");
+  return t("defaultName", { system });
 }
 
 function DevicesCard({ view, onChange }: { view: AccountView; onChange: (v: AccountView) => void }) {
+  const t = useTranslations("account.security.devices");
+  const ago = useAgo();
   const { api } = useAccount();
   const stepUp = useStepUp();
   const [removing, setRemoving] = useState<number | null>(null);
   return (
-    <Card id="devices" title="Launchers" description="Every PC where the launcher is signed in to your account.">
+    <Card id="devices" title={t("title")} description={t("description")}>
       {view.devices.length ? (
         <Rows>
           {view.devices.map((d) => (
@@ -631,24 +661,24 @@ function DevicesCard({ view, onChange }: { view: AccountView; onChange: (v: Acco
               key={d.id}
               icon={<ComputerDesktopIcon className="size-5" strokeWidth={1.6} />}
               title={d.name}
-              detail={`${PLATFORM[d.platform] ?? d.platform} · Last used ${ago(d.lastUsed)}`}
+              detail={t("detail", { platform: PLATFORM[d.platform] ?? d.platform, used: ago(d.lastUsed) })}
               trailing={
                 <button type="button" className={smallButton} onClick={() => setRemoving(d.id)}>
-                  Sign out
+                  {t("signOut")}
                 </button>
               }
             />
           ))}
         </Rows>
       ) : (
-        <Empty>No launcher is signed in yet.</Empty>
+        <Empty>{t("empty")}</Empty>
       )}
       <Confirm
         open={removing !== null}
         onOpenChange={(o) => !o && setRemoving(null)}
-        title="Sign out this launcher?"
-        description="It goes offline until someone signs in on that PC again."
-        confirmLabel="Sign out launcher"
+        title={t("confirmTitle")}
+        description={t("confirmDescription")}
+        confirmLabel={t("confirmLabel")}
         onConfirm={async () => {
           const id = removing!;
           await stepUp(() => api.security.removeDevice(id));
@@ -660,23 +690,25 @@ function DevicesCard({ view, onChange }: { view: AccountView; onChange: (v: Acco
 }
 
 function SessionsCard({ view, onChange }: { view: AccountView; onChange: (v: AccountView) => void }) {
+  const t = useTranslations("account.security.browsers");
+  const ago = useAgo();
   const { api } = useAccount();
   const router = useRouter();
   const stepUp = useStepUp();
   const [ending, setEnding] = useState<number | null>(null);
   const current = view.sessions.find((s) => s.id === ending)?.current ?? false;
   return (
-    <Card id="browsers" title="Browsers" description="Every browser signed in to this account page. We keep no more about them than when they were used.">
+    <Card id="browsers" title={t("title")} description={t("description")}>
       <Rows>
         {view.sessions.map((s) => (
           <Row
             key={s.id}
             icon={<GlobeAltIcon className="size-5" strokeWidth={1.6} />}
-            title={s.current ? <>This browser <Badge tone="ok">You are here</Badge></> : "Other browser"}
-            detail={`Signed in ${ago(s.created)} · Last used ${ago(s.lastUsed)}`}
+            title={s.current ? <>{t("thisBrowser")} <Badge tone="ok">{t("here")}</Badge></> : t("other")}
+            detail={t("detail", { created: ago(s.created), used: ago(s.lastUsed) })}
             trailing={
               <button type="button" className={smallButton} onClick={() => setEnding(s.id)}>
-                Sign out
+                {t("signOut")}
               </button>
             }
           />
@@ -685,9 +717,9 @@ function SessionsCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
       <Confirm
         open={ending !== null}
         onOpenChange={(o) => !o && setEnding(null)}
-        title={current ? "Sign out of this browser?" : "Sign out that browser?"}
-        description={current ? "You go back to the start and sign in again next time." : "It has to sign in again to open your account."}
-        confirmLabel="Sign out"
+        title={current ? t("confirmThisTitle") : t("confirmOtherTitle")}
+        description={current ? t("confirmThisDescription") : t("confirmOtherDescription")}
+        confirmLabel={t("confirmLabel")}
         onConfirm={async () => {
           const id = ending!;
           let signedOut = false;
@@ -703,26 +735,27 @@ function SessionsCard({ view, onChange }: { view: AccountView; onChange: (v: Acc
 }
 
 function EverywhereCard() {
+  const t = useTranslations("account.security.everywhere");
   const { api } = useAccount();
   const router = useRouter();
   const stepUp = useStepUp();
   const [open, setOpen] = useState(false);
   return (
     <Card
-      title="Sign out everywhere"
-      description="Every launcher and every browser, this one too. Use it when a device was lost or someone else might have signed in."
+      title={t("title")}
+      description={t("description")}
       action={
         <button type="button" className={smallDanger} onClick={() => setOpen(true)}>
-          Sign out everywhere
+          {t("button")}
         </button>
       }
     >
       <Confirm
         open={open}
         onOpenChange={setOpen}
-        title="Sign out everywhere?"
-        description="Every launcher and browser is signed out at once, this one too."
-        confirmLabel="Sign out everywhere"
+        title={t("confirmTitle")}
+        description={t("confirmDescription")}
+        confirmLabel={t("confirmLabel")}
         danger
         onConfirm={async () => {
           await stepUp(() => api.security.signOutEverywhere());
@@ -735,13 +768,7 @@ function EverywhereCard() {
 
 /* ───────────────────────────── Privacy ───────────────────────────── */
 
-const PARTS: { part: PrivacyKey; title: string; detail: string }[] = [
-  { part: "trophies", title: "Trophies", detail: "Your trophy counts, points and level" },
-  { part: "playtime", title: "Playtime", detail: "How long you played, per game" },
-  { part: "about", title: "About", detail: "The line on your profile" },
-  { part: "favourites", title: "Favourite games", detail: "Up to three games you pin" },
-  { part: "avatar", title: "Picture", detail: "Your profile picture" },
-];
+const PARTS: PrivacyKey[] = ["trophies", "playtime", "about", "favourites", "avatar"];
 
 /**
  * Appear offline: friends see the player as offline while the player keeps playing, chatting and
@@ -749,6 +776,9 @@ const PARTS: { part: PrivacyKey; title: string; detail: string }[] = [
  * and goes back, with the reason, when the cloud says no.
  */
 function AppearOfflineCard() {
+  const t = useTranslations("account.privacy.appearOffline");
+  const tState = useTranslations("account.state");
+  const describeError = useDescribeError();
   const { api } = useAccount();
   const load = useCallback(() => api.account.appearOffline(), [api]);
   const { data, error, reload, setData } = useLoad<boolean>(load);
@@ -756,7 +786,7 @@ function AppearOfflineCard() {
   const latest = useRef(0);
   let body: ReactNode;
   if (error) body = <Failed message={error} retry={reload} />;
-  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">{tState("loading")}</span></span>;
   else {
     const set = async (value: boolean) => {
       const before = data;
@@ -775,7 +805,7 @@ function AppearOfflineCard() {
     body = (
       <>
         <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
-          <Switch label="Appear offline" detail="Friends see you as offline. You can still play, chat and join." checked={data} onChange={(on) => void set(on)} />
+          <Switch label={t("label")} detail={t("detail")} checked={data} onChange={(on) => void set(on)} />
         </div>
         {problem && (
           <div className="mt-4">
@@ -786,7 +816,7 @@ function AppearOfflineCard() {
     );
   }
   return (
-    <Card title="Online status" description="Applies to every launcher and browser signed in to your account.">
+    <Card title={t("title")} description={t("description")}>
       {body}
     </Card>
   );
@@ -798,6 +828,9 @@ function AppearOfflineCard() {
  * appearing offline.
  */
 function PublicProfileCard() {
+  const t = useTranslations("account.privacy.publicProfile");
+  const tState = useTranslations("account.state");
+  const describeError = useDescribeError();
   const { api, session } = useAccount();
   const { host } = useSite();
   const load = useCallback(() => api.account.publicProfile(), [api]);
@@ -807,7 +840,7 @@ function PublicProfileCard() {
   const handle = session.account?.handle;
   let body: ReactNode;
   if (error) body = <Failed message={error} retry={reload} />;
-  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">{tState("loading")}</span></span>;
   else {
     const set = async (value: boolean) => {
       const before = data;
@@ -826,14 +859,18 @@ function PublicProfileCard() {
     body = (
       <>
         <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
-          <Switch label="Show a public profile" detail="Anyone with the link sees your level, trophies and games played. It never shows whether you are online." checked={data} onChange={(on) => void set(on)} />
+          <Switch label={t("label")} detail={t("detail")} checked={data} onChange={(on) => void set(on)} />
         </div>
         {data && handle && (
           <p className="mt-4 text-[14px] text-ink-2">
-            Your page:{" "}
-            <a href={`/u/${encodeURIComponent(handle)}`} className="font-medium text-ink underline underline-offset-4">
-              {host ?? ""}/u/{handle}
-            </a>
+            {t.rich("page", {
+              url: `${host ?? ""}/u/${handle}`,
+              link: (chunks) => (
+                <a href={`/u/${encodeURIComponent(handle)}`} className="font-medium text-ink underline underline-offset-4 break-all">
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
         )}
         {problem && (
@@ -845,7 +882,7 @@ function PublicProfileCard() {
     );
   }
   return (
-    <Card title="Public profile" description="Off until you turn it on. Applies to every launcher and browser signed in to your account.">
+    <Card title={t("title")} description={t("description")}>
       {body}
     </Card>
   );
@@ -857,6 +894,9 @@ function PublicProfileCard() {
  * is kept and can empty it. Same optimistic switch as the others; clearing asks first.
  */
 function PlayedWithCard() {
+  const t = useTranslations("account.privacy.playedWith");
+  const tState = useTranslations("account.state");
+  const describeError = useDescribeError();
   const { api } = useAccount();
   const load = useCallback(() => api.account.playedWithRemember(), [api]);
   const { data, error, reload, setData } = useLoad<boolean>(load);
@@ -866,7 +906,7 @@ function PlayedWithCard() {
   const latest = useRef(0);
   let body: ReactNode;
   if (error) body = <Failed message={error} retry={reload} />;
-  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">Loading</span></span>;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">{tState("loading")}</span></span>;
   else {
     const set = async (value: boolean) => {
       const before = data;
@@ -885,7 +925,7 @@ function PlayedWithCard() {
     body = (
       <>
         <div className="rounded-[16px] bg-white/[0.02] px-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
-          <Switch label="Remember people I play with" detail="Keeps the people you shared a party or game session with for 30 days, up to 50. Only you see the list." checked={data} onChange={(on) => void set(on)} />
+          <Switch label={t("label")} detail={t("detail")} checked={data} onChange={(on) => void set(on)} />
         </div>
         {problem && (
           <div className="mt-4">
@@ -897,22 +937,22 @@ function PlayedWithCard() {
   }
   return (
     <Card
-      title="People you played with"
-      description="Turning it off adds no one new. The list stays until you clear it."
+      title={t("title")}
+      description={t("description")}
       action={
         <button type="button" className={smallDanger} onClick={() => { setCleared(false); setClearing(true); }}>
-          Clear the list
+          {t("clear")}
         </button>
       }
     >
       {body}
-      <p role="status" className="mt-4 text-[14px] text-ink-2 empty:hidden">{cleared ? "The list is empty." : ""}</p>
+      <p role="status" className="mt-4 text-[14px] text-ink-2 empty:hidden">{cleared ? t("cleared") : ""}</p>
       <Confirm
         open={clearing}
         onOpenChange={setClearing}
-        title="Clear the list?"
-        description="Everyone on your list of people you played with is removed. It does not change anyone else’s list, and you can’t undo it."
-        confirmLabel="Clear the list"
+        title={t("confirmTitle")}
+        description={t("confirmDescription")}
+        confirmLabel={t("clear")}
         danger
         onConfirm={async () => {
           await api.account.clearPlayedWith();
@@ -924,6 +964,10 @@ function PlayedWithCard() {
 }
 
 export function PrivacyPage() {
+  const t = useTranslations("account.privacy");
+  const tNav = useTranslations("account.shell");
+  const tAudience = useTranslations("account.ui.audience");
+  const describeError = useDescribeError();
   const { api } = useAccount();
   const load = useCallback(() => api.account.privacy(), [api]);
   const { data, error, reload, setData } = useLoad<Privacy>(load);
@@ -948,12 +992,12 @@ export function PrivacyPage() {
   };
   return (
     <div>
-      <PageTitle title="Privacy" lead="Who sees your profile and your activity. Your handle is always visible, so friends can find you." />
+      <PageTitle title={tNav("nav_privacy")} lead={t("lead")} />
       <div className="grid gap-6">
-        <Card title="Your profile" description="Changes count at once, in the launcher too.">
+        <Card title={t("profile.title")} description={t("profile.description")}>
           <Rows>
-            {PARTS.map((p) => (
-              <Row key={p.part} title={p.title} detail={p.detail} trailing={<AudiencePicker label={`Who sees: ${p.title}`} value={data[p.part]} disabled={saving === p.part} onChange={(a) => void set(p.part, a)} />} />
+            {PARTS.map((part) => (
+              <Row key={part} title={t(`parts.${part}.title`)} detail={t(`parts.${part}.detail`)} trailing={<AudiencePicker label={t("whoSees", { part: t(`parts.${part}.title`) })} value={data[part]} disabled={saving === part} onChange={(a) => void set(part, a)} />} />
             ))}
           </Rows>
           {problem && problem.part !== "feed" && (
@@ -962,12 +1006,12 @@ export function PrivacyPage() {
             </div>
           )}
         </Card>
-        <Card title="Your activity" description="What you do on AnyPlay, as your friends see it in their feed.">
+        <Card title={t("activity.title")} description={t("activity.description")}>
           <Rows>
             <Row
-              title="Activity"
-              detail="Friends see it in their feed. Strangers see no feed. Only me hides what is there and stops new items."
-              trailing={<AudiencePicker label="Who sees: Activity" value={data.feed === "everyone" ? "friends" : data.feed} only={["friends", "nobody"]} disabled={saving === "feed"} onChange={(a) => void set("feed", a)} />}
+              title={t("activity.row")}
+              detail={t("activity.detail", { nobody: tAudience("nobody") })}
+              trailing={<AudiencePicker label={t("whoSees", { part: t("activity.row") })} value={data.feed === "everyone" ? "friends" : data.feed} only={["friends", "nobody"]} disabled={saving === "feed"} onChange={(a) => void set("feed", a)} />}
             />
           </Rows>
           {problem?.part === "feed" && (
@@ -986,29 +1030,33 @@ export function PrivacyPage() {
 
 /* ───────────────────────────── Connections ───────────────────────────── */
 
-const RESULT: Record<string, { tone: "ok" | "warn"; text: (name: string) => string }> = {
-  linked: { tone: "ok", text: (n) => `${n} is linked to your account.` },
-  denied: { tone: "warn", text: (n) => `${n} was not linked: the request was declined there.` },
-  expired: { tone: "warn", text: (n) => `Linking ${n} took too long. Start again.` },
-  fresh: { tone: "warn", text: (n) => `Linking ${n} needs a recent sign-in. Start again and confirm it's you.` },
-  taken: { tone: "warn", text: (n) => `That ${n} account is already linked to another AnyPlay account.` },
-  exists: { tone: "warn", text: (n) => `You already have a ${n} account linked. Unlink it first.` },
-  failed: { tone: "warn", text: (n) => `Linking ${n} failed. Try again in a minute.` },
-};
+/** The outcomes the cloud can send back in `?result=`, and the tone of each; the words are in the messages. */
+const RESULT = {
+  linked: "ok",
+  denied: "warn",
+  expired: "warn",
+  fresh: "warn",
+  taken: "warn",
+  exists: "warn",
+  failed: "warn",
+} as const;
+const isResult = (value: string | null): value is keyof typeof RESULT => value !== null && Object.hasOwn(RESULT, value);
 
 export function ConnectionsPage() {
+  const t = useTranslations("account.connections");
+  const tNav = useTranslations("account.shell");
   const { api } = useAccount();
   const params = useSearchParams();
   const load = useCallback(() => api.links.list(), [api]);
   const { data, error, reload, setData } = useLoad<LinkedAccount[]>(load);
   const provider = params.get("link") as LinkProvider | null;
   const result = params.get("result");
-  const notice = provider && result && RESULT[result] && BRAND[provider] ? { tone: RESULT[result].tone, text: RESULT[result].text(BRAND[provider].name) } : null;
+  const notice = provider && isResult(result) && BRAND[provider] ? { tone: RESULT[result], text: t(`result.${result}`, { name: BRAND[provider].name }) } : null;
   if (error) return <Failed message={error} retry={reload} />;
   if (!data) return <Loading />;
   return (
     <div>
-      <PageTitle title="Connections" lead="Link the accounts you already play with, so friends can find you and see where else you are." />
+      <PageTitle title={tNav("nav_connections")} lead={t("lead")} />
       <div className="grid gap-4">
         {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
         {data.map((l) => (
@@ -1026,6 +1074,8 @@ export function ConnectionsPage() {
 const LINKING_OPEN = new Set<LinkProvider>(["discord"]);
 
 function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l: LinkedAccount) => void }) {
+  const t = useTranslations("account.connections");
+  const ago = useAgo();
   const { api } = useAccount();
   const stepUp = useStepUp();
   const { busy, error, run } = useAction();
@@ -1037,11 +1087,11 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
       <div className="flex flex-wrap items-center justify-between gap-4">
         <span className="min-w-0">
           <span className="block truncate text-[15px] font-medium">{link.name ?? link.externalId}</span>
-          <span className="block text-[13px] text-ink-3">Linked {ago(link.linkedAt)}</span>
+          <span className="block text-[13px] text-ink-3">{t("linkedAgo", { ago: ago(link.linkedAt) })}</span>
         </span>
         <span className="flex flex-wrap items-center gap-3">
           <AudiencePicker
-            label={`Who sees your ${brand.name} account`}
+            label={t("whoSees", { name: brand.name })}
             value={link.audience}
             disabled={busy}
             onChange={(a) =>
@@ -1052,7 +1102,7 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
             }
           />
           <button type="button" className={smallButton} onClick={() => setUnlinking(true)}>
-            Unlink
+            {t("unlink")}
           </button>
         </span>
       </div>
@@ -1069,11 +1119,11 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
           })
         }
       >
-        {busy ? "Opening…" : `Link ${brand.name}`}
+        {busy ? t("opening") : t("link", { name: brand.name })}
       </button>
     );
   } else {
-    body = <Badge>Soon</Badge>;
+    body = <Badge>{t("soon")}</Badge>;
   }
   return (
     <section aria-label={brand.name} className="flex flex-wrap items-center gap-5 rounded-[22px] bg-[#141312] p-5 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)]">
@@ -1082,7 +1132,7 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
       </span>
       <div className="min-w-0 flex-1">
         <h2 className="text-[16px] font-semibold">{brand.name}</h2>
-        {!link.linked && <p className="text-[13px] text-ink-3">{LINKING_OPEN.has(link.provider) && link.available ? "Not linked" : "Linking arrives soon"}</p>}
+        {!link.linked && <p className="text-[13px] text-ink-3">{LINKING_OPEN.has(link.provider) && link.available ? t("notLinked") : t("arrivesSoon")}</p>}
         {link.linked && <div className="mt-3">{body}</div>}
         {error && (
           <div className="mt-3">
@@ -1094,9 +1144,9 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
       <Confirm
         open={unlinking}
         onOpenChange={setUnlinking}
-        title={`Unlink ${brand.name}?`}
-        description={`Your ${brand.name} account no longer shows on your profile. You can link it again any time.`}
-        confirmLabel={`Unlink ${brand.name}`}
+        title={t("confirmTitle", { name: brand.name })}
+        description={t("confirmDescription", { name: brand.name })}
+        confirmLabel={t("confirmLabel", { name: brand.name })}
         onConfirm={async () => {
           await stepUp(() => api.links.unlink(link.provider));
           onChange({ ...link, linked: false, name: null, externalId: null, avatarUrl: null, linkedAt: null });
@@ -1109,6 +1159,9 @@ function ConnectionCard({ link, onChange }: { link: LinkedAccount; onChange: (l:
 /* ───────────────────────────── Your data ───────────────────────────── */
 
 export function DataPage() {
+  const t = useTranslations("account.data");
+  const tNav = useTranslations("account.shell");
+  const date = useDate();
   const { api, session } = useAccount();
   const load = useCallback(() => api.account.get(), [api]);
   const { data, error, reload, setData } = useLoad<AccountView>(load);
@@ -1133,14 +1186,14 @@ export function DataPage() {
 
   return (
     <div>
-      <PageTitle title="Your data" lead="Everything AnyPlay keeps about you is yours: take a copy, or delete the account." />
+      <PageTitle title={tNav("nav_data")} lead={t("lead")} />
       <div className="grid gap-6">
         <Card
-          title="Download your data"
-          description="Your account, profile, friends, trophies, playtime and linked accounts, as one JSON file."
+          title={t("export.title")}
+          description={t("export.description")}
           action={
             <button type="button" className={smallPrimary} onClick={download} disabled={exporting.busy}>
-              <ArrowDownTrayIcon aria-hidden className="size-4" /> {exporting.busy ? "Preparing…" : "Download"}
+              <ArrowDownTrayIcon aria-hidden className="size-4" /> {exporting.busy ? t("export.preparing") : t("export.button")}
             </button>
           }
         >
@@ -1148,7 +1201,7 @@ export function DataPage() {
         </Card>
 
         {data.deletion ? (
-          <Card title="Deletion scheduled" description={`Your account and everything in it will be deleted on ${date(data.deletion.at)}. Until then you can keep it.`}>
+          <Card title={t("scheduled.title")} description={t("scheduled.description", { date: date(data.deletion.at) })}>
             <button
               type="button"
               className={smallPrimary}
@@ -1159,16 +1212,16 @@ export function DataPage() {
                 })
               }
             >
-              Keep my account
+              {t("scheduled.keep")}
             </button>
           </Card>
         ) : (
           <Card
-            title="Delete your account"
-            description="Your account is deleted after 30 days; until then you can change your mind. After that it is gone, with your friends, trophies and playtime."
+            title={t("delete.title")}
+            description={t("delete.description")}
             action={
               <button type="button" className={smallDanger} onClick={() => setDeleting(true)}>
-                Delete account
+                {t("delete.button")}
               </button>
             }
           />
@@ -1177,9 +1230,9 @@ export function DataPage() {
       <Confirm
         open={deleting}
         onOpenChange={setDeleting}
-        title="Delete your account?"
-        description={<>It is deleted in 30 days. Every launcher and browser is signed out now.</>}
-        confirmLabel="Delete account"
+        title={t("confirm.title")}
+        description={t("confirm.description")}
+        confirmLabel={t("delete.button")}
         danger
         typed={handle}
         onConfirm={async () => {

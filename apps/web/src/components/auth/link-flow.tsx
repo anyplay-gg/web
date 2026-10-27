@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type PortalApi, describeError, isApiError } from "@anyplay/api-client";
+import { type PortalApi, isApiError } from "@anyplay/api-client";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDescribeError } from "@/i18n/errors";
 import { loadApi } from "@/lib/api";
 import { BannedStep, Loading, Step } from "./auth-flow";
 import { FormError, primaryButton } from "./fields";
@@ -25,6 +27,8 @@ type State =
 
 export function LinkFlow({ code }: { code: string }) {
   const [state, setState] = useState<State>({ at: "loading" });
+  const t = useTranslations("auth");
+  const describeError = useDescribeError();
 
   useEffect(() => {
     let alive = true;
@@ -47,7 +51,7 @@ export function LinkFlow({ code }: { code: string }) {
     return () => {
       alive = false;
     };
-  }, [code]);
+  }, [code, describeError]);
 
   switch (state.at) {
     case "loading":
@@ -56,17 +60,17 @@ export function LinkFlow({ code }: { code: string }) {
       return <Ask api={state.api} code={code} handle={state.handle} onState={setState} />;
     case "expired":
       return (
-        <Step title="This link has expired" lead="Open your account page from AnyPlay again.">
-          <p className="text-[14px] text-ink-3">You can close this tab.</p>
+        <Step title={t("link.expiredTitle")} lead={t("link.expiredLead")}>
+          <p className="text-[14px] text-ink-3">{t("link.close")}</p>
         </Step>
       );
     case "banned":
       return <BannedStep api={state.api} />;
     case "failed":
       return (
-        <Step title="Can’t reach AnyPlay" lead={state.message}>
+        <Step title={t("step.unreachable")} lead={state.message}>
           <button type="button" className={primaryButton} onClick={() => window.location.reload()}>
-            Try again
+            {t("step.tryAgain")}
           </button>
         </Step>
       );
@@ -74,6 +78,8 @@ export function LinkFlow({ code }: { code: string }) {
 }
 
 function Ask({ api, code, handle, onState }: { api: PortalApi; code: string; handle: string; onState: (s: State) => void }) {
+  const t = useTranslations("auth.link");
+  const describeError = useDescribeError();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,26 +102,22 @@ function Ask({ api, code, handle, onState }: { api: PortalApi; code: string; han
 
   return (
     <Step
-      title="Open your account"
-      lead={
-        <>
-          AnyPlay on your PC asked to open the account of <strong className="font-semibold text-ink">{handle}</strong> in this browser.
-        </>
-      }
+      title={t("title")}
+      lead={t.rich("lead", { handle, b: (chunks) => <strong className="font-semibold text-ink">{chunks}</strong> })}
     >
       <div className="grid gap-4">
         <button type="button" className={primaryButton} disabled={busy} onClick={open}>
           {busy ? (
-            "Opening…"
+            t("opening")
           ) : (
             <>
-              Open account <ArrowRightIcon aria-hidden className="size-4" />
+              {t("open")} <ArrowRightIcon aria-hidden className="size-4 shrink-0" />
             </>
           )}
         </button>
         {error && <FormError>{error}</FormError>}
       </div>
-      <p className="mt-6 text-[14px] text-ink-3">Did not ask for this? Close the tab.</p>
+      <p className="mt-6 text-[14px] text-ink-3">{t("notYou")}</p>
     </Step>
   );
 }
