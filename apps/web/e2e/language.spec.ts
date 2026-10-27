@@ -10,6 +10,8 @@ async function shoot(page: Page, name: string) {
 }
 
 async function noViolations(page: Page) {
+  // The flow loads its session first; the audit is of the page that stands afterwards.
+  await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
   const { violations } = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
 }
