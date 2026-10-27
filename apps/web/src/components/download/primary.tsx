@@ -31,7 +31,7 @@ export function PrimaryDownload({ downloads }: { downloads: Downloads }) {
 
   const row = rows.find((r) => r.os === os && r.main)!;
   const size = megabytes(row.file.size);
-  const label = os === "windows" ? "Download for Windows" : os === "mac" ? "Download for Mac" : "Download for Linux";
+  const label = os === "windows" ? "Download for Windows" : os === "mac" ? "Download for macOS" : "Download for Linux";
 
   return (
     <div className="flex flex-col items-start gap-4">
@@ -46,6 +46,7 @@ export function PrimaryDownload({ downloads }: { downloads: Downloads }) {
       </div>
       <p className="text-[14px] leading-[1.5] text-ink-3">
         {row.name}
+        {os === "mac" ? ", Apple silicon" : null}
         {size ? (
           <>
             {" · "}

@@ -33,7 +33,7 @@ const noSubscription = () => () => {};
 const LABEL: Record<Os, string> = {
   windows: "Download for Windows",
   linux: "Download for Linux",
-  mac: "Download for Mac",
+  mac: "Download for macOS",
   other: "Download",
 };
 
@@ -114,14 +114,14 @@ export function DownloadMenu({
             <Menu.Separator className="mx-3 my-1.5 h-px bg-white/[0.07]" />
             <Menu.LinkItem
               href={LINKS.downloadPage}
-              className="flex items-center justify-between rounded-[14px] px-3 py-2.5 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
+              className="flex min-h-11 items-center justify-between rounded-[14px] px-3 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
             >
               All downloads and checksums
               <ArrowUpRightIcon aria-hidden className="size-4 opacity-70" />
             </Menu.LinkItem>
             <Menu.LinkItem
               href={downloads.page}
-              className="flex items-center justify-between rounded-[14px] px-3 py-2.5 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
+              className="flex min-h-11 items-center justify-between rounded-[14px] px-3 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
             >
               Release notes
               <ArrowUpRightIcon aria-hidden className="size-4 opacity-70" />

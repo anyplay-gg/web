@@ -17,9 +17,11 @@ import { PrimaryDownload } from "./primary";
  * happens after the install. Nothing here is a screenshot or a claim the release does not make.
  */
 
+const RELEASE_OF_THESE_NOTES = "0.3.5";
+
 const NEW = [
   {
-    title: "Played With Recently",
+    title: "Played with recently",
     text: "Friends lists the people you shared a party or a game with in the last 30 days, so adding one takes a single step. Only you see it, you can turn it off or clear it any time, and people you block never show up.",
   },
   {
@@ -42,6 +44,8 @@ export async function DownloadPage() {
   const { discord } = readSite();
   const downloads = await latestDownloads();
   const day = dayLabel(downloads.published);
+  // The "new" wording is written for 0.3.5; once a newer release is out it must not claim to be news.
+  const current = !downloads.live || downloads.version === RELEASE_OF_THESE_NOTES;
 
   return (
     <LandingProviders>
@@ -74,7 +78,7 @@ export async function DownloadPage() {
             </div>
           </section>
 
-          <section id="files" aria-labelledby="files-title" className="mx-auto w-full max-w-[1160px] px-[var(--gutter)] pb-[clamp(4rem,8vw,7rem)]">
+          <section id="files" aria-labelledby="files-title" className="mx-auto scroll-mt-28 w-full max-w-[1160px] px-[var(--gutter)] pb-[clamp(4rem,8vw,7rem)]">
             <h2 id="files-title" className="display text-[clamp(1.75rem,1.2rem+2vw,2.75rem)] leading-[1.06]">
               All downloads
             </h2>
@@ -83,7 +87,6 @@ export async function DownloadPage() {
             </p>
             {!downloads.live && (
               <p
-                role="status"
                 className="mt-6 max-w-[34rem] rounded-[16px] bg-surface-2 px-4 py-3 text-[14px] leading-[1.55] text-ink-2 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] text-pretty"
               >
                 GitHub did not answer just now, so sizes and the version are missing. These buttons open the latest release, where every file is listed.
@@ -123,15 +126,15 @@ export async function DownloadPage() {
 
           <section aria-labelledby="new-title" className="border-t border-line">
             <div className="mx-auto w-full max-w-[1160px] px-[var(--gutter)] py-[clamp(4rem,8vw,7rem)]">
-              <p className="font-mono text-[13px] tracking-[0.04em] text-brand-text uppercase">New in 0.3.5</p>
+              {current ? <p className="font-mono text-[13px] tracking-[0.04em] text-brand-text uppercase">New in {RELEASE_OF_THESE_NOTES}</p> : null}
               <h2 id="new-title" className="display mt-4 max-w-[16ch] text-[clamp(1.75rem,1.2rem+2.4vw,3.25rem)] leading-[1.06] text-balance">
-                Six looks, three of them new
+                {current ? "Six looks, three of them new" : "Six looks"}
               </h2>
               <p className="mt-4 max-w-[34rem] text-[17px] leading-[1.6] text-ink-2 text-pretty">
                 Pick one in Settings under Appearance, or on the first start. Ember, Tide and Daylight move; the pictures here stand still.
               </p>
               <div className="mt-10">
-                <Looks />
+                <Looks showNew={current} />
               </div>
               <ul className="mt-16 grid gap-x-10 gap-y-8 md:grid-cols-3">
                 {NEW.map((n) => (
@@ -141,7 +144,6 @@ export async function DownloadPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-10 text-[14px] leading-[1.6] text-ink-3">Share play in the party room is on its way.</p>
             </div>
           </section>
 
@@ -170,7 +172,7 @@ export async function DownloadPage() {
                 )}
               </div>
               <p className="mt-12 max-w-[40rem] text-[14px] leading-[1.6] text-ink-3 text-pretty">
-                AnyPlay does not include or provide games. You play the games you own, run through AnyPS5, a compatibility layer and never an emulator.
+                AnyPlay does not include or provide games. You play the games you own, run through AnyPS5, a compatibility layer, never an emulator.
                 See <a href={LINKS.compatibility} className={textLink}>how games run</a>.
               </p>
             </div>

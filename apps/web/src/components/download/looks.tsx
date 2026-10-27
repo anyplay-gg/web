@@ -19,7 +19,7 @@ export const LOOKS: Look[] = [
   { name: "Daylight", text: "The first light look. Soft sky, dark text, drifting clouds.", isNew: true, bg: tone("#a3bfe3", "#d4e3f2", "#fff2d1", "50% 115%") },
 ];
 
-export function Looks() {
+export function Looks({ showNew = true }: { showNew?: boolean }) {
   return (
     <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3">
       {LOOKS.map((l) => (
@@ -31,7 +31,7 @@ export function Looks() {
           />
           <h3 className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[16px] leading-[1.3] font-semibold">
             {l.name}
-            {l.isNew ? (
+            {l.isNew && showNew ? (
               <span className="rounded-full bg-brand-wash px-2 py-0.5 text-[12px] leading-[1.3] font-semibold text-brand-text">New in 0.3.5</span>
             ) : null}
           </h3>

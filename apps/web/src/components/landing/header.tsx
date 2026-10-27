@@ -76,6 +76,7 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
 
 /** Below the width where the links fit, they move into a menu behind one button. */
 function PhoneMenu() {
+  const onDownload = usePathname() === LINKS.downloadPage;
   const { discord } = useSite();
   const links: [string, string][] = [
     ["Launcher", LINKS.downloadPage],
@@ -100,6 +101,7 @@ function PhoneMenu() {
                 key={label}
                 href={href}
                 closeOnClick
+                aria-current={href === LINKS.downloadPage && onDownload ? "page" : undefined}
                 className="flex min-h-11 items-center rounded-[14px] px-3.5 text-[15px] font-medium outline-none select-none data-[highlighted]:bg-white/[0.08]"
               >
                 {label}
