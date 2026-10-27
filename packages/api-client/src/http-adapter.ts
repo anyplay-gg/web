@@ -7,7 +7,6 @@ import type {
 	LinkedAccount,
 	AccountView,
 	BoardPage,
-	BoardRead,
 	CompatList,
 	PushDevice,
 	PushState,

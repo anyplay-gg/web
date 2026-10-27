@@ -8,8 +8,6 @@ import type {
 	AccountView,
 	BanStatement,
 	BrowserSession,
-	BoardPage,
-	BoardRead,
 	CompatList,
 	Device,
 	Flow,
