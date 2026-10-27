@@ -124,3 +124,42 @@ test.describe("/account/privacy appear offline", () => {
     await shoot(page, "appear-offline-save-error");
   });
 });
+
+test.describe("/account/privacy people you played with", () => {
+  const remember = (page: Page) => page.getByRole("switch", { name: "Remember people I play with" });
+
+  test("load: on by default, with its explanation", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await expect(remember(page)).toBeChecked();
+    await expect(page.getByText("Only you see the list.")).toBeVisible();
+    const { violations } = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+  });
+
+  test("turning it off moves the switch", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await page.getByText("Remember people I play with", { exact: true }).click();
+    await expect(remember(page)).not.toBeChecked();
+  });
+
+  test("clearing asks first, and Cancel changes nothing", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await page.getByRole("button", { name: "Clear the list" }).click();
+    const dialog = page.getByRole("dialog", { name: "Clear the list?" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByText("The list is empty.")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Clear the list" }).click();
+    await page.getByRole("dialog", { name: "Clear the list?" }).getByRole("button", { name: "Clear the list" }).click();
+    await expect(page.getByText("The list is empty.")).toBeVisible();
+  });
+
+  test("error: a failed save puts the switch back and says so", async ({ page }) => {
+    await page.goto("/account/privacy?mock=nosave");
+    await page.getByText("Remember people I play with", { exact: true }).click();
+    await expect(page.locator("main [role=alert]")).toContainText("problem");
+    await expect(remember(page)).toBeChecked();
+  });
+});

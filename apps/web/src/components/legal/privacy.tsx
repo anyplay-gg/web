@@ -145,6 +145,12 @@ const KEPT: Fact[] = [
     keep: "A feed item: 90 days. The list of games: until your account is deleted.",
   },
   {
+    what: "People you played with",
+    why: "A private list for you, so you can add someone as a friend, open their profile or block them later. When you and another account were in the same party or session together for at least 2 minutes, we store that account, when it was last, and the title of the session (a party has none). The other person is not told and it shows on no profile. You see it in the launcher. A block hides the entry. The switch “Remember people I play with” on the Privacy page is on for a new account; when you turn it off, nothing new is added, and “Clear the list” on the same page removes what is there.",
+    basis: contract,
+    keep: "30 days after you last played together, and at most the latest 50 people. Deleted with either of the two accounts.",
+  },
+  {
     what: "Profile, trophies and play time",
     why: "Your about text, favourite games, picture, play time per game and day, trophies (game, trophy number, grade, time, and whether it is secret), the level and points we work out from them, and the reports you send about how a game ran (verdict, system, version). Each part is shown to your friends only, unless you choose nobody or everyone. “Everyone” includes people who are not signed in. A player who may see your trophies can compare them with their own. Your trophies also count in the anonymous share of players who earned a trophy, once at least 10 players have the game, whatever you set. We resize every picture and drop its metadata. A picture has a web address that does not need a sign-in, and a browser or proxy may keep a copy for up to a year.",
     basis: contract,
@@ -368,7 +374,7 @@ export function PrivacyNotice() {
           <li>
             <Strong>Access and a copy.</Strong> On the <A href="/account/data">Your data</A> page you can download a file
             with your account, devices, passkeys, friends, requests and blocks, privacy choices, profile, picture,
-            trophies, play time, game reports, connected accounts, notification devices, party, feed items, conversations
+            trophies, play time, game reports, connected accounts, notification devices, party, feed items, the people you played with, conversations
             and your own messages and reactions, a list of the screenshots and clips you sent (not the files), your looking-for-group listings and requests, your reports, the actions against you and your consent record. It does not hold your
             presence, the list of games we saw you play, invitations, missed calls, your join code, the messages other
             people wrote to you, the old text of messages you edited or unsent, and the records about you that moderators keep. Write to us for those.
@@ -417,7 +423,7 @@ export function PrivacyNotice() {
         </P>
         <P>
           Deleting removes your account, devices, passkeys, friends, requests, blocks, presence, sessions, party, join
-          code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices,
+          code, profile, picture, trophies, play time, game reports, feed items, the people you played with, connected accounts, notification devices,
           the messages you wrote with their old texts, your reactions, the screenshots and clips you sent, and your looking-for-group listings and requests. A
           direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
           others wrote. A screenshot or clip that a report holds stays until the report is decided and its 6 months are over, or for up to 1 year if nobody decides.

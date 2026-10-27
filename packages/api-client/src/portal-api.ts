@@ -110,6 +110,11 @@ export interface PortalApi {
 		/** Whether the page at /u/<handle> is open to people who are not friends. Off for a new account. */
 		publicProfile(): Promise<boolean>;
 		setPublicProfile(value: boolean): Promise<boolean>;
+		/** Whether the cloud remembers the people the player shares parties and sessions with. On for a new account. */
+		playedWithRemember(): Promise<boolean>;
+		setPlayedWithRemember(value: boolean): Promise<boolean>;
+		/** Empties the private list of people played with. The list itself is read in the launcher. */
+		clearPlayedWith(): Promise<void>;
 	};
 
 	security: {
