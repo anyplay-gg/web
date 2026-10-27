@@ -5,6 +5,7 @@ import { Menu } from "@anyplay/ui/menu";
 import { ArrowDownTrayIcon, ArrowUpRightIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { type ComponentType, useSyncExternalStore } from "react";
 import { AppleLogo, LinuxLogo, WindowsLogo } from "./os-logos";
+import { LINKS } from "./links";
 import type { Downloads } from "./release";
 
 type Os = "windows" | "linux" | "mac" | "other";
@@ -13,8 +14,10 @@ type Os = "windows" | "linux" | "mac" | "other";
 function detectOs(): Os {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
   const p = (nav.userAgentData?.platform || nav.userAgent || "").toLowerCase();
+  // Phones and tablets get no launcher: the menu still lists every system for them.
+  if (/iphone|ipad|android/.test(p)) return "other";
   if (p.includes("win")) return "windows";
-  if (p.includes("mac") || p.includes("iphone") || p.includes("ipad")) return "mac";
+  if (p.includes("mac")) return "mac";
   if (p.includes("linux") || p.includes("x11") || p.includes("cros")) return "linux";
   return "other";
 }
@@ -30,7 +33,7 @@ const noSubscription = () => () => {};
 const LABEL: Record<Os, string> = {
   windows: "Download for Windows",
   linux: "Download for Linux",
-  mac: "Download",
+  mac: "Download for macOS",
   other: "Download",
 };
 
@@ -47,8 +50,7 @@ function megabytes(bytes?: number) {
 
 /**
  * The download button: it opens a menu with every system, the visitor's own marked, and each entry
- * downloads the file straight away. Mac is listed as coming, so a Mac visitor learns that here
- * instead of after a download.
+ * downloads the file straight away.
  */
 export function DownloadMenu({
   downloads,
@@ -65,6 +67,7 @@ export function DownloadMenu({
     { os: "windows", logo: WindowsLogo, name: "Windows", detail: "Installer, 64-bit", file: downloads.windows },
     { os: "linux", logo: LinuxLogo, name: "Linux", detail: "AppImage, x86-64", file: downloads.appImage },
     { os: "linux-tar", logo: LinuxLogo, name: "Linux", detail: "tar.gz archive, x86-64", file: downloads.tarball },
+    { os: "mac", logo: AppleLogo, name: "macOS", detail: "Apple silicon, macOS 11 or newer", file: downloads.mac },
   ] as const;
 
   return (
@@ -108,25 +111,19 @@ export function DownloadMenu({
                 </Menu.LinkItem>
               );
             })}
-            <Menu.Item
-              disabled
-              className="grid grid-cols-[40px_1fr_auto] items-center gap-3 rounded-[16px] px-2.5 py-2 outline-none select-none"
-            >
-              <span className="grid size-10 place-items-center rounded-[12px] bg-white/[0.04] text-[#8f8b84]">
-                <AppleLogo className="size-[18px]" />
-              </span>
-              <span className="min-w-0 text-[#8f8b84]">
-                <span className="block text-[15px] leading-tight font-semibold">macOS</span>
-                <span className="block text-[12.5px] leading-tight">Not available yet</span>
-              </span>
-              <span className="rounded-full bg-white/[0.07] px-2 py-0.5 text-[11px] font-semibold text-[#bdb9b1]">Soon</span>
-            </Menu.Item>
             <Menu.Separator className="mx-3 my-1.5 h-px bg-white/[0.07]" />
             <Menu.LinkItem
-              href={downloads.page}
-              className="flex items-center justify-between rounded-[14px] px-3 py-2.5 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
+              href={LINKS.downloadPage}
+              className="flex min-h-11 items-center justify-between rounded-[14px] px-3 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
             >
-              Release notes and checksums
+              All downloads and checksums
+              <ArrowUpRightIcon aria-hidden className="size-4 opacity-70" />
+            </Menu.LinkItem>
+            <Menu.LinkItem
+              href={downloads.page}
+              className="flex min-h-11 items-center justify-between rounded-[14px] px-3 text-[13px] text-[#bdb9b1] outline-none select-none data-[highlighted]:bg-white/[0.07] data-[highlighted]:text-[#f6f5f1]"
+            >
+              Release notes
               <ArrowUpRightIcon aria-hidden className="size-4 opacity-70" />
             </Menu.LinkItem>
           </Menu.Popup>
