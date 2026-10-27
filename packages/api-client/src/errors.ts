@@ -114,6 +114,9 @@ export const defaultMessages = {
 export function describeError(e: unknown, messages: Record<string, string> = defaultMessages): string {
 	const text = (key: string) => messages[key] ?? defaultMessages.generic;
 	if (!isApiError(e)) return text("generic");
+	// The cloud words a lockout itself (how long, and that a passkey still works); its generic
+	// limit says "Too many requests", which the table below replaces.
+	if (e.code === "rate_limited" && e.message && !e.message.startsWith("Too many requests")) return e.message;
 	if (e.code === "rate_limited" && e.retryAfter) return `Too many tries. Wait ${e.retryAfter} seconds and try again.`;
 	if (e.code in defaultMessages) return text(e.code);
 	return e.message || text("generic");
