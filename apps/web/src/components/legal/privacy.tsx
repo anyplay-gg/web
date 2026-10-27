@@ -130,7 +130,7 @@ const KEPT: Fact[] = [
     what: "Screenshots and clips you send to a friend",
     why: "If you use “Send to a Friend” in the launcher: the file you chose (a PNG or JPEG screenshot of up to 10 MB, or an MP4 clip of up to 100 MB and 60 seconds), who sent it, when, and the conversation it is in. Only the friend you sent it to can open it: it goes into your direct conversation, never to strangers, message requests or groups, and we check who may open it on every request. We check the type, size and length of a file. We do not look at the picture and we do not remove metadata from it; screenshots made by the launcher have none. A file comes to us only when you press Send. If your friend reports it, a moderator can see it.",
     basis: contract,
-    keep: "30 days after you sent it, then deleted. If you take the message back, nobody can open it at once, and we delete it after 7 days. A reported file stays as long as the report (up to 1 year) and survives the deletion of your account, like the report.",
+    keep: "30 days after you sent it, then deleted. If you take the message back, nobody can open it at once, and we delete it after 7 days, unless a report holds it. A file that a report holds stays until 6 months after a moderator decides the report, or for 1 year after the report if nobody decides. It stays even if you delete your account, like the report.",
   },
   {
     what: "Looking-for-group listings",
@@ -182,7 +182,7 @@ const KEPT: Fact[] = [
     what: "Warnings, mutes, bans and appeals",
     why: "The action, the rule and the reason, the end date, your appeal and the answer. A ban also holds your account number and a keyed hash of your e-mail address, so that the ban still holds if you come back with a new account and the same address.",
     basis: interest,
-    keep: "A warning, a mute or a time-limited ban: 6 months after it ends or was given. A ban for good: until we lift it, and 6 months after. These records stay when you delete your account.",
+    keep: "A warning or a mute: 6 months after it ends or was given. A time-limited ban: 6 months after it ends. A ban for good: until we lift it. When we lift a ban, we delete the ban and the hash of your e-mail address at once; the record of the action stays for 6 months more. These records stay when you delete your account.",
   },
   {
     what: "Moderation log",
@@ -420,7 +420,7 @@ export function PrivacyNotice() {
           code, profile, picture, trophies, play time, game reports, feed items, connected accounts, notification devices,
           the messages you wrote with their old texts, your reactions, the screenshots and clips you sent, and your looking-for-group listings and requests. A
           direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
-          others wrote. A screenshot or clip that a report holds stays for the time of the report.
+          others wrote. A screenshot or clip that a report holds stays until the report is decided and its 6 months are over, or for up to 1 year if nobody decides.
         </P>
         <P>
           It does not remove the records about reports, warnings, mutes, bans and appeals, nor the moderation log. They
@@ -433,8 +433,8 @@ export function PrivacyNotice() {
       <Section id="backups" title="Backups">
         <P>
           Every night the server saves an encrypted copy of its data, and keeps it for 14 days. We keep an encrypted copy
-          on our own computer for up to 90 days. Before each update the server also saves a copy of its data, and keeps
-          the newest 14. So deleted data can stay in a backup for up to 90 days. We use backups to restore the service
+          on our own computer for up to 90 days. Before each update the server also saves a copy of its data. We keep the
+          newest 14 of these copies and delete any that is older than 90 days. So deleted data can stay in a backup for up to 90 days. We use backups to restore the service
           after a failure, not to look at data. If we restore a backup, we delete again what was deleted since.
         </P>
       </Section>
