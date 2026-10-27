@@ -2,7 +2,9 @@
 import { Fragment } from "react";
 import { ArrowRightIcon, CodeBracketIcon, LockClosedIcon, ServerStackIcon } from "@heroicons/react/20/solid";
 import { DownloadMenu } from "./download-button";
-import { Header, Wordmark } from "./header";
+import { Footer } from "./footer";
+import { Header } from "./header";
+import { pillGlass, pillLight, pillSmall } from "./pills";
 import { HeroField, TiltIn } from "./hero";
 import { LauncherDemo } from "./launcher-demo";
 import { readSite } from "@/lib/site";
@@ -21,14 +23,6 @@ import { Together } from "./together";
  * run, and a dithered sun to close. Shaders are Paper Shaders (Apache-2.0), mounted only
  * near the viewport; icons are Heroicons (MIT).
  */
-
-const pill =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold whitespace-nowrap select-none transition-[background-color,color,scale,box-shadow] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] active:duration-[var(--duration-press)]";
-const pillLight = `${pill} bg-[#f6f5f1] text-[#161513] shadow-[inset_0_-1px_0_rgb(0_0_0/0.12),0_1px_2px_rgb(0_0_0/0.4),0_10px_30px_-10px_rgb(255_90_31/0.45)] [@media(hover:hover)]:hover:bg-white`;
-/** The navbar's button: the same light pill, sized for a 56 high bar. */
-const pillSmall =
-  "inline-flex h-9 [@media(pointer:coarse)]:h-11 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-3.5 text-[14px] font-semibold whitespace-nowrap text-[#161513] select-none transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] active:scale-[0.96] [@media(hover:hover)]:hover:bg-white";
-const pillGlass = `${pill} bg-white/[0.06] text-[#f6f5f1] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12),inset_0_1px_0_rgb(255_255_255/0.1)] backdrop-blur-md [@media(hover:hover)]:hover:bg-white/[0.1]`;
 
 /** The headline, word by word. The last word carries the gradient and is padded below, so the gradient reaches its descender. */
 const HEADLINE = ["Play", "your", "games", "together."];
@@ -176,68 +170,8 @@ export async function Landing() {
           </section>
         </main>
 
-        <footer className="relative border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]">
-          <div className="mx-auto grid w-full max-w-[1160px] gap-10 px-[var(--gutter)] py-14 md:grid-cols-[1fr_auto_auto_auto_auto] md:gap-12 lg:gap-16">
-            <div>
-              <Wordmark />
-              <p className="mt-3 max-w-[22rem] text-[14px] leading-[1.6] text-ink-3">
-                Open source on GitHub. Not affiliated with any console maker.
-              </p>
-            </div>
-            <FooterColumn
-              title="Product"
-              links={[
-                ["Download", LINKS.download],
-                ["Release notes", LINKS.releases],
-                ["Compatibility", LINKS.compatibility],
-                ["Self-hosting", LINKS.selfHost],
-              ]}
-            />
-            <FooterColumn
-              title="Community"
-              links={[
-                ...(discord ? ([["Discord", discord]] as [string, string][]) : []),
-                ["GitHub", LINKS.github],
-              ]}
-            />
-            <FooterColumn
-              title="Account"
-              links={[
-                ["Sign in", LINKS.signIn],
-                ["Create an account", LINKS.createAccount],
-              ]}
-            />
-            <FooterColumn
-              title="Legal"
-              links={[
-                ["Legal notice", LINKS.legal],
-                ["Privacy notice", LINKS.privacy],
-                ["Terms of use", LINKS.terms],
-              ]}
-            />
-          </div>
-        </footer>
+        <Footer />
       </div>
     </LandingProviders>
-  );
-}
-
-function FooterColumn({ title, links }: { title: string; links: [string, string][] }) {
-  return (
-    <div>
-      <p className="text-[13px] font-semibold text-ink">{title}</p>
-      <ul className="mt-2 md:mt-3">
-        {links.map(([label, href]) => (
-          <li key={label}>
-            <a
-              href={href}
-              className="inline-flex min-h-11 items-center text-[14px] text-ink-3 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
-            >
-              {label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

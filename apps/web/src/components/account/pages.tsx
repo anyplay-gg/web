@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { CodeField, FormError, TextField } from "../auth/fields";
 import { DownloadMenu } from "../landing/download-button";
+import { FALLBACK } from "../landing/release";
 import { DitherField } from "../landing/shaders";
 import { useSite } from "../site-context";
 import { LevelMeter } from "./level";
@@ -182,12 +183,7 @@ export function OverviewPage() {
   );
 }
 
-const DOWNLOADS = {
-  windows: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
-  appImage: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
-  tarball: { href: "https://github.com/anyplaynet/launcher/releases/latest" },
-  page: "https://github.com/anyplaynet/launcher/releases/latest",
-};
+const DOWNLOADS = FALLBACK;
 
 const AUDIENCE_WORD: Record<Audience, string> = { everyone: "Everyone", friends: "Friends", nobody: "Only you" };
 

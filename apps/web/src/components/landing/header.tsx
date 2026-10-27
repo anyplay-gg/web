@@ -5,6 +5,7 @@ import { Menu } from "@anyplay/ui/menu";
 import { useMotionValueEvent, useScroll } from "@anyplay/ui/motion";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useSite } from "../site-context";
 import { DownloadMenu } from "./download-button";
@@ -31,6 +32,7 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
   const { discord } = useSite();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const onDownload = usePathname() === LINKS.downloadPage;
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
   return (
@@ -44,7 +46,7 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
           <Wordmark />
         </Link>
         <nav aria-label="Main" className="relative hidden items-center md:flex">
-          <a href={LINKS.releases} className={navLink}>
+          <a href={LINKS.downloadPage} aria-current={onDownload ? "page" : undefined} className={`${navLink} aria-[current=page]:text-ink`}>
             Launcher
           </a>
           <a href={LINKS.selfHost} className={navLink}>
@@ -76,7 +78,7 @@ export function Header({ pill, downloads }: { pill: string; downloads: Downloads
 function PhoneMenu() {
   const { discord } = useSite();
   const links: [string, string][] = [
-    ["Launcher", LINKS.releases],
+    ["Launcher", LINKS.downloadPage],
     ["Self-hosting", LINKS.selfHost],
     ["GitHub", LINKS.github],
     ...(discord ? ([["Discord", discord]] as [string, string][]) : []),
