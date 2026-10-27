@@ -6,7 +6,7 @@ The website and account web of [AnyPlay](https://anyplaynet.com), live at **[any
 
 - **Get the launcher.** The landing page links the files of the latest [launcher release](https://github.com/anyplaynet/launcher/releases).
 - **Sign in or create an account** with a passkey or a code sent by e-mail. The launcher's own sign-in opens the same pages.
-- **Manage your account:** profile, friends, trophies, notifications, security (passkeys, launchers, browsers), privacy, connections (Discord, Steam) and your data (export and deletion).
+- **Manage your account:** profile, friends, trophies, notifications, security (passkeys, launchers, browsers), privacy (including the private "played with recently" list), connections (Discord, Steam) and your data (export and deletion).
 - **Share a profile.** Every player has a public page that shows only what that player allows.
 - **Check how games run.** The compatibility list is built from players' answers to "How did it run?".
 - **Read the legal pages:** legal notice, privacy notice and terms of use.
@@ -16,6 +16,8 @@ The website and account web of [AnyPlay](https://anyplaynet.com), live at **[any
 | `/` | Landing page and launcher download |
 | `/sign-in`, `/create` | Sign-in and sign-up |
 | `/account` | Account pages |
+| `/join/{code}` | Join page for a join code |
+| `/link` | Opens the account web from the launcher |
 | `/u/{handle}` | Public profile |
 | `/compatibility` | Compatibility list |
 | `/legal`, `/privacy`, `/terms` | Legal notice, privacy notice, terms |
@@ -43,7 +45,7 @@ pnpm install
 pnpm dev            # http://127.0.0.1:4400, on a mock of the cloud
 ```
 
-No cloud is needed in development. Before a pull request, run `pnpm lint`, `pnpm typecheck` and `pnpm test`.
+No cloud is needed in development. Before a pull request, run `pnpm lint`, `pnpm typecheck` and `pnpm test`; CI also runs `pnpm build` and the browser tests (`pnpm --filter @anyplay/web e2e`).
 
 ## Deployment
 

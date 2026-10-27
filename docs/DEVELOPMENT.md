@@ -23,13 +23,15 @@ pnpm install
 pnpm dev            # http://127.0.0.1:4400, on the mock
 ```
 
-In development the mock stands in for the cloud. Add `?mock=signedout`, `?mock=handoff`, `?mock=banned`, `?mock=empty`, `?mock=slow` or `?mock=error` to a URL to see those states.
+In development the mock stands in for the cloud. Add `?mock=<scenario>` to a URL to see a state: `signedout`, `handoff`, `banned`, `empty`, `slow` or `error`, plus `nosave`, `oldfeed`, `nocompare` and `hiddennow` for the account pages (the list is `SCENARIOS` in `packages/api-client/src/mock/adapter.ts`).
 
-Before a pull request: `pnpm lint`, `pnpm typecheck` and `pnpm test`. CI (`.github/workflows/ci.yml`) runs those plus the build, the Playwright suite and the shared rules on every pull request and on `main`. The browser tests (`pnpm --filter @anyplay/web e2e`, Playwright, on the mock at 375 and 1280 px) start their own dev server on port 4410; `SHOTS=<folder>` also saves screenshots.
+Before a pull request: `pnpm lint`, `pnpm typecheck` and `pnpm test`. CI (`.github/workflows/ci.yml`) runs those plus the check that the colour ramps are current (`node scripts/gen-ramps.mjs --check`; run it without `--check` after you change a ramp), the build, the Playwright suite and the shared rules on every pull request and on `main`. The browser tests (`pnpm --filter @anyplay/web e2e`, Playwright, on the mock at 375 and 1280 px) start their own dev server on port 4410; `SHOTS=<folder>` also saves screenshots.
 
 ## Run it
 
 The `Dockerfile` builds the standalone server. A cloud runs it next to itself on the same host name with [`deploy/compose.web.yaml`](https://github.com/anyplaynet/cloud/blob/main/deploy/compose.web.yaml); the cloud's [deploy guide](https://github.com/anyplaynet/cloud/blob/main/docs/deploy.md#the-website) says how.
+
+Browser error reports are off unless `NEXT_PUBLIC_SENTRY_DSN` names a Sentry-compatible address at build time (`NEXT_PUBLIC_ENVIRONMENT` sets the environment name, default `production`).
 
 ## Legal texts
 
