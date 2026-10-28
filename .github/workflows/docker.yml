@@ -11,6 +11,8 @@ name: docker
 # check with `gh attestation verify` that this workflow built it. anyplaynet/cloud's
 # `deploy/update.sh --web-image` does so (docs/deploy.md there).
 #
+# After the image job, the `deploy` job puts it live (see there).
+#
 # On pull requests that touch the Dockerfile, its context rules or the lockfile, the same build runs
 # without pushing: the `check` job does not build the image, and a Dockerfile that stopped building
 # would be found at the next deploy otherwise.
@@ -42,6 +44,8 @@ jobs:
   image:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      digest: ${{ steps.web.outputs.digest }}
     permissions:
       contents: read
       packages: write # pushes the image
@@ -104,3 +108,57 @@ jobs:
             echo "cloud/deploy/update.sh --cloud <cloud commit> --image <digest> --relay-image <digest> --web-image ${WEB_DIGEST}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Deploys the image that was just built: one ssh call to the forced command on the server
+  # (anyplaynet/cloud docs/adr/0008), which checks the attestation again and swaps only the web
+  # container. Merge to live is about 5 minutes.
+  deploy:
+    needs: image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    # One deploy at a time; a waiting one is replaced by the newest, a running one is never cut off.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      DIGEST: ${{ needs.image.outputs.digest }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Skip when a newer commit is on main
+        id: head
+        run: |
+          head=$(gh api "repos/${GITHUB_REPOSITORY}/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ] && [ "${{ github.event_name }}" = push ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "A newer commit ($head) is on main; its run deploys." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Deploy
+        if: steps.head.outputs.skip != 'true'
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ vars.DEPLOY_HOST }}
+          HOST_KEY: ${{ vars.DEPLOY_HOST_KEY }}
+        run: |
+          [[ $DIGEST =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "no image digest" >&2; exit 1; }
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$HOST_KEY" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 "root@${HOST}" "web ${DIGEST}"
+          rm -f ~/.ssh/deploy_key
+      - name: The site answers
+        if: steps.head.outputs.skip != 'true'
+        run: |
+          fail=0
+          for p in / /download /status /sign-in; do
+            code=000
+            for i in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "https://anyplaynet.com$p") && [ "$code" = 200 ] && break
+              sleep 5
+            done
+            echo "$p $code"; [ "$code" = 200 ] || fail=1
+          done
+          exit $fail
