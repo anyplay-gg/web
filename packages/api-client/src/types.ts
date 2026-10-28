@@ -352,3 +352,41 @@ export interface JoinView {
 	maxMembers: number;
 	kind: JoinKind;
 }
+
+/** Which end of a board ranks first. */
+export type BoardOrder = "high" | "low";
+export type BoardStatus = "open" | "closed";
+/** `around` and `friends` need a session. */
+export type BoardView = "top" | "around" | "friends";
+
+/** One line of a board. A player is named by handle only. */
+export interface BoardLine {
+	/** Equal scores share a rank. */
+	rank: number;
+	handle: string;
+	score: number;
+	/** Unix seconds. */
+	achieved: number;
+}
+
+/** A range of a board as the viewer may see it (network spec/portal-api.md, "Leaderboards"). */
+export interface BoardPage {
+	titleId: string;
+	board: string;
+	order: BoardOrder;
+	status: BoardStatus;
+	view: BoardView;
+	/** The entries the viewer may see in this view. */
+	total: number;
+	/** The position of the first entry, from 0. */
+	start: number;
+	entries: BoardLine[];
+	/** The viewer's own line, absent without a session or an entry. */
+	me?: BoardLine;
+}
+
+export interface BoardRead {
+	view?: BoardView;
+	start?: number;
+	count?: number;
+}

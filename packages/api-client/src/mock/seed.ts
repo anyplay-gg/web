@@ -6,6 +6,9 @@
 import type {
 	Account,
 	BrowserSession,
+	BoardLine,
+	BoardPage,
+	BoardRead,
 	CompatList,
 	CompatVersion,
 	RunCounts,
@@ -374,5 +377,39 @@ export function seedCompatibility(): CompatList {
 					: [{ version: "1.00", reports, verdict }];
 			return { titleId, ...(title ? { title } : {}), verdict, reports, counts, versions };
 		}),
+	};
+}
+
+const BOARD_NAMES = ["Lumen", "Ember", "Tidal", "Quill", "Nova", "Sable", "Fern", "Orbit", "Pixel", "Mosaic", "Cinder", "Harbor"];
+
+/** The demo board of the mock: Board 7 of a demo title, higher is better, ties included. */
+export const DEMO_BOARD = { titleId: "GAME00001", board: "7" } as const;
+
+/** A range of the demo board as the mock viewer sees it. */
+export function seedBoard(read: BoardRead = {}, signedIn = false, empty = false): BoardPage {
+	const view = read.view ?? "top";
+	const all: BoardLine[] = empty
+		? []
+		: Array.from({ length: 60 }, (_, i) => ({
+				handle: i < BOARD_NAMES.length ? BOARD_NAMES[i]! : `Player${i + 1}`,
+				score: 120_000 - Math.floor(i / 2) * 1_750,
+				achieved: 1_790_000_000 - i * 5_400,
+			}))
+				.filter((_, i) => view !== "friends" || i % 7 === 0)
+				.map((line, i, rows) => ({ ...line, rank: rows.findIndex((r) => r.score === line.score) + 1 }));
+	const mine = signedIn ? all.find((l) => l.handle === "Quill") : undefined;
+	const count = read.count ?? 25;
+	const pos = mine ? all.indexOf(mine) : 0;
+	const start = view === "around" ? Math.max(0, pos - Math.floor(count / 2)) : (read.start ?? 0);
+	return {
+		titleId: DEMO_BOARD.titleId,
+		board: DEMO_BOARD.board,
+		order: "high",
+		status: "open",
+		view,
+		total: all.length,
+		start,
+		entries: all.slice(start, start + count),
+		...(mine ? { me: mine } : {}),
 	};
 }

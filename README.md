@@ -20,6 +20,7 @@ The website and account web of [AnyPlay](https://anyplaynet.com), live at **[any
 | `/link` | Opens the account web from the launcher |
 | `/u/{handle}` | Public profile |
 | `/compatibility` | Compatibility list |
+| `/boards/{title}/{board}` | Leaderboard of a game, read-only (where the cloud has leaderboards on) |
 | `/legal`, `/privacy`, `/terms` | Legal notice, privacy notice, terms |
 
 ## How it is built
