@@ -3,6 +3,7 @@
 import { ApiError } from "../errors";
 import type { PortalApi } from "../portal-api";
 import type {
+	Audience,
 	Account,
 	LinkedAccount,
 	AccountView,
@@ -118,6 +119,7 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 	let me: Me = seedMe(t0);
 	let publicProfile = false;
 	let playedWithRemember = true;
+	let scorePrivacy: Audience = "friends";
 	let freshUntil = options.fresh ? t0 + FRESH_FOR : 0;
 	let passkeys: Passkey[] = empty ? [] : seedPasskeys(t0);
 	let devices: Device[] = empty ? [] : seedDevices(t0);
@@ -521,6 +523,15 @@ export function createMockApi(options: MockOptions = {}): PortalApi {
 			removeAvatar: () =>
 				call(() => {
 					profile = { ...profile, avatar: null };
+				}),
+			scorePrivacy: () => call(() => scorePrivacy, { read: true }),
+			setScorePrivacy: (value) =>
+				call(() => {
+					if (scenario === "nosave") {
+						throw new ApiError("internal", "The mock is set to fail.", { status: 500 });
+					}
+					scorePrivacy = value;
+					return scorePrivacy;
 				}),
 			appearOffline: () => call(() => Boolean(me.appearOffline), { read: true }),
 			setAppearOffline: (value) =>

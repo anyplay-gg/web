@@ -213,6 +213,14 @@
       "row": "Atividade",
       "detail": "Seus amigos veem no feed deles. Desconhecidos não veem feed. Escolha “{nobody}” para esconder o que está lá e parar novos itens."
     },
+    "scores": {
+      "title": "Pontuações",
+      "description": "Quem vê sua melhor pontuação no ranking de um jogo. Você sempre vê a sua.",
+      "row": "Pontuações do ranking",
+      "who": "Quem vê: pontuações do ranking",
+      "detail": "Seus amigos veem sua entrada e sua posição. Escolha “{nobody}” para escondê-la. Um bloqueio esconde você e a outra pessoa um do outro.",
+      "everyone": "“{everyone}” inclui quem não entrou na conta. Essas pessoas veem seu nome, sua pontuação e a data na página pública do ranking."
+    },
     "appearOffline": {
       "title": "Status online",
       "description": "Vale para todo launcher e navegador conectado à sua conta.",

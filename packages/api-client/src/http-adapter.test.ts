@@ -297,6 +297,20 @@ describe("http adapter", () => {
 		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
 	});
 
+	it("reads and sets who sees the scores on its own, as {scores}", async () => {
+		const { api, call } = setup((url, init) =>
+			url.endsWith("/session") ? json(view()) : json({ scores: init.method === "PUT" ? "nobody" : "friends" }),
+		);
+		expect(await api.account.scorePrivacy()).toBe("friends");
+		expect(call(0).url).toBe("/web/api/v1/me/score-privacy");
+		expect(await api.account.setScorePrivacy("nobody")).toBe("nobody");
+		const put = call(2);
+		expect(put.url).toBe("/web/api/v1/me/score-privacy");
+		expect(put.init.method).toBe("PUT");
+		expect(JSON.parse(String(put.init.body))).toEqual({ scores: "nobody" });
+		expect(headersOf(put.init)["X-CSRF-Token"]).toBe("tok-1");
+	});
+
 	it("reads, sets and clears the played-with list on its own", async () => {
 		const { api, call } = setup((url, init) =>
 			url.endsWith("/session")

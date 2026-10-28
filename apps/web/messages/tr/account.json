@@ -213,6 +213,14 @@
       "row": "Etkinlik",
       "detail": "Arkadaşların akışlarında görür. Yabancılar akış görmez. Oradakini gizlemek ve yeni öğeleri durdurmak için “{nobody}” seç."
     },
+    "scores": {
+      "title": "Skorlar",
+      "description": "Bir oyunun sıralama tablosundaki en iyi skorunu kimlerin gördüğü. Kendi skorunu her zaman sen görürsün.",
+      "row": "Sıralama skorları",
+      "who": "Kimler görür: sıralama skorları",
+      "detail": "Arkadaşların sıralamadaki kaydını ve yerini görür. Gizlemek için “{nobody}” seç. Engelleme, seni ve karşındakini birbirinden gizler.",
+      "everyone": "“{everyone}” giriş yapmamış kişileri de kapsar. Onlar kullanıcı adını, skorunu ve tarihini sıralama tablosunun herkese açık sayfasında görür."
+    },
     "appearOffline": {
       "title": "Çevrimiçi durumu",
       "description": "Hesabına giriş yapmış her başlatıcı ve tarayıcı için geçerlidir.",

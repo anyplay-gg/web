@@ -163,3 +163,44 @@ test.describe("/account/privacy people you played with", () => {
     await expect(remember(page)).toBeChecked();
   });
 });
+
+test.describe("/account/privacy leaderboard scores", () => {
+  const scores = (page: Page) => page.getByRole("group", { name: "Who sees: leaderboard scores" });
+
+  test("load: at friends, with the wording of the privacy notice", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await expect(page.getByRole("heading", { level: 2, name: "Scores" })).toBeVisible();
+    await expect(scores(page).getByLabel("Friends")).toBeChecked();
+    await expect(page.getByText("Friends see your entry and your rank by default.")).toBeVisible();
+    await expect(page.getByText("includes people who are not signed in")).toHaveCount(0);
+    const { violations } = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+    await shoot(page, "scores-load");
+  });
+
+  test("everyone says that people who are not signed in see it, and the choice survives leaving the page", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await scores(page).getByText("Everyone", { exact: true }).click();
+    await expect(scores(page).getByLabel("Everyone")).toBeChecked();
+    await expect(page.getByText("includes people who are not signed in")).toBeVisible();
+    await shoot(page, "scores-everyone");
+    await page.getByRole("link", { name: "Overview", exact: true }).first().click();
+    await page.getByRole("link", { name: "Privacy", exact: true }).first().click();
+    await expect(scores(page).getByLabel("Everyone")).toBeChecked();
+  });
+
+  test("nobody works with the keyboard", async ({ page }) => {
+    await page.goto("/account/privacy");
+    await scores(page).getByLabel("Friends").focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(scores(page).getByLabel("Only me")).toBeChecked();
+  });
+
+  test("error: a failed save puts the choice back and says so", async ({ page }) => {
+    await page.goto("/account/privacy?mock=nosave");
+    await scores(page).getByText("Only me", { exact: true }).click();
+    await expect(page.locator("main [role=alert]").last()).toContainText("problem");
+    await expect(scores(page).getByLabel("Friends")).toBeChecked();
+    await shoot(page, "scores-save-error");
+  });
+});

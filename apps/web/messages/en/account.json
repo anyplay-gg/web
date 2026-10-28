@@ -213,6 +213,14 @@
       "row": "Activity",
       "detail": "Friends see it in their feed. Strangers see no feed. Choose “{nobody}” to hide what is there and stop new items."
     },
+    "scores": {
+      "title": "Scores",
+      "description": "Who sees your best score on a game’s leaderboard. You always see your own.",
+      "row": "Leaderboard scores",
+      "who": "Who sees: leaderboard scores",
+      "detail": "Friends see your entry and your rank by default. Choose “{nobody}” to hide it. A block hides you and the other person from each other.",
+      "everyone": "“{everyone}” includes people who are not signed in. They see your handle, score and date on the board’s public page."
+    },
     "appearOffline": {
       "title": "Online status",
       "description": "Applies to every launcher and browser signed in to your account.",
