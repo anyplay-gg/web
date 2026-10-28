@@ -21,6 +21,7 @@ import { DitherField } from "../landing/shaders";
  */
 export function AuthShell({ children, toasts = true }: { children: ReactNode; toasts?: boolean }) {
   const t = useTranslations("auth.shell");
+  const legal = useTranslations("common.legal");
   const { discord } = useSite();
   return (
     <LandingProviders>
@@ -88,18 +89,18 @@ export function AuthShell({ children, toasts = true }: { children: ReactNode; to
                 </a>
               </p>
             )}
-            <nav aria-label={t("legalNav")}>
+            <nav aria-label={legal("nav")}>
               <ul className="flex flex-wrap gap-x-6">
                 {(
                   [
-                    ["legalNotice", LINKS.legal],
-                    ["privacyNotice", LINKS.privacy],
-                    ["termsOfUse", LINKS.terms],
+                    ["legal", LINKS.legal],
+                    ["privacy", LINKS.privacy],
+                    ["terms", LINKS.terms],
                   ] as const
                 ).map(([label, href]) => (
                   <li key={label}>
                     <a href={href} className="inline-flex min-h-11 items-center py-1 text-ink-2 underline-offset-4 [@media(hover:hover)]:hover:underline">
-                      {t(label)}
+                      {legal(label)}
                     </a>
                   </li>
                 ))}

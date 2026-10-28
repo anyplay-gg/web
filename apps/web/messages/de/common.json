@@ -16,5 +16,11 @@
     "rate_limited": "Zu viele Versuche. Warte einen Moment und versuche es erneut.",
     "rate_limited_wait": "Zu viele Versuche. Warte {seconds, plural, one {# Sekunde} other {# Sekunden}} und versuche es erneut.",
     "passkey_unsupported": "Dieser Browser unterstützt keine Passkeys. Verwende stattdessen den E-Mail-Code."
+  },
+  "legal": {
+    "nav": "Rechtliches",
+    "legal": "Impressum",
+    "privacy": "Datenschutzhinweis",
+    "terms": "Nutzungsbedingungen"
   }
 }

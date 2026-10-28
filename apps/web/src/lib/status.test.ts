@@ -2,6 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { StatusPage, utc } from "@/components/status/status-page";
+import { Intl } from "@/i18n/test-utils";
 import { loadStatus, parseStatus } from "./status";
 
 const body = (over: Record<string, unknown> = {}) => ({
@@ -62,7 +63,7 @@ describe("loadStatus", () => {
 describe("StatusPage", () => {
   it("names every part with a word, and prints the time", async () => {
     const status = await loadStatus({}, answer(body({ components: [{ id: "relay", status: "down" }], status: "degraded" })));
-    const html = renderToStaticMarkup(createElement(StatusPage, { status }));
+    const html = renderToStaticMarkup(createElement(Intl, null, createElement(StatusPage, { status })));
     expect(html).toContain("Some parts are down");
     for (const name of ["Cloud", "Database", "Live updates", "Relay", "Website"]) expect(html).toContain(name);
     expect(html).toContain("Down");

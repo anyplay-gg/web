@@ -1,0 +1,23 @@
+{
+  "/": 1015000,
+  "/account": 1000000,
+  "/account/connections": 1000000,
+  "/account/data": 1000000,
+  "/account/friends": 1010000,
+  "/account/notifications": 1010000,
+  "/account/privacy": 1000000,
+  "/account/profile": 1000000,
+  "/account/security": 1000000,
+  "/account/trophies": 1010000,
+  "/compatibility": 905000,
+  "/create": 1000000,
+  "/download": 890000,
+  "/join/[code]": 1005000,
+  "/legal": 775000,
+  "/link": 1005000,
+  "/privacy": 775000,
+  "/sign-in": 1000000,
+  "/status": 775000,
+  "/terms": 775000,
+  "/u/[handle]": 1025000
+}

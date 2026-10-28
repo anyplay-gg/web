@@ -59,7 +59,7 @@
     "deletion": "Hesabın {date} tarihinde silinecek. <keep>Hesabımı koru</keep>",
     "passkeys": "{count, plural, one {# geçiş anahtarı} other {# geçiş anahtarı}}",
     "noPasskey": "Henüz geçiş anahtarı yok",
-    "launchersBrowsers": "{launchers, plural, one {# Launcher} other {# Launcher}} · {browsers, plural, one {# tarayıcı} other {# tarayıcı}}",
+    "launchersBrowsers": "{launchers, plural, one {# başlatıcı} other {# başlatıcı}} · {browsers, plural, one {# tarayıcı} other {# tarayıcı}}",
     "trophiesAudience": "Kupalar: {audience}",
     "pictureAudience": "Profil resmi: {audience}",
     "audience": {
@@ -78,8 +78,8 @@
     "dataValue": "Dışa aktar ya da sil",
     "dataDetail": "Hakkında tuttuğumuz her şey",
     "launcher": {
-      "title": "Launcher’ı indir",
-      "description": "Bu hesapla Launcher’a giriş yap; arkadaşların, partilerin ve kupaların orada olur."
+      "title": "Başlatıcıyı indir",
+      "description": "Bu hesapla başlatıcıya giriş yap; arkadaşların, partilerin ve kupaların orada olur."
     }
   },
   "profile": {
@@ -102,7 +102,7 @@
     },
     "favourites": {
       "title": "Favori oyunlar",
-      "description": "En fazla {max}, oyun kimliğiyle. Bu site kimliği gösterir. Launcher her oyunun adını kendi kopyandan gösterir.",
+      "description": "En fazla {max}, oyun kimliğiyle. Bu site kimliği gösterir. Başlatıcı her oyunun adını kendi kopyandan gösterir.",
       "empty": "Henüz favori oyun yok. Aşağıdan bir oyun kimliği ekle.",
       "listLabel": "Favori oyunların",
       "remove": "{id} kaldır",
@@ -117,7 +117,7 @@
     }
   },
   "security": {
-    "lead": "Nasıl giriş yaptığın ve hesabına giriş yapmış her Launcher ile tarayıcı.",
+    "lead": "Nasıl giriş yaptığın ve hesabına giriş yapmış her başlatıcı ile tarayıcı.",
     "email": {
       "title": "E-posta",
       "description": "Giriş kodlarının gittiği adres. Değiştirmek için yeni adrese gönderilen bir kod gerekir.",
@@ -146,14 +146,14 @@
       "thisDevice": "bu cihaz"
     },
     "devices": {
-      "title": "Launcher’lar",
-      "description": "Launcher’ın hesabınla giriş yaptığı tüm bilgisayarlar.",
+      "title": "Başlatıcılar",
+      "description": "Hesabınla başlatıcıya giriş yapılmış tüm bilgisayarlar.",
       "detail": "{platform} · Son kullanım: {used}",
       "signOut": "Çıkış yap",
-      "empty": "Henüz hiçbir Launcher’da giriş yapılmadı.",
-      "confirmTitle": "Bu Launcher’dan çıkış yapılsın mı?",
+      "empty": "Henüz hiçbir başlatıcıda giriş yapılmadı.",
+      "confirmTitle": "Bu başlatıcıdan çıkış yapılsın mı?",
       "confirmDescription": "O bilgisayarda biri tekrar giriş yapana kadar çevrimdışı olur.",
-      "confirmLabel": "Launcher’dan çıkış yap"
+      "confirmLabel": "Başlatıcıdan çıkış yap"
     },
     "browsers": {
       "title": "Tarayıcılar",
@@ -171,10 +171,10 @@
     },
     "everywhere": {
       "title": "Her yerden çıkış yap",
-      "description": "Bu dahil her Launcher ve her tarayıcı. Bir cihaz kaybolduysa ya da başkası giriş yapmış olabilirse kullan.",
+      "description": "Bu dahil her başlatıcı ve her tarayıcı. Bir cihaz kaybolduysa ya da başkası giriş yapmış olabilirse kullan.",
       "button": "Her yerden çıkış yap",
       "confirmTitle": "Her yerden çıkış yapılsın mı?",
-      "confirmDescription": "Bu dahil her Launcher ve tarayıcıdan aynı anda çıkış yapılır.",
+      "confirmDescription": "Bu dahil her başlatıcı ve tarayıcıdan aynı anda çıkış yapılır.",
       "confirmLabel": "Her yerden çıkış yap"
     }
   },
@@ -182,7 +182,7 @@
     "lead": "Profilini ve etkinliğini kimin gördüğü. Kullanıcı adın her zaman görünür; böylece arkadaşların seni bulabilir.",
     "profile": {
       "title": "Profilin",
-      "description": "Değişiklikler hemen geçerli olur, Launcher’da da."
+      "description": "Değişiklikler hemen geçerli olur, başlatıcıda da."
     },
     "parts": {
       "trophies": {
@@ -215,13 +215,13 @@
     },
     "appearOffline": {
       "title": "Çevrimiçi durumu",
-      "description": "Hesabına giriş yapmış her Launcher ve tarayıcı için geçerlidir.",
+      "description": "Hesabına giriş yapmış her başlatıcı ve tarayıcı için geçerlidir.",
       "label": "Çevrimdışı görün",
       "detail": "Arkadaşların seni çevrimdışı görür. Yine de oynayabilir, sohbet edebilir ve katılabilirsin."
     },
     "publicProfile": {
       "title": "Herkese açık profil",
-      "description": "Sen açana kadar kapalıdır. Hesabına giriş yapmış her Launcher ve tarayıcı için geçerlidir.",
+      "description": "Sen açana kadar kapalıdır. Hesabına giriş yapmış her başlatıcı ve tarayıcı için geçerlidir.",
       "label": "Herkese açık profil göster",
       "detail": "Bağlantıya sahip herkes seviyeni, kupalarını ve oynadığın oyunları görür. Çevrimiçi olup olmadığını asla göstermez.",
       "page": "Sayfan: <link>{url}</link>"
@@ -280,7 +280,7 @@
     },
     "confirm": {
       "title": "Hesabın silinsin mi?",
-      "description": "Hesap 30 gün içinde silinir. Her Launcher ve tarayıcıdan şimdi çıkış yapılır."
+      "description": "Hesap 30 gün içinde silinir. Her başlatıcı ve tarayıcıdan şimdi çıkış yapılır."
     }
   },
   "compare": {

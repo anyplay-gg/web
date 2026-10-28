@@ -67,3 +67,15 @@ test("the account area speaks the language too, and the long words fit", async (
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBe(0);
 });
+
+test("a public profile carries only its own words, and none is missing", async ({ page }) => {
+  const problems: string[] = [];
+  page.on("console", (m) => {
+    if (m.type() === "error" && /MISSING_MESSAGE|Could not resolve/.test(m.text())) problems.push(m.text());
+  });
+  await page.goto("/u/mira?lang=de");
+  await expect(page.locator("html")).toHaveAttribute("lang", "de");
+  await expect(page.getByRole("heading", { level: 1, name: "mira" })).toBeVisible();
+  await expect(page.getByRole("region").first()).toBeVisible();
+  expect(problems).toEqual([]);
+});

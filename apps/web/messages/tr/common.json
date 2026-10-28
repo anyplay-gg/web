@@ -16,5 +16,11 @@
     "rate_limited": "Çok fazla deneme. Biraz bekleyip yeniden dene.",
     "rate_limited_wait": "Çok fazla deneme. {seconds, plural, one {# saniye} other {# saniye}} bekleyip yeniden dene.",
     "passkey_unsupported": "Bu tarayıcı geçiş anahtarlarını kullanamıyor. Bunun yerine e-posta kodunu kullan."
+  },
+  "legal": {
+    "nav": "Yasal",
+    "legal": "Yasal bildirim",
+    "privacy": "Gizlilik bildirimi",
+    "terms": "Kullanım koşulları"
   }
 }
