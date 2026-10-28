@@ -117,7 +117,7 @@ export function AudiencePicker({ value, onChange, label, disabled, only, describ
       {AUDIENCES.filter((a) => !only || only.includes(a)).map((a) => (
         <label
           key={a}
-          className="relative cursor-pointer rounded-full px-3 py-1.5 text-center text-[13px] font-medium text-ink-3 transition-colors duration-[var(--duration-quick)] has-[:checked]:bg-white/[0.1] has-[:checked]:text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ap-focus)] [@media(hover:hover)]:hover:text-ink"
+          className="relative inline-flex cursor-pointer items-center justify-center rounded-full px-3 py-1.5 text-center [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:px-4 text-[13px] font-medium text-ink-3 transition-colors duration-[var(--duration-quick)] has-[:checked]:bg-white/[0.1] has-[:checked]:text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ap-focus)] [@media(hover:hover)]:hover:text-ink"
         >
           <input type="radio" name={label} value={a} checked={value === a} onChange={() => onChange(a)} className="sr-only" />
           {t(a)}
