@@ -1,0 +1,20 @@
+{
+  "errors": {
+    "generic": "Bir şeyler ters gitti. Yeniden dene.",
+    "network": "AnyPlay’e ulaşılamıyor. Bağlantını kontrol edip yeniden dene.",
+    "internal": "AnyPlay’in tarafında bir sorun oldu. Bir dakika sonra yeniden dene.",
+    "unauthorized": "Oturumun sona erdi. Yeniden giriş yap.",
+    "forbidden": "Bunu bu hesapla yapamazsın.",
+    "banned": "Bu hesap engellendi.",
+    "not_found": "Bu artık yok.",
+    "limit": "Bunun için sınıra ulaştın. Önce birini kaldır.",
+    "too_large": "Bu göndermek için fazla büyük.",
+    "code_wrong": "Bu kod yanlış. Kontrol edip yeniden dene.",
+    "code_expired": "Bu kodun süresi doldu. Yeni bir kod iste.",
+    "handle_taken": "Bu kullanıcı adı alınmış. Başka bir tane dene.",
+    "handle_invalid": "3 ile 16 arasında harf, rakam, tire veya alt çizgi kullan. Bir harfle başla.",
+    "rate_limited": "Çok fazla deneme. Biraz bekleyip yeniden dene.",
+    "rate_limited_wait": "Çok fazla deneme. {seconds, plural, one {# saniye} other {# saniye}} bekleyip yeniden dene.",
+    "passkey_unsupported": "Bu tarayıcı geçiş anahtarlarını kullanamıyor. Bunun yerine e-posta kodunu kullan."
+  }
+}

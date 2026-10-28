@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { NextResponse, type NextRequest } from "next/server";
+import { LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, LOCALE_HEADER, parseLocale, resolveLocale } from "@/i18n/config";
 import { monitoringOrigin } from "@/lib/monitoring";
 
 /**
@@ -18,6 +19,9 @@ import { monitoringOrigin } from "@/lib/monitoring";
  * this hash has to be computed again from the new block.
  */
 const PAPER_SHADERS_STYLE = "'sha256-bcX2M6hOeEgeI9Ttj3KtXWZuoRsKenyQAlXswSnLakA='";
+
+/** The account flows and the public profile; everything else is English only for now. */
+const TRANSLATED_PAGES = /^\/(sign-in|create|link|join|account|u)(\/|$)/;
 
 export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
@@ -45,8 +49,18 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
   headers.set("content-security-policy", csp);
+  // The language: an explicit ?lang= (the launcher passes its own), else the cookie, else the browser.
+  const param = request.nextUrl.searchParams.get("lang");
+  const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
+  const locale = resolveLocale({ param, cookie, acceptLanguage: request.headers.get("accept-language") });
+  // Only the pages that are translated take the language; the others are English, and say so (<html lang>).
+  headers.set(LOCALE_HEADER, TRANSLATED_PAGES.test(request.nextUrl.pathname) ? locale : "en");
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("content-security-policy", csp);
+  // An explicit choice is remembered, so the next page opened without it keeps the language.
+  if (parseLocale(param) && parseLocale(cookie) !== locale) {
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: LOCALE_COOKIE_MAX_AGE, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
+  }
   return response;
 }
 

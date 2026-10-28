@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { OverviewPage } from "@/components/account/pages";
 
-export const metadata: Metadata = { title: "Overview" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("account.shell");
+  return { title: t("nav_overview") };
+}
 
 export default function Page() {
   return <OverviewPage />;

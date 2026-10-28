@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type Audience, type PortalApi, describeError, isApiError, isStepUp } from "@anyplay/api-client";
+import { type Audience, type PortalApi, isApiError, isStepUp } from "@anyplay/api-client";
 import { Dialog } from "@anyplay/ui/dialog";
+import { useLocale, useTranslations } from "next-intl";
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useDescribeError } from "@/i18n/errors";
 import { CodeField, FormError, TextField, primaryButton, secondaryButton } from "../auth/fields";
 
 /**
@@ -13,11 +15,11 @@ import { CodeField, FormError, TextField, primaryButton, secondaryButton } from 
  */
 
 export const smallButton =
-  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-white/[0.06] px-3.5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white/[0.1]";
+  "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 shrink-0 items-center justify-center gap-1.5 py-1.5 text-center rounded-full bg-white/[0.06] px-3.5 text-[14px] font-medium text-ink shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white/[0.1]";
 export const smallPrimary =
-  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#f6f5f1] px-4 text-[14px] font-semibold text-[#161513] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white";
+  "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 shrink-0 items-center justify-center gap-1.5 py-1.5 text-center rounded-full bg-[#f6f5f1] px-4 text-[14px] font-semibold text-[#161513] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-white";
 export const smallDanger =
-  "inline-flex h-9 [@media(pointer:coarse)]:h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#ff5a3d]/10 px-3.5 text-[14px] font-medium text-[#ffb3a6] shadow-[inset_0_0_0_1px_rgb(255_140_128/0.25)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-[#ff5a3d]/16";
+  "inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 shrink-0 items-center justify-center gap-1.5 py-1.5 text-center rounded-full bg-[#ff5a3d]/10 px-3.5 text-[14px] font-medium text-[#ffb3a6] shadow-[inset_0_0_0_1px_rgb(255_140_128/0.25)] transition-[background-color,scale] duration-[var(--duration-quick)] ease-[var(--ease-out)] select-none active:scale-[0.96] disabled:opacity-50 [@media(hover:hover)]:hover:bg-[#ff5a3d]/16";
 
 export function PageTitle({ title, lead }: { title: string; lead?: ReactNode }) {
   return (
@@ -73,7 +75,7 @@ export function Row({ icon, title, detail, trailing }: { icon?: ReactNode; title
         <span className="block text-[15px] font-medium break-words">{title}</span>
         {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
       </span>
-      {trailing && <span className="ml-auto flex shrink-0 items-center gap-2">{trailing}</span>}
+      {trailing && <span className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-2">{trailing}</span>}
     </li>
   );
 }
@@ -88,7 +90,7 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
     brand: "bg-[#ff5a1f]/15 text-[#ffb487]",
     ok: "bg-[#3fd38a]/12 text-[#7fe3b0]",
   } as const;
-  return <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-[12px] font-semibold ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex min-h-6 items-center rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${tones[tone]}`}>{children}</span>;
 }
 
 export function Notice({ children, tone = "info" }: { children: ReactNode; tone?: "info" | "ok" | "warn" }) {
@@ -104,24 +106,21 @@ export function Notice({ children, tone = "info" }: { children: ReactNode; tone?
   );
 }
 
-const AUDIENCES: { value: Audience; label: string }[] = [
-  { value: "everyone", label: "Everyone" },
-  { value: "friends", label: "Friends" },
-  { value: "nobody", label: "Only me" },
-];
+const AUDIENCES: Audience[] = ["everyone", "friends", "nobody"];
 
 /** Who sees something: three choices (or the ones in `only`) as one radio group, keyboard by arrows like any radio group. */
 export function AudiencePicker({ value, onChange, label, disabled, only }: { value: Audience; onChange: (a: Audience) => void; label: string; disabled?: boolean; only?: Audience[] }) {
+  const t = useTranslations("account.ui.audience");
   return (
-    <fieldset disabled={disabled} className="inline-flex rounded-full bg-white/[0.04] p-1 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
+    <fieldset disabled={disabled} className="inline-flex flex-wrap rounded-full bg-white/[0.04] p-1 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
       <legend className="sr-only">{label}</legend>
-      {AUDIENCES.filter((a) => !only || only.includes(a.value)).map((a) => (
+      {AUDIENCES.filter((a) => !only || only.includes(a)).map((a) => (
         <label
-          key={a.value}
-          className="relative cursor-pointer rounded-full px-3 py-1.5 text-[13px] font-medium text-ink-3 transition-colors duration-[var(--duration-quick)] has-[:checked]:bg-white/[0.1] has-[:checked]:text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ap-focus)] [@media(hover:hover)]:hover:text-ink"
+          key={a}
+          className="relative cursor-pointer rounded-full px-3 py-1.5 text-center text-[13px] font-medium text-ink-3 transition-colors duration-[var(--duration-quick)] has-[:checked]:bg-white/[0.1] has-[:checked]:text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ap-focus)] [@media(hover:hover)]:hover:text-ink"
         >
-          <input type="radio" name={label} value={a.value} checked={value === a.value} onChange={() => onChange(a.value)} className="sr-only" />
-          {a.label}
+          <input type="radio" name={label} value={a} checked={value === a} onChange={() => onChange(a)} className="sr-only" />
+          {t(a)}
         </label>
       ))}
     </fieldset>
@@ -156,6 +155,8 @@ export function Confirm({
   typed?: string;
   onConfirm: () => Promise<void>;
 }) {
+  const t = useTranslations("account.ui");
+  const describeError = useDescribeError();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
@@ -190,7 +191,7 @@ export function Confirm({
           <Dialog.Description className="mt-2 text-[15px] leading-[1.6] text-ink-2">{description}</Dialog.Description>
           {typed && (
             <div className="mt-5">
-              <TextField label={`Type ${typed} to confirm`} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" spellCheck={false} />
+              <TextField label={t("typeToConfirm", { word: typed })} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" spellCheck={false} />
             </div>
           )}
           {error && (
@@ -199,14 +200,14 @@ export function Confirm({
             </div>
           )}
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <Dialog.Close className={`${secondaryButton} sm:w-auto`}>Cancel</Dialog.Close>
+            <Dialog.Close className={`${secondaryButton} sm:w-auto`}>{t("cancel")}</Dialog.Close>
             <button
               type="button"
               disabled={busy || !ready}
               onClick={run}
               className={danger ? `${primaryButton} bg-[#ff6b52] text-[#1a0905] sm:w-auto [@media(hover:hover)]:hover:bg-[#ff8066]` : `${primaryButton} sm:w-auto`}
             >
-              {busy ? "Working…" : confirmLabel}
+              {busy ? t("working") : confirmLabel}
             </button>
           </div>
         </Dialog.Popup>
@@ -280,6 +281,9 @@ export function StepUpProvider({ api, children }: { api: PortalApi; children: Re
 export const useStepUp = () => useContext(StepUpContext);
 
 function StepUpForm({ api, onDone }: { api: PortalApi; onDone: () => void }) {
+  const t = useTranslations("account.ui.stepUp");
+  const tc = useTranslations("account.ui");
+  const describeError = useDescribeError();
   const [methods, setMethods] = useState<string[] | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [code, setCode] = useState("");
@@ -327,9 +331,9 @@ function StepUpForm({ api, onDone }: { api: PortalApi; onDone: () => void }) {
 
   return (
     <div>
-      <Dialog.Title className="text-[20px] font-semibold tracking-[-0.01em]">Confirm it’s you</Dialog.Title>
+      <Dialog.Title className="text-[20px] font-semibold tracking-[-0.01em]">{t("title")}</Dialog.Title>
       <Dialog.Description className="mt-2 text-[15px] leading-[1.6] text-ink-2">
-        {hint ? `We sent a 6-digit code to ${hint}.` : "This change needs a recent sign-in. It lasts 15 minutes."}
+        {hint ? t("sent", { hint }) : t("needed")}
       </Dialog.Description>
       <div className="mt-6 grid gap-3">
         {hint ? (
@@ -346,37 +350,42 @@ function StepUpForm({ api, onDone }: { api: PortalApi; onDone: () => void }) {
           <>
             {methods?.includes("passkey") && (
               <button type="button" className={primaryButton} onClick={passkey}>
-                Use your passkey
+                {t("passkey")}
               </button>
             )}
             <button type="button" className={methods?.includes("passkey") ? secondaryButton : primaryButton} onClick={send} disabled={busy || !methods}>
-              {busy ? "Sending…" : "Send a code by e-mail"}
+              {busy ? t("sending") : t("sendCode")}
             </button>
             {error && <FormError>{error}</FormError>}
           </>
         )}
-        <Dialog.Close className="mt-1 text-[14px] text-ink-3 [@media(hover:hover)]:hover:text-ink">Cancel</Dialog.Close>
+        <Dialog.Close className="mt-1 text-[14px] text-ink-3 [@media(hover:hover)]:hover:text-ink">{tc("cancel")}</Dialog.Close>
       </div>
     </div>
   );
 }
 
-const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-/** "today", "3 days ago", "last month": for when something was last used. */
-export function ago(seconds: number | null | undefined): string {
-  if (!seconds) return "never";
-  const diff = seconds - Date.now() / 1000;
-  const abs = Math.abs(diff);
-  if (abs < 3600) return relative.format(Math.round(diff / 60), "minute");
-  if (abs < 86_400) return relative.format(Math.round(diff / 3600), "hour");
-  if (abs < 30 * 86_400) return relative.format(Math.round(diff / 86_400), "day");
-  if (abs < 365 * 86_400) return relative.format(Math.round(diff / (30 * 86_400)), "month");
-  return relative.format(Math.round(diff / (365 * 86_400)), "year");
+/** "today", "3 days ago", "last month" in the visitor's language: for when something was last used. */
+export function useAgo(): (seconds: number | null | undefined) => string {
+  const locale = useLocale();
+  const t = useTranslations("account.ui");
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  return (seconds) => {
+    if (!seconds) return t("never");
+    const diff = seconds - Date.now() / 1000;
+    const abs = Math.abs(diff);
+    if (abs < 3600) return relative.format(Math.round(diff / 60), "minute");
+    if (abs < 86_400) return relative.format(Math.round(diff / 3600), "hour");
+    if (abs < 30 * 86_400) return relative.format(Math.round(diff / 86_400), "day");
+    if (abs < 365 * 86_400) return relative.format(Math.round(diff / (30 * 86_400)), "month");
+    return relative.format(Math.round(diff / (365 * 86_400)), "year");
+  };
 }
 
-export function date(seconds: number | null | undefined): string {
-  return seconds ? new Date(seconds * 1000).toLocaleDateString("en", { dateStyle: "long" }) : "";
+/** A long date ("27 October 2026") in the visitor's language; empty when there is none. */
+export function useDate(): (seconds: number | null | undefined) => string {
+  const locale = useLocale();
+  return (seconds) => (seconds ? new Date(seconds * 1000).toLocaleDateString(locale, { dateStyle: "long" }) : "");
 }
 
 /**
@@ -397,14 +406,17 @@ export function Switch({
   onChange: (checked: boolean) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("account.ui");
   return (
     <label className={`flex min-h-14 items-center gap-4 py-2 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}>
       <span className="min-w-0 flex-1">
         <span className="block text-[15px] font-medium">{label}</span>
         {detail && <span className="mt-0.5 block text-[13px] leading-[1.45] text-ink-3 text-pretty">{detail}</span>}
       </span>
-      <span aria-hidden className="w-7 text-right text-[13px] font-medium text-ink-3">
-        {checked ? "On" : "Off"}
+      {/* Both words share one cell, so the longer one sets the width and nothing shifts between states. */}
+      <span aria-hidden className="grid shrink-0 text-right text-[13px] font-medium text-ink-3">
+        <span className={`col-start-1 row-start-1 ${checked ? "invisible" : ""}`}>{t("off")}</span>
+        <span className={`col-start-1 row-start-1 ${checked ? "" : "invisible"}`}>{t("on")}</span>
       </span>
       <input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} className="peer sr-only" />
       <span

@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { connection } from "next/server";
 import { Monitoring } from "@/components/monitoring";
 import { SiteProvider } from "@/components/site-context";
@@ -27,10 +29,15 @@ export const viewport: Viewport = { themeColor: "#0b0a09", colorScheme: "dark li
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const site = readSite();
+  const locale = await getLocale();
+  // Only the shared words go to every page; the account flows add theirs in their own layouts.
+  const { common } = (await getMessages()) as { common: Record<string, unknown> };
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
-        <SiteProvider site={site}>{children}</SiteProvider>
+        <NextIntlClientProvider locale={locale} messages={{ common }}>
+          <SiteProvider site={site}>{children}</SiteProvider>
+        </NextIntlClientProvider>
         <Monitoring />
       </body>
     </html>

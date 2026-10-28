@@ -1,0 +1,20 @@
+{
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "network": "Can’t reach AnyPlay. Check your connection and try again.",
+    "internal": "AnyPlay had a problem on its side. Try again in a minute.",
+    "unauthorized": "Your session ended. Sign in again.",
+    "forbidden": "You can’t do that with this account.",
+    "banned": "This account is banned.",
+    "not_found": "That doesn’t exist any more.",
+    "limit": "You’ve reached the limit for this. Remove one first.",
+    "too_large": "That is too large to send.",
+    "code_wrong": "That code is wrong. Check it and try again.",
+    "code_expired": "That code has expired. Request a new one.",
+    "handle_taken": "That handle is taken. Try another.",
+    "handle_invalid": "Use 3 to 16 letters, digits, hyphens or underscores. Start with a letter.",
+    "rate_limited": "Too many tries. Wait a moment and try again.",
+    "rate_limited_wait": "Too many tries. Wait {seconds, plural, one {# second} other {# seconds}} and try again.",
+    "passkey_unsupported": "This browser can’t use passkeys. Use the e-mail code instead."
+  }
+}

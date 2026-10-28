@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type JoinView, describeError, isApiError } from "@anyplay/api-client";
+import { type JoinView, isApiError } from "@anyplay/api-client";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useDescribeError } from "@/i18n/errors";
 import { LINKS } from "@/components/landing/links";
 import { loadApi } from "@/lib/api";
 import { joinPath, launcherJoinUrl, normalizeJoinCode, withNext } from "@/lib/join";
@@ -29,6 +31,8 @@ export function JoinFlow({ code: raw }: { code: string }) {
   const code = normalizeJoinCode(raw);
   const [state, setState] = useState<State>(code ? { at: "loading" } : { at: "expired" });
   const [attempt, setAttempt] = useState(0);
+  const t = useTranslations("auth");
+  const describeError = useDescribeError();
 
   useEffect(() => {
     if (!code) return;
@@ -49,7 +53,7 @@ export function JoinFlow({ code: raw }: { code: string }) {
     return () => {
       alive = false;
     };
-  }, [code, attempt]);
+  }, [code, attempt, describeError]);
 
   switch (state.at) {
     case "loading":
@@ -58,20 +62,20 @@ export function JoinFlow({ code: raw }: { code: string }) {
       return code && <Invite code={code} view={state.view} signedIn={state.signedIn} />;
     case "expired":
       return (
-        <Step title="This invitation has expired" lead="The link may have run out, or the player has stopped playing. Ask them for a new one.">
+        <Step title={t("join.expiredTitle")} lead={t("join.expiredLead")}>
           <div className="grid gap-3">
             <a href={LINKS.download} className={primaryButton}>
-              Get AnyPlay
+              {t("step.getApp")}
             </a>
             <Link href="/" className={secondaryButton}>
-              Back to the start
+              {t("step.backToStart")}
             </Link>
           </div>
         </Step>
       );
     case "failed":
       return (
-        <Step title="Can’t reach AnyPlay" lead={state.message}>
+        <Step title={t("step.unreachable")} lead={state.message}>
           <button
             type="button"
             className={primaryButton}
@@ -80,7 +84,7 @@ export function JoinFlow({ code: raw }: { code: string }) {
               setAttempt((n) => n + 1);
             }}
           >
-            Try again
+            {t("step.tryAgain")}
           </button>
         </Step>
       );
@@ -88,50 +92,47 @@ export function JoinFlow({ code: raw }: { code: string }) {
 }
 
 function Invite({ code, view, signedIn }: { code: string; view: JoinView; signedIn: boolean }) {
+  const t = useTranslations("auth");
   const party = view.kind === "party";
   return (
     <Step
-      title={`${view.handle} invited you`}
-      lead={
-        signedIn
-          ? "Open AnyPlay on your PC to see the invitation. You choose there whether to join."
-          : "Sign in or create an account first. You come back here to open the invitation."
-      }
+      title={t("join.title", { handle: view.handle })}
+      lead={t(signedIn ? "join.leadSignedIn" : "join.leadSignedOut")}
     >
       <dl className="mb-8 grid gap-4 rounded-[18px] bg-white/[0.04] p-5 text-[15px] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
         <div>
-          <dt className="text-[13px] text-ink-3">{party ? "Party" : "Game"}</dt>
+          <dt className="text-[13px] text-ink-3">{t(party ? "join.party" : "join.game")}</dt>
           <dd className="mt-1 text-[18px] leading-[1.3] font-semibold [overflow-wrap:anywhere] text-ink">
-            {party ? "An AnyPlay party" : (view.title ?? "A game")}
+            {party ? t("join.partyName") : (view.title ?? t("join.gameFallback"))}
           </dd>
         </div>
         <div>
-          <dt className="text-[13px] text-ink-3">Joined</dt>
+          <dt className="text-[13px] text-ink-3">{t("join.joined")}</dt>
           <dd className="mt-1 text-ink tabular-nums">
-            {view.members} of {view.maxMembers} players
+            {t("join.players", { members: view.members, max: view.maxMembers })}
           </dd>
         </div>
       </dl>
       {signedIn ? (
         <div className="grid gap-3">
           <a href={launcherJoinUrl(code)} className={primaryButton}>
-            Open in AnyPlay <ArrowRightIcon aria-hidden className="size-4" />
+            {t("join.open")} <ArrowRightIcon aria-hidden className="size-4 shrink-0" />
           </a>
           <a href={LINKS.download} className={secondaryButton}>
-            Get AnyPlay
+            {t("step.getApp")}
           </a>
         </div>
       ) : (
         <div className="grid gap-3">
           <Link href={withNext("/create", joinPath(code))} className={primaryButton}>
-            Create an account
+            {t("step.createAccount")}
           </Link>
           <Link href={withNext("/sign-in", joinPath(code))} className={secondaryButton}>
-            Sign in
+            {t("step.signIn")}
           </Link>
         </div>
       )}
-      {signedIn && <p className="mt-6 text-[14px] text-ink-3">No AnyPlay on this PC yet? Get it first, then open this page again.</p>}
+      {signedIn && <p className="mt-6 text-[14px] text-ink-3">{t("join.noApp")}</p>}
     </Step>
   );
 }

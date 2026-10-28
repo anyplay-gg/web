@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type PublicLink, type PublicUser, describeError, isApiError } from "@anyplay/api-client";
+import { type PublicLink, type PublicUser, isApiError } from "@anyplay/api-client";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { FormError } from "../auth/fields";
@@ -9,6 +10,7 @@ import { Wordmark } from "../landing/header";
 import { LandingProviders } from "../landing/providers";
 import { LegalLinks } from "../legal/links";
 import { Failed, useAction } from "./pages";
+import { useDescribeError } from "@/i18n/errors";
 import { loadApi } from "@/lib/api";
 import { BRAND, BrandLogo } from "./brand-logos";
 import { CompareCard, CompareSignIn } from "./compare";
@@ -29,9 +31,16 @@ type State =
   | { status: "missing" }
   | { status: "failed"; message: string };
 
-const hours = (minutes: number) => (minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60).toLocaleString("en")} h`);
+/** "45 min" below an hour, "12 h" above, in the visitor's number format. */
+function useHours(): (minutes: number) => string {
+  const t = useTranslations("account.publicProfile");
+  const { number } = useFormatter();
+  return (minutes) => (minutes < 60 ? t("minutes", { n: number(minutes) }) : t("hours", { n: number(Math.round(minutes / 60)) }));
+}
 
 export function ProfilePage({ handle }: { handle: string }) {
+  const t = useTranslations("account.publicProfile");
+  const describeError = useDescribeError();
   const [state, setState] = useState<State>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
 
@@ -49,7 +58,7 @@ export function ProfilePage({ handle }: { handle: string }) {
     return () => {
       alive = false;
     };
-  }, [handle, attempt]);
+  }, [handle, attempt, describeError]);
 
   const retry = useCallback(() => {
     setState({ status: "loading" });
@@ -64,22 +73,22 @@ export function ProfilePage({ handle }: { handle: string }) {
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgb(255_90_31/0.14),transparent)]"
         />
         <header className="relative mx-auto flex min-h-20 w-full max-w-[1120px] items-center justify-between px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)]">
-          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
+          <Link href="/" aria-label={t("home")} className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
             <Wordmark />
           </Link>
           {state.status === "ready" && (
             <Link
               href={state.signedIn ? "/account" : "/sign-in"}
-              className="inline-flex h-9 [@media(pointer:coarse)]:h-11 items-center rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+              className="inline-flex min-h-9 [@media(pointer:coarse)]:min-h-11 items-center rounded-full px-3 py-1.5 text-end text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
             >
-              {state.signedIn ? "Your account" : "Sign in"}
+              {state.signedIn ? t("yourAccount") : t("signIn")}
             </Link>
           )}
         </header>
         <main id="main" className="relative mx-auto w-full max-w-[720px] px-[max(var(--gutter),env(safe-area-inset-left))] pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
           {state.status === "loading" && (
             <div aria-busy role="status" className="grid gap-4">
-              <span className="sr-only">Loading</span>
+              <span className="sr-only">{t("loading")}</span>
               <span className="h-32 animate-pulse rounded-[28px] bg-white/[0.04]" />
               <span className="h-36 animate-pulse rounded-[24px] bg-white/[0.04]" />
             </div>
@@ -87,10 +96,10 @@ export function ProfilePage({ handle }: { handle: string }) {
           {state.status === "failed" && <Failed message={state.message} retry={retry} />}
           {state.status === "missing" && (
             <div className="grid justify-items-start gap-4">
-              <h1 className="display text-[clamp(2rem,1.6rem+1.4vw,2.6rem)] leading-[1.05]">No player named {handle}</h1>
-              <p className="max-w-[32rem] text-[16px] leading-[1.6] text-ink-2 text-pretty">Check the spelling of the handle, or ask the player to send it again.</p>
+              <h1 className="display text-[clamp(2rem,1.6rem+1.4vw,2.6rem)] leading-[1.05]">{t("missingTitle", { handle })}</h1>
+              <p className="max-w-[32rem] text-[16px] leading-[1.6] text-ink-2 text-pretty">{t("missingBody")}</p>
               <Link href="/" className={smallButton}>
-                Go to AnyPlay
+                {t("goHome")}
               </Link>
             </div>
           )}
@@ -103,6 +112,8 @@ export function ProfilePage({ handle }: { handle: string }) {
 }
 
 function Profile({ user }: { user: PublicUser }) {
+  const t = useTranslations("account.publicProfile");
+  const hours = useHours();
   const { handle } = user.account;
   const links = user.links ?? [];
   const hasAny = user.about || user.trophies || user.favourites?.length || user.playtime?.length || links.length;
@@ -110,7 +121,7 @@ function Profile({ user }: { user: PublicUser }) {
 
   return (
     <div className="grid gap-6">
-      <section aria-label="Player" className="rounded-[28px] bg-[#120f0d] p-7 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] sm:p-9">
+      <section aria-label={t("player")} className="rounded-[28px] bg-[#120f0d] p-7 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)] sm:p-9">
         <div className="flex flex-wrap items-center gap-5">
           {user.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element -- the cloud serves the picture, there is nothing to optimise
@@ -127,9 +138,9 @@ function Profile({ user }: { user: PublicUser }) {
       </section>
 
       {trophies && (
-        <Card id="trophies" title="Trophies" description={totalOf(trophies) === 0 ? undefined : `${totalOf(trophies)} earned.`}>
+        <Card id="trophies" title={t("trophies")} description={totalOf(trophies) === 0 ? undefined : t("trophiesEarned", { count: totalOf(trophies) })}>
           {totalOf(trophies) === 0 ? (
-            <Empty>{handle} has not earned a trophy yet.</Empty>
+            <Empty>{t("noTrophies", { handle })}</Empty>
           ) : (
             <div className="grid gap-5">
               {user.level && <LevelMeter level={user.level} />}
@@ -143,11 +154,11 @@ function Profile({ user }: { user: PublicUser }) {
       {trophies && totalOf(trophies) > 0 && user.viewer && user.viewer.relation !== "self" && !user.viewer.blocked && <CompareCard user={user} />}
 
       {user.favourites && user.favourites.length > 0 && (
-        <Card id="favourites" title="Favourite games" description="Shown by title ID.">
+        <Card id="favourites" title={t("favourites")} description={t("favouritesNote")}>
           <ul className="flex flex-wrap gap-3">
             {user.favourites.map((id) => (
-              <li key={id} className="inline-flex h-9 items-center gap-2 rounded-full bg-white/[0.05] px-4 text-[14px] font-medium shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
-                <span className="text-ink-3">Game</span>
+              <li key={id} className="inline-flex min-h-9 items-center gap-2 rounded-full bg-white/[0.05] px-4 py-1.5 text-[14px] font-medium shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
+                <span className="text-ink-3">{t("game")}</span>
                 <span className="tabular-nums">{id}</span>
               </li>
             ))}
@@ -156,13 +167,13 @@ function Profile({ user }: { user: PublicUser }) {
       )}
 
       {links.length > 0 && (
-        <Card id="connections" title="Connections">
+        <Card id="connections" title={t("connections")}>
           <Links links={links} />
         </Card>
       )}
 
       {user.playtime && user.playtime.length > 0 && (
-        <Card id="playtime" title="Games played" description={`${user.playtime.length} ${user.playtime.length === 1 ? "game" : "games"}, ${hours(user.playtime.reduce((n, p) => n + p.minutes, 0))} in total.`}>
+        <Card id="playtime" title={t("playtime")} description={t("playtimeNote", { count: user.playtime.length, total: hours(user.playtime.reduce((n, p) => n + p.minutes, 0)) })}>
           <Rows>
             {user.playtime.map((p) => (
               <Row key={p.titleId} title={<span className="tabular-nums">{p.titleId}</span>} trailing={<span className="text-[15px] font-medium tabular-nums">{hours(p.minutes)}</span>} />
@@ -171,13 +182,14 @@ function Profile({ user }: { user: PublicUser }) {
         </Card>
       )}
 
-      {!hasAny && <Notice>There is nothing more to show of {handle} yet.</Notice>}
+      {!hasAny && <Notice>{t("nothing", { handle })}</Notice>}
     </div>
   );
 }
 
 /** The player's linked accounts: the name on the other service, and a link where it has a profile page. */
 function Links({ links }: { links: PublicLink[] }) {
+  const t = useTranslations("account.publicProfile");
   return (
     <Rows>
       {links.map((l) => {
@@ -191,8 +203,8 @@ function Links({ links }: { links: PublicLink[] }) {
             trailing={
               l.profileUrl ? (
                 <a href={l.profileUrl} target="_blank" rel="noopener noreferrer" className={smallButton}>
-                  Open profile
-                  <span className="sr-only"> on {brand.name} (opens in a new tab)</span>
+                  {t("openProfile")}
+                  <span className="sr-only"> {t("openProfileOn", { brand: brand.name })}</span>
                 </a>
               ) : undefined
             }
@@ -205,6 +217,7 @@ function Links({ links }: { links: PublicLink[] }) {
 
 /** What the visitor can do with this player, from the viewer the API reports. */
 function Relation({ user }: { user: PublicUser }) {
+  const t = useTranslations("account.publicProfile");
   const { viewer } = user;
   const { handle, id } = user.account;
   const { busy, error, run } = useAction();
@@ -214,21 +227,21 @@ function Relation({ user }: { user: PublicUser }) {
   if (!viewer) {
     body = (
       <Link href="/sign-in" className={smallPrimary}>
-        Sign in to add {handle}
+        {t("signInToAdd", { handle })}
       </Link>
     );
   } else if (viewer.relation === "self") {
     body = (
       <Link href="/account/profile" className={smallButton}>
-        Edit your profile
+        {t("editProfile")}
       </Link>
     );
   } else if (viewer.blocked) {
-    body = <Badge>Blocked</Badge>;
+    body = <Badge>{t("blocked")}</Badge>;
   } else if (viewer.relation === "friend" || done === "friends") {
-    body = <Badge tone="ok">Friends</Badge>;
+    body = <Badge tone="ok">{t("friends")}</Badge>;
   } else if (viewer.requested === "outgoing" || done === "requested") {
-    body = <Badge>Request sent</Badge>;
+    body = <Badge>{t("requestSent")}</Badge>;
   } else if (viewer.requested === "incoming") {
     body = (
       <button
@@ -243,7 +256,7 @@ function Relation({ user }: { user: PublicUser }) {
           })
         }
       >
-        {busy ? "Accepting…" : "Accept request"}
+        {busy ? t("accepting") : t("accept")}
       </button>
     );
   } else {
@@ -259,7 +272,7 @@ function Relation({ user }: { user: PublicUser }) {
           })
         }
       >
-        {busy ? "Sending…" : "Add friend"}
+        {busy ? t("sending") : t("addFriend")}
       </button>
     );
   }
@@ -273,7 +286,7 @@ function Relation({ user }: { user: PublicUser }) {
         {body}
         {inLauncher && (
           <a href={`anyps5://v1/friend/${encodeURIComponent(handle)}`} className={smallButton}>
-            Add friend in AnyPlay
+            {t("addInAnyPlay")}
           </a>
         )}
       </div>
