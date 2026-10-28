@@ -14,6 +14,7 @@ import {
   UserCircleIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -39,18 +40,19 @@ export function useAccount(): Account {
 }
 
 const NAV = [
-  { href: "/account", label: "Overview", icon: HomeIcon },
-  { href: "/account/profile", label: "Profile", icon: UserCircleIcon },
-  { href: "/account/friends", label: "Friends", icon: UsersIcon },
-  { href: "/account/trophies", label: "Trophies", icon: TrophyIcon },
-  { href: "/account/security", label: "Security", icon: ShieldCheckIcon },
-  { href: "/account/notifications", label: "Notifications", icon: BellIcon },
-  { href: "/account/privacy", label: "Privacy", icon: EyeIcon },
-  { href: "/account/connections", label: "Connections", icon: LinkIcon },
-  { href: "/account/data", label: "Your data", icon: CircleStackIcon },
+  { href: "/account", key: "overview", icon: HomeIcon },
+  { href: "/account/profile", key: "profile", icon: UserCircleIcon },
+  { href: "/account/friends", key: "friends", icon: UsersIcon },
+  { href: "/account/trophies", key: "trophies", icon: TrophyIcon },
+  { href: "/account/security", key: "security", icon: ShieldCheckIcon },
+  { href: "/account/notifications", key: "notifications", icon: BellIcon },
+  { href: "/account/privacy", key: "privacy", icon: EyeIcon },
+  { href: "/account/connections", key: "connections", icon: LinkIcon },
+  { href: "/account/data", key: "data", icon: CircleStackIcon },
 ] as const;
 
 export function AccountShell({ children }: { children: ReactNode }) {
+  const t = useTranslations("account.shell");
   const [api, setApi] = useState<PortalApi | null>(null);
   const [session, setSession] = useState<SessionView | null>(null);
   const [failed, setFailed] = useState(false);
@@ -106,7 +108,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgb(255_90_31/0.14),transparent)]"
         />
         <header className="relative mx-auto flex min-h-20 w-full max-w-[1120px] items-center justify-between px-[max(var(--gutter),env(safe-area-inset-left))] pt-[env(safe-area-inset-top)]">
-          <Link href="/" aria-label="AnyPlay, home" className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
+          <Link href="/" aria-label={t("home")} className="-mx-2 inline-flex min-h-11 items-center rounded-full px-2">
             <Wordmark />
           </Link>
           {session?.account && (
@@ -118,10 +120,10 @@ export function AccountShell({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={signOut}
-                className="inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-[14px] text-ink-2 transition-colors duration-[var(--duration-quick)] [@media(hover:hover)]:hover:text-ink"
               >
                 <ArrowRightStartOnRectangleIcon aria-hidden className="size-[18px]" />
-                Sign out
+                {t("signOut")}
               </button>
             </div>
           )}
@@ -131,27 +133,27 @@ export function AccountShell({ children }: { children: ReactNode }) {
           {/* A phone gets one row of tabs that sticks under the notch while the page scrolls; the
               edges fade out, which is the hint that more tabs wait past them. */}
           <nav
-            aria-label="Account"
+            aria-label={t("nav")}
             className="sticky top-0 z-20 bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-xl lg:static lg:bg-transparent lg:pt-0 lg:backdrop-blur-none"
           >
             <ul
               ref={strip}
               className="flex gap-1 overflow-x-auto overscroll-x-contain px-[max(var(--gutter),env(safe-area-inset-left))] py-1.5 [scrollbar-width:none] max-lg:[mask-image:linear-gradient(to_right,transparent,black_var(--gutter),black_calc(100%-var(--gutter)),transparent)] lg:sticky lg:top-8 lg:flex-col lg:overflow-visible lg:px-0 lg:py-0 [&::-webkit-scrollbar]:hidden"
             >
-              {NAV.map(({ href, label, icon: Icon }) => {
+              {NAV.map(({ href, key, icon: Icon }) => {
                 const current = href === "/account" ? path === href : path.startsWith(href);
                 return (
                   <li key={href} className="shrink-0">
                     <Link
                       href={href}
                       aria-current={current ? "page" : undefined}
-                      className={`relative flex h-11 items-center gap-3 rounded-[12px] px-3.5 text-[14px] lg:h-10 lg:px-3 font-medium whitespace-nowrap transition-colors duration-[var(--duration-quick)] ${
+                      className={`relative flex min-h-11 items-center gap-3 rounded-[12px] px-3.5 text-[14px] lg:min-h-10 lg:px-3 lg:py-1.5 font-medium whitespace-nowrap lg:whitespace-normal transition-colors duration-[var(--duration-quick)] ${
                         current ? "bg-white/[0.07] text-ink" : "text-ink-3 [@media(hover:hover)]:hover:bg-white/[0.04] [@media(hover:hover)]:hover:text-ink"
                       }`}
                     >
                       {current && <span aria-hidden className="absolute top-2.5 bottom-2.5 -left-px hidden w-[3px] rounded-full bg-brand lg:block" />}
                       <Icon aria-hidden className="size-[18px]" strokeWidth={1.6} />
-                      {label}
+                      {t(`nav_${key}`)}
                     </Link>
                   </li>
                 );
@@ -162,11 +164,13 @@ export function AccountShell({ children }: { children: ReactNode }) {
           <main id="main" className="min-w-0 px-[max(var(--gutter),env(safe-area-inset-left))] pt-6 lg:px-0 lg:pt-0">
             {failed ? (
               <div role="alert" className="text-ink-2">
-                Can’t reach AnyPlay. Check your connection and{" "}
-                <button type="button" className="text-brand-text underline" onClick={() => window.location.reload()}>
-                  try again
-                </button>
-                .
+                {t.rich("unreachable", {
+                  retry: (chunks) => (
+                    <button type="button" className="text-brand-text underline" onClick={() => window.location.reload()}>
+                      {chunks}
+                    </button>
+                  ),
+                })}
               </div>
             ) : api && session ? (
               <AccountContext.Provider value={{ api, session, refresh }}>
@@ -174,7 +178,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
               </AccountContext.Provider>
             ) : (
               <div aria-busy role="status" className="grid gap-4">
-                <span className="sr-only">Loading</span>
+                <span className="sr-only">{t("loading")}</span>
                 <span className="h-10 w-1/2 animate-pulse rounded-[12px] bg-white/[0.06]" />
                 <span className="h-40 w-full animate-pulse rounded-[24px] bg-white/[0.04]" />
                 <span className="h-40 w-full animate-pulse rounded-[24px] bg-white/[0.04]" />

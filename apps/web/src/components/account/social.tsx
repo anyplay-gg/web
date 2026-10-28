@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { type Account, type GradeCounts, describeError, isApiError } from "@anyplay/api-client";
+import { type Account, type GradeCounts, isApiError } from "@anyplay/api-client";
 import { TrophyIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useCallback, useState } from "react";
+import { isTranslated, useDescribeError } from "@/i18n/errors";
 import { FormError, TextField } from "../auth/fields";
 import { LevelMeter } from "./level";
 import { Failed, Loading, useAction, useLoad } from "./pages";
 import { Initial, useAccount } from "./shell";
-import { Card, Confirm, Empty, Notice, PageTitle, Row, Rows, ago, smallButton, smallPrimary } from "./ui";
+import { Card, Confirm, Empty, Notice, PageTitle, Row, Rows, smallButton, smallPrimary, useAgo } from "./ui";
 
 /**
  * The social pages of the account: friends with their requests and blocks, and the trophy counts.
@@ -17,6 +19,7 @@ import { Card, Confirm, Empty, Notice, PageTitle, Row, Rows, ago, smallButton, s
  * else: no cover, no trophy names or texts.
  */
 
+/** `label` is the English name, kept for callers that have not moved to the translated one (`useGradeLabel`). */
 export const GRADES = [
   { key: "platinum", label: "Platinum", color: "#bdd6f7" },
   { key: "gold", label: "Gold", color: "#f7c757" },
@@ -24,17 +27,24 @@ export const GRADES = [
   { key: "bronze", label: "Bronze", color: "#d48c5c" },
 ] as const satisfies readonly { key: keyof GradeCounts; label: string; color: string }[];
 
+/** The name of a grade in the visitor's language. */
+export function useGradeLabel(): (key: keyof GradeCounts) => string {
+  const t = useTranslations("account.trophies.grades");
+  return (key) => t(key);
+}
+
 export const totalOf = (c: GradeCounts) => c.platinum + c.gold + c.silver + c.bronze;
 
 /** The four grades as tiles: the colour of the trophy, the count, the grade in words. */
 export function GradeTiles({ counts }: { counts: GradeCounts }) {
+  const label = useGradeLabel();
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {GRADES.map((g) => (
         <li key={g.key} className="rounded-[16px] bg-white/[0.02] p-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
           <TrophyIcon aria-hidden className="size-6" style={{ color: g.color }} strokeWidth={1.6} />
           <span className="mt-3 block text-[28px] leading-none font-semibold tracking-[-0.02em] tabular-nums">{counts[g.key]}</span>
-          <span className="mt-1.5 block text-[13px] text-ink-3">{g.label}</span>
+          <span className="mt-1.5 block text-[13px] text-ink-3">{label(g.key)}</span>
         </li>
       ))}
     </ul>
@@ -43,13 +53,14 @@ export function GradeTiles({ counts }: { counts: GradeCounts }) {
 
 /** The four counts in one line, each with the colour of its grade and its name for a screen reader. */
 export function GradeInline({ counts }: { counts: GradeCounts }) {
+  const label = useGradeLabel();
   return (
-    <ul className="flex items-center gap-4">
+    <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
       {GRADES.map((g) => (
         <li key={g.key} className="flex items-center gap-1.5 text-[14px] font-medium tabular-nums">
           <span aria-hidden className="size-2.5 rounded-full" style={{ background: g.color }} />
           {counts[g.key]}
-          <span className="sr-only">{g.label}</span>
+          <span className="sr-only">{label(g.key)}</span>
         </li>
       ))}
     </ul>
@@ -69,9 +80,9 @@ function Person({ account, detail, online, trailing }: { account: Account; detai
         <Link href={`/u/${encodeURIComponent(account.handle)}`} className="-my-3 block truncate rounded-[6px] py-3 text-[15px] font-medium [@media(hover:hover)]:hover:underline">
           {account.handle}
         </Link>
-        {detail && <span className="mt-0.5 block truncate text-[13px] text-ink-3">{detail}</span>}
+        {detail && <span className="mt-0.5 block text-[13px] text-ink-3 break-words">{detail}</span>}
       </span>
-      {trailing && <span className="ml-auto flex shrink-0 items-center gap-3">{trailing}</span>}
+      {trailing && <span className="ml-auto flex max-w-full flex-wrap items-center justify-end gap-3">{trailing}</span>}
     </li>
   );
 }
@@ -81,6 +92,8 @@ const sub = "mb-3 text-[13px] font-medium text-ink-3";
 type Pending = { kind: "remove" | "block"; account: Account };
 
 export function FriendsPage() {
+  const t = useTranslations("account.friends");
+  const ago = useAgo();
   const { api } = useAccount();
   const load = useCallback(() => api.friends.lists(), [api]);
   const { data, error, reload } = useLoad(load);
@@ -98,33 +111,33 @@ export function FriendsPage() {
 
   return (
     <div>
-      <PageTitle title="Friends" lead="Add the people you play with, answer requests and decide who stays out." />
+      <PageTitle title={t("title")} lead={t("lead")} />
       <div className="grid gap-6">
         {act.error && <FormError>{act.error}</FormError>}
 
         <AddFriend onSent={reload} />
 
-        <Card title="Requests" description="Players who want to be your friend, and the requests you sent.">
+        <Card title={t("requests.title")} description={t("requests.description")}>
           {data.incoming.length === 0 && data.outgoing.length === 0 ? (
-            <Empty>No open requests. When someone adds you, the request shows up here.</Empty>
+            <Empty>{t("requests.empty")}</Empty>
           ) : (
             <div className="grid gap-6">
               {data.incoming.length > 0 && (
                 <div>
-                  <h3 className={sub}>Received</h3>
+                  <h3 className={sub}>{t("requests.received")}</h3>
                   <Rows>
                     {data.incoming.map((r) => (
                       <Person
                         key={r.account.id}
                         account={r.account}
-                        detail={`Received ${ago(r.since)}`}
+                        detail={t("requests.receivedAgo", { when: ago(r.since) })}
                         trailing={
                           <>
                             <button type="button" className={smallButton} disabled={act.busy} onClick={() => void change(() => api.friends.dropRequest(r.account.id))}>
-                              Decline
+                              {t("requests.decline")}
                             </button>
                             <button type="button" className={smallPrimary} disabled={act.busy} onClick={() => void change(() => api.friends.accept(r.account.id))}>
-                              Accept
+                              {t("requests.accept")}
                             </button>
                           </>
                         }
@@ -135,16 +148,16 @@ export function FriendsPage() {
               )}
               {data.outgoing.length > 0 && (
                 <div>
-                  <h3 className={sub}>Sent</h3>
+                  <h3 className={sub}>{t("requests.sent")}</h3>
                   <Rows>
                     {data.outgoing.map((r) => (
                       <Person
                         key={r.account.id}
                         account={r.account}
-                        detail={`Sent ${ago(r.since)}`}
+                        detail={t("requests.sentAgo", { when: ago(r.since) })}
                         trailing={
                           <button type="button" className={smallButton} disabled={act.busy} onClick={() => void change(() => api.friends.dropRequest(r.account.id))}>
-                            Withdraw
+                            {t("requests.withdraw")}
                           </button>
                         }
                       />
@@ -156,9 +169,9 @@ export function FriendsPage() {
           )}
         </Card>
 
-        <Card title="Your friends" description="See who is online and what they are playing.">
+        <Card title={t("list.title")} description={t("list.description")}>
           {data.friends.length === 0 ? (
-            <Empty>No friends yet. Add someone by their handle above; they show up here once they accept.</Empty>
+            <Empty>{t("list.empty")}</Empty>
           ) : (
             <Rows>
               {data.friends.map((f) => (
@@ -166,14 +179,14 @@ export function FriendsPage() {
                   key={f.account.id}
                   account={f.account}
                   online={f.presence.online}
-                  detail={f.presence.online ? (f.presence.activity ? `Playing ${f.presence.activity.title}` : "Online") : "Offline"}
+                  detail={f.presence.online ? (f.presence.activity ? t("list.playing", { title: f.presence.activity.title }) : t("list.online")) : t("list.offline")}
                   trailing={
                     <>
                       <button type="button" className={smallButton} onClick={() => setPending({ kind: "block", account: f.account })}>
-                        Block
+                        {t("list.block")}
                       </button>
                       <button type="button" className={smallButton} onClick={() => setPending({ kind: "remove", account: f.account })}>
-                        Remove
+                        {t("list.remove")}
                       </button>
                     </>
                   }
@@ -183,9 +196,9 @@ export function FriendsPage() {
           )}
         </Card>
 
-        <Card title="Blocked" description="Blocked players are removed from your friends and requests.">
+        <Card title={t("blocked.title")} description={t("blocked.description")}>
           {data.blocked.length === 0 ? (
-            <Empty>You have not blocked anyone. Block a player from your friends list when you need to.</Empty>
+            <Empty>{t("blocked.empty")}</Empty>
           ) : (
             <Rows>
               {data.blocked.map((a) => (
@@ -194,7 +207,7 @@ export function FriendsPage() {
                   account={a}
                   trailing={
                     <button type="button" className={smallButton} disabled={act.busy} onClick={() => void change(() => api.friends.unblock(a.id))}>
-                      Unblock
+                      {t("blocked.unblock")}
                     </button>
                   }
                 />
@@ -207,13 +220,11 @@ export function FriendsPage() {
       <Confirm
         open={pending !== null}
         onOpenChange={(o) => !o && setPending(null)}
-        title={pending?.kind === "block" ? `Block @${pending.account.handle}?` : `Remove @${pending?.account.handle ?? ""} from your friends?`}
+        title={pending?.kind === "block" ? t("confirm.blockTitle", { handle: pending.account.handle }) : t("confirm.removeTitle", { handle: pending?.account.handle ?? "" })}
         description={
-          pending?.kind === "block"
-            ? "You are no longer friends and any open request is dropped. You can unblock them any time."
-            : "You stop seeing when each other is online. You can send a new request later."
+          pending?.kind === "block" ? t("confirm.blockText") : t("confirm.removeText")
         }
-        confirmLabel={pending?.kind === "block" ? "Block player" : "Remove friend"}
+        confirmLabel={pending?.kind === "block" ? t("confirm.blockLabel") : t("confirm.removeLabel")}
         danger={pending?.kind === "block"}
         onConfirm={async () => {
           if (!pending) return;
@@ -227,6 +238,8 @@ export function FriendsPage() {
 }
 
 function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
+  const t = useTranslations("account.friends.add");
+  const describeError = useDescribeError();
   const { api } = useAccount();
   const [handle, setHandle] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -238,33 +251,33 @@ function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
     const h = handle.trim().replace(/^@/, "");
     setDone(null);
     if (!h) {
-      setError("Enter the handle of the player you want to add.");
+      setError(t("enterHandle"));
       return;
     }
     setBusy(true);
     setError(null);
     try {
       const result = await api.friends.sendRequest(h);
-      setDone(result === "friends" ? `You and @${h} are now friends.` : `Request sent to @${h}. You are friends once they accept.`);
+      setDone(result === "friends" ? t("nowFriends", { handle: h }) : t("sent", { handle: h }));
       setHandle("");
       await onSent();
     } catch (err) {
-      setError((isApiError(err) && err.fields.handle) || describeError(err));
+      setError((isApiError(err) && !isTranslated(err) && err.fields.handle) || describeError(err));
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Card title="Add a friend" description="Enter a player’s handle to send them a request.">
+    <Card title={t("title")} description={t("description")}>
       <form onSubmit={submit} noValidate className="grid max-w-[28rem] gap-4">
         <TextField
-          label="Handle"
+          label={t("handle")}
           name="handle"
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
           error={error}
-          hint="Their handle, with or without the @."
+          hint={t("hint")}
           autoComplete="off"
           autoCapitalize="none"
           autoCorrect="off"
@@ -273,7 +286,7 @@ function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
         />
         <div>
           <button type="submit" className={smallPrimary} disabled={busy}>
-            {busy ? "Sending…" : "Send request"}
+            {busy ? t("sending") : t("send")}
           </button>
         </div>
         {done && <Notice tone="ok">{done}</Notice>}
@@ -285,6 +298,8 @@ function AddFriend({ onSent }: { onSent: () => Promise<void> }) {
 /* ───────────────────────────── Trophies ───────────────────────────── */
 
 export function TrophiesPage() {
+  const t = useTranslations("account.trophies");
+  const ago = useAgo();
   const { api } = useAccount();
   const load = useCallback(() => api.trophies.mine(), [api]);
   const { data, error, reload } = useLoad(load);
@@ -296,10 +311,10 @@ export function TrophiesPage() {
 
   return (
     <div>
-      <PageTitle title="Trophies" lead="What you earned in your games. AnyPlay keeps counts per game and grade, never trophy names or art." />
+      <PageTitle title={t("title")} lead={t("lead")} />
       <div className="grid gap-6">
-        <Card title="Totals" description={total === 0 ? undefined : `${total} earned across ${titles.length} ${titles.length === 1 ? "game" : "games"}.`}>
-          {total === 0 ? <Empty>No trophies yet. Play a game through AnyPlay and the ones you earn are counted here.</Empty> : (
+        <Card title={t("totals.title")} description={total === 0 ? undefined : t("totals.description", { total, games: titles.length })}>
+          {total === 0 ? <Empty>{t("totals.empty")}</Empty> : (
             <div className="grid gap-5">
               {data.level && <LevelMeter level={data.level} />}
               <GradeTiles counts={data.counts} />
@@ -308,14 +323,14 @@ export function TrophiesPage() {
         </Card>
 
         {titles.length > 0 && (
-          <Card title="By game" description="Games are listed by title id, the most recent first.">
+          <Card title={t("byGame.title")} description={t("byGame.description")}>
             <Rows>
-              {titles.map((t) => (
+              {titles.map((g) => (
                 <Row
-                  key={t.titleId}
-                  title={<span className="tabular-nums">{t.titleId}</span>}
-                  detail={`${t.earned} ${t.earned === 1 ? "trophy" : "trophies"} · last earned ${ago(t.lastEarned)}`}
-                  trailing={<GradeInline counts={t.counts} />}
+                  key={g.titleId}
+                  title={<span className="tabular-nums">{g.titleId}</span>}
+                  detail={t("byGame.detail", { earned: g.earned, when: ago(g.lastEarned) })}
+                  trailing={<GradeInline counts={g.counts} />}
                 />
               ))}
             </Rows>

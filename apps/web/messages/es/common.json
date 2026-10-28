@@ -1,0 +1,20 @@
+{
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "network": "No se puede conectar con AnyPlay. Comprueba tu conexión e inténtalo de nuevo.",
+    "internal": "AnyPlay tuvo un problema. Inténtalo de nuevo en un minuto.",
+    "unauthorized": "Tu sesión ha terminado. Inicia sesión de nuevo.",
+    "forbidden": "No puedes hacer eso con esta cuenta.",
+    "banned": "Esta cuenta está bloqueada.",
+    "not_found": "Eso ya no existe.",
+    "limit": "Has llegado al límite. Quita uno primero.",
+    "too_large": "Eso es demasiado grande para enviarlo.",
+    "code_wrong": "Ese código es incorrecto. Revísalo e inténtalo de nuevo.",
+    "code_expired": "Ese código ha caducado. Solicita uno nuevo.",
+    "handle_taken": "Ese nombre de usuario ya está en uso. Prueba con otro.",
+    "handle_invalid": "Usa de 3 a 16 letras, dígitos, guiones o guiones bajos. Empieza con una letra.",
+    "rate_limited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+    "rate_limited_wait": "Demasiados intentos. Espera {seconds, plural, one {# segundo} other {# segundos}} e inténtalo de nuevo.",
+    "passkey_unsupported": "Este navegador no admite passkeys. Usa el código por correo electrónico."
+  }
+}

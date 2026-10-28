@@ -1,0 +1,461 @@
+{
+  "ui": {
+    "never": "hiç",
+    "on": "Açık",
+    "off": "Kapalı",
+    "cancel": "Vazgeç",
+    "working": "İşleniyor…",
+    "typeToConfirm": "Onaylamak için {word} yaz",
+    "audience": {
+      "everyone": "Herkes",
+      "friends": "Arkadaşlar",
+      "nobody": "Sadece ben"
+    },
+    "stepUp": {
+      "title": "Sen olduğunu doğrula",
+      "needed": "Bu değişiklik için yakın zamanda giriş yapmış olman gerekir. 15 dakika geçerli kalır.",
+      "sent": "{hint} adresine 6 haneli bir kod gönderdik.",
+      "passkey": "Geçiş anahtarını kullan",
+      "sending": "Gönderiliyor…",
+      "sendCode": "E-postayla kod gönder"
+    }
+  },
+  "shell": {
+    "home": "AnyPlay, ana sayfa",
+    "signOut": "Çıkış yap",
+    "nav": "Hesap",
+    "nav_overview": "Genel bakış",
+    "nav_profile": "Profil",
+    "nav_friends": "Arkadaşlar",
+    "nav_trophies": "Kupalar",
+    "nav_security": "Güvenlik",
+    "nav_notifications": "Bildirimler",
+    "nav_privacy": "Gizlilik",
+    "nav_connections": "Bağlantılar",
+    "nav_data": "Verilerin",
+    "unreachable": "AnyPlay’e ulaşılamıyor. Bağlantını kontrol et ve <retry>tekrar dene</retry>.",
+    "loading": "Yükleniyor"
+  },
+  "level": {
+    "top": "En üst seviyeye ulaşıldı",
+    "toNext": "{level}. seviyeye {count, plural, one {# puan} other {# puan}} kaldı",
+    "level": "Seviye {level}",
+    "points": "{count, plural, one {# puan} other {# puan}}",
+    "progress": "Seviye ilerlemesi",
+    "progressTo": "Seviye {level} ilerlemesi"
+  },
+  "meta": {
+    "title": "Hesabın",
+    "template": "%s · Hesabın · AnyPlay"
+  },
+  "state": {
+    "loading": "Yükleniyor",
+    "tryAgain": "Tekrar dene"
+  },
+  "overview": {
+    "label": "Hesabın",
+    "memberSince": "Üyelik başlangıcı: {date}",
+    "appearingOffline": "Çevrimdışı görünüyorsun",
+    "deletion": "Hesabın {date} tarihinde silinecek. <keep>Hesabımı koru</keep>",
+    "passkeys": "{count, plural, one {# geçiş anahtarı} other {# geçiş anahtarı}}",
+    "noPasskey": "Henüz geçiş anahtarı yok",
+    "launchersBrowsers": "{launchers, plural, one {# Launcher} other {# Launcher}} · {browsers, plural, one {# tarayıcı} other {# tarayıcı}}",
+    "trophiesAudience": "Kupalar: {audience}",
+    "pictureAudience": "Profil resmi: {audience}",
+    "audience": {
+      "everyone": "Herkes",
+      "friends": "Arkadaşlar",
+      "nobody": "Yalnızca sen"
+    },
+    "audienceInline": {
+      "everyone": "herkes",
+      "friends": "arkadaşlar",
+      "nobody": "yalnızca sen"
+    },
+    "linked": "{count} bağlı",
+    "nothingLinked": "Hiçbir şey bağlı değil",
+    "connectionsDetail": "Discord, Steam",
+    "dataValue": "Dışa aktar ya da sil",
+    "dataDetail": "Hakkında tuttuğumuz her şey",
+    "launcher": {
+      "title": "Launcher’ı indir",
+      "description": "Bu hesapla Launcher’a giriş yap; arkadaşların, partilerin ve kupaların orada olur."
+    }
+  },
+  "profile": {
+    "lead": "Profilini açan arkadaşlarının gördükleri. Her bölümü kimin göreceğini Gizlilik sayfasından sen seçersin.",
+    "avatar": {
+      "title": "Resim",
+      "description": "PNG ya da JPEG, en fazla 1 MB. Yuvarlak görünür; bu yüzden yüzünü ortada tut.",
+      "uploading": "Yükleniyor…",
+      "change": "Resmi değiştir",
+      "upload": "Resim yükle",
+      "remove": "Kaldır"
+    },
+    "about": {
+      "title": "Hakkında",
+      "description": "Kendin hakkında bir iki satır: ne oynadığın, ne zaman çevrimiçi olduğun.",
+      "placeholder": "Olursa ortak oyun, olmazsa tek başıma.",
+      "saved": "Kaydedildi",
+      "saving": "Kaydediliyor…",
+      "save": "Kaydet"
+    },
+    "favourites": {
+      "title": "Favori oyunlar",
+      "description": "En fazla {max}, oyun kimliğiyle. Bu site kimliği gösterir. Launcher her oyunun adını kendi kopyandan gösterir.",
+      "empty": "Henüz favori oyun yok. Aşağıdan bir oyun kimliği ekle.",
+      "listLabel": "Favori oyunların",
+      "remove": "{id} kaldır",
+      "fieldLabel": "Oyun kimliği",
+      "full": "{max} oyunun var. Yenisini eklemek için birini kaldır.",
+      "add": "Oyun ekle",
+      "saved": "Kaydedildi",
+      "saving": "Kaydediliyor…",
+      "save": "Kaydet",
+      "badId": "Yalnızca harf, rakam, tire ve alt çizgi kullan.",
+      "duplicate": "{id} zaten listede."
+    }
+  },
+  "security": {
+    "lead": "Nasıl giriş yaptığın ve hesabına giriş yapmış her Launcher ile tarayıcı.",
+    "email": {
+      "title": "E-posta",
+      "description": "Giriş kodlarının gittiği adres. Değiştirmek için yeni adrese gönderilen bir kod gerekir.",
+      "change": "Değiştir",
+      "invalid": "Yeni adresi gir, örneğin ad@ornek.com.",
+      "done": "Giriş adresin artık {email}.",
+      "newAddress": "Yeni adres",
+      "sending": "Gönderiliyor…",
+      "send": "Kod gönder",
+      "cancel": "Vazgeç",
+      "sentTo": "<b>{email}</b> adresine 6 haneli bir kod gönderdik."
+    },
+    "passkeys": {
+      "title": "Geçiş anahtarları",
+      "description": "Kod yerine parmak izin, yüzün ya da cihaz PIN’inle giriş yap. Geçiş anahtarını kimse oltalayamaz.",
+      "add": "Geçiş anahtarı ekle",
+      "waiting": "Cihazın bekleniyor…",
+      "detail": "Eklenme: {added} · Son kullanım: {used}",
+      "remove": "Kaldır",
+      "empty": "Henüz geçiş anahtarı yok. Bir tane ekle; e-posta kodu yerine tek dokunuşla giriş yaparsın.",
+      "full": "Bir hesabın tutabileceği en fazla geçiş anahtarına sahipsin ({max}). Yenisini eklemek için birini kaldır.",
+      "confirmTitle": "Bu geçiş anahtarı kaldırılsın mı?",
+      "confirmDescription": "Bu cihaz artık onunla giriş yapamaz. E-postayla gelen kodla her zaman giriş yapabilirsin.",
+      "confirmLabel": "Geçiş anahtarını kaldır",
+      "defaultName": "{system} geçiş anahtarı",
+      "thisDevice": "bu cihaz"
+    },
+    "devices": {
+      "title": "Launcher’lar",
+      "description": "Launcher’ın hesabınla giriş yaptığı tüm bilgisayarlar.",
+      "detail": "{platform} · Son kullanım: {used}",
+      "signOut": "Çıkış yap",
+      "empty": "Henüz hiçbir Launcher’da giriş yapılmadı.",
+      "confirmTitle": "Bu Launcher’dan çıkış yapılsın mı?",
+      "confirmDescription": "O bilgisayarda biri tekrar giriş yapana kadar çevrimdışı olur.",
+      "confirmLabel": "Launcher’dan çıkış yap"
+    },
+    "browsers": {
+      "title": "Tarayıcılar",
+      "description": "Bu hesap sayfasına giriş yapmış her tarayıcı. Onlar hakkında, ne zaman kullanıldıklarından fazlasını tutmuyoruz.",
+      "thisBrowser": "Bu tarayıcı",
+      "here": "Şu an buradasın",
+      "other": "Başka tarayıcı",
+      "detail": "Giriş: {created} · Son kullanım: {used}",
+      "signOut": "Çıkış yap",
+      "confirmThisTitle": "Bu tarayıcıdan çıkış yapılsın mı?",
+      "confirmOtherTitle": "O tarayıcıdan çıkış yapılsın mı?",
+      "confirmThisDescription": "Başa dönersin ve bir sonraki sefer yeniden giriş yaparsın.",
+      "confirmOtherDescription": "Hesabını açmak için yeniden giriş yapması gerekir.",
+      "confirmLabel": "Çıkış yap"
+    },
+    "everywhere": {
+      "title": "Her yerden çıkış yap",
+      "description": "Bu dahil her Launcher ve her tarayıcı. Bir cihaz kaybolduysa ya da başkası giriş yapmış olabilirse kullan.",
+      "button": "Her yerden çıkış yap",
+      "confirmTitle": "Her yerden çıkış yapılsın mı?",
+      "confirmDescription": "Bu dahil her Launcher ve tarayıcıdan aynı anda çıkış yapılır.",
+      "confirmLabel": "Her yerden çıkış yap"
+    }
+  },
+  "privacy": {
+    "lead": "Profilini ve etkinliğini kimin gördüğü. Kullanıcı adın her zaman görünür; böylece arkadaşların seni bulabilir.",
+    "profile": {
+      "title": "Profilin",
+      "description": "Değişiklikler hemen geçerli olur, Launcher’da da."
+    },
+    "parts": {
+      "trophies": {
+        "title": "Kupalar",
+        "detail": "Kupa sayıların, puanların ve seviyen"
+      },
+      "playtime": {
+        "title": "Oynama süresi",
+        "detail": "Her oyunu ne kadar oynadığın"
+      },
+      "about": {
+        "title": "Hakkında",
+        "detail": "Profilindeki satır"
+      },
+      "favourites": {
+        "title": "Favori oyunlar",
+        "detail": "Sabitlediğin en fazla üç oyun"
+      },
+      "avatar": {
+        "title": "Resim",
+        "detail": "Profil resmin"
+      }
+    },
+    "whoSees": "Kim görür: {part}",
+    "activity": {
+      "title": "Etkinliğin",
+      "description": "AnyPlay’de yaptıkların, arkadaşlarının akışında göründüğü gibi.",
+      "row": "Etkinlik",
+      "detail": "Arkadaşların akışlarında görür. Yabancılar akış görmez. Oradakini gizlemek ve yeni öğeleri durdurmak için “{nobody}” seç."
+    },
+    "appearOffline": {
+      "title": "Çevrimiçi durumu",
+      "description": "Hesabına giriş yapmış her Launcher ve tarayıcı için geçerlidir.",
+      "label": "Çevrimdışı görün",
+      "detail": "Arkadaşların seni çevrimdışı görür. Yine de oynayabilir, sohbet edebilir ve katılabilirsin."
+    },
+    "publicProfile": {
+      "title": "Herkese açık profil",
+      "description": "Sen açana kadar kapalıdır. Hesabına giriş yapmış her Launcher ve tarayıcı için geçerlidir.",
+      "label": "Herkese açık profil göster",
+      "detail": "Bağlantıya sahip herkes seviyeni, kupalarını ve oynadığın oyunları görür. Çevrimiçi olup olmadığını asla göstermez.",
+      "page": "Sayfan: <link>{url}</link>"
+    },
+    "playedWith": {
+      "title": "Son oynadıkların",
+      "description": "Kapatırsan yeni kimse eklenmez. Liste, sen temizleyene kadar kalır.",
+      "label": "Oynadığım kişileri hatırla",
+      "detail": "Birlikte parti ya da oyun oturumu paylaştığın kişileri 30 gün boyunca, en fazla 50 kişi tutar. Listeyi yalnızca sen görürsün.",
+      "clear": "Listeyi temizle",
+      "cleared": "Liste boş.",
+      "confirmTitle": "Liste temizlensin mi?",
+      "confirmDescription": "Birlikte oynadıklarının listesindeki herkes kaldırılır. Başkalarının listesi değişmez ve bunu geri alamazsın."
+    }
+  },
+  "connections": {
+    "lead": "Zaten oynadığın hesapları bağla; arkadaşların seni bulsun ve başka nerede olduğunu görsün.",
+    "result": {
+      "linked": "{name} hesabına bağlandı.",
+      "denied": "{name} bağlanmadı: istek orada reddedildi.",
+      "expired": "{name} bağlama çok uzun sürdü. Baştan başla.",
+      "fresh": "{name} bağlamak için yakın zamanda giriş yapmış olman gerekir. Baştan başla ve senin olduğunu doğrula.",
+      "taken": "Bu {name} hesabı başka bir AnyPlay hesabına zaten bağlı.",
+      "exists": "Zaten bir {name} hesabın bağlı. Önce onun bağlantısını kaldır.",
+      "failed": "{name} bağlanamadı. Bir dakika sonra tekrar dene."
+    },
+    "whoSees": "{name} hesabını kim görür",
+    "linkedAgo": "Bağlanma: {ago}",
+    "unlink": "Bağlantıyı kaldır",
+    "link": "{name} bağla",
+    "opening": "Açılıyor…",
+    "soon": "Yakında",
+    "notLinked": "Bağlı değil",
+    "arrivesSoon": "Bağlama yakında geliyor",
+    "confirmTitle": "{name} bağlantısı kaldırılsın mı?",
+    "confirmDescription": "{name} hesabın artık profilinde görünmez. İstediğin zaman yeniden bağlayabilirsin.",
+    "confirmLabel": "{name} bağlantısını kaldır"
+  },
+  "data": {
+    "lead": "AnyPlay’in hakkında tuttuğu her şey senindir: bir kopyasını al ya da hesabı sil.",
+    "export": {
+      "title": "Verilerini indir",
+      "description": "Hesabın, profilin, arkadaşların, kupaların, oynama sürelerin ve bağlı hesapların tek bir JSON dosyası olarak.",
+      "preparing": "Hazırlanıyor…",
+      "button": "İndir"
+    },
+    "scheduled": {
+      "title": "Silme planlandı",
+      "description": "Hesabın ve içindeki her şey {date} tarihinde silinecek. O zamana kadar hesabını koruyabilirsin.",
+      "keep": "Hesabımı koru"
+    },
+    "delete": {
+      "title": "Hesabını sil",
+      "description": "Hesabın 30 gün sonra silinir; o zamana kadar fikrini değiştirebilirsin. Sonrasında arkadaşların, kupaların ve oynama sürelerinle birlikte tamamen gider.",
+      "button": "Hesabı sil"
+    },
+    "confirm": {
+      "title": "Hesabın silinsin mi?",
+      "description": "Hesap 30 gün içinde silinir. Her Launcher ve tarayıcıdan şimdi çıkış yapılır."
+    }
+  },
+  "compare": {
+    "title": "Kupaları karşılaştır",
+    "description": "Kupaların, {handle} ile yan yana.",
+    "descriptionShared": "Sen ve {handle}, ikinizin de sahip olduğu bir oyunda.",
+    "signInDescription": "Kupalarının {handle} ile nasıl kıyaslandığını gör.",
+    "signIn": "Kupaları karşılaştırmak için giriş yap",
+    "hidden": "{handle} kullanıcısının kupaları karşılaştırmaya uygun değil.",
+    "loading": "Yükleniyor",
+    "loadingComparison": "Karşılaştırma yükleniyor",
+    "empty": "Sen ve {handle} için henüz ortak bir oyun yok. {handle} oynadığı bir oyunu oynarsan burada görünür.",
+    "game": "Oyun",
+    "gameNamed": "Oyun <id>{title}</id>",
+    "verdictNone": "İkinizin de bu oyunda kazandığı bir kupa yok.",
+    "verdictLevel": "Bu oyunda puanlarınız eşit.",
+    "verdictAhead": "Bu oyunda {count, number} puan öndesin.",
+    "verdictBehind": "Bu oyunda {handle}, {count, number} puan önde.",
+    "caption": "{titleId} oyunundaki kupalar: sen ve {handle}",
+    "stat": "Kategori",
+    "you": "Sen",
+    "ahead": "(önde)",
+    "rowTrophies": "Kupalar",
+    "rowPoints": "Bu oyunda puan",
+    "rowLevel": "Genel seviye",
+    "grade": {
+      "platinum": "Platin",
+      "gold": "Altın",
+      "silver": "Gümüş",
+      "bronze": "Bronz"
+    },
+    "both": "İkinizin de kazandığı",
+    "onlyYou": "Sadece sen",
+    "onlyThem": "Sadece {handle}"
+  },
+  "publicProfile": {
+    "home": "AnyPlay, ana sayfa",
+    "yourAccount": "Hesabın",
+    "signIn": "Giriş yap",
+    "loading": "Yükleniyor",
+    "missingTitle": "{handle} adında bir oyuncu yok",
+    "missingBody": "Kullanıcı adının yazımını kontrol et ya da oyuncudan tekrar göndermesini iste.",
+    "goHome": "AnyPlay’e git",
+    "player": "Oyuncu",
+    "trophies": "Kupalar",
+    "trophiesEarned": "{count, number} kazanıldı.",
+    "noTrophies": "{handle} henüz kupa kazanmadı.",
+    "favourites": "Favori oyunlar",
+    "favouritesNote": "Başlık kimliğiyle gösterilir.",
+    "game": "Oyun",
+    "connections": "Bağlantılar",
+    "playtime": "Oynanan oyunlar",
+    "playtimeNote": "{count, number} oyun, toplam {total}.",
+    "nothing": "{handle} hakkında gösterilecek başka bir şey yok.",
+    "openProfile": "Profili aç",
+    "openProfileOn": "{brand} üzerinde (yeni sekmede açılır)",
+    "signInToAdd": "{handle} kullanıcısını eklemek için giriş yap",
+    "editProfile": "Profilini düzenle",
+    "blocked": "Engellendi",
+    "friends": "Arkadaşlar",
+    "requestSent": "İstek gönderildi",
+    "accepting": "Kabul ediliyor…",
+    "accept": "İsteği kabul et",
+    "sending": "Gönderiliyor…",
+    "addFriend": "Arkadaş ekle",
+    "addInAnyPlay": "AnyPlay’de arkadaş ekle",
+    "minutes": "{n} dk",
+    "hours": "{n} sa"
+  },
+  "friends": {
+    "title": "Arkadaşlar",
+    "lead": "Birlikte oynadığın kişileri ekle, isteklere yanıt ver ve kimin dışarıda kalacağına karar ver.",
+    "add": {
+      "title": "Arkadaş ekle",
+      "description": "İstek göndermek için bir oyuncunun adını gir.",
+      "handle": "Ad",
+      "hint": "Oyuncunun adı, @ ile ya da @ olmadan.",
+      "send": "İstek gönder",
+      "sending": "Gönderiliyor…",
+      "enterHandle": "Eklemek istediğin oyuncunun adını gir.",
+      "nowFriends": "Sen ve @{handle} artık arkadaşsınız.",
+      "sent": "İstek @{handle} kişisine gönderildi. Kabul ettiğinde arkadaş olursunuz."
+    },
+    "requests": {
+      "title": "İstekler",
+      "description": "Arkadaşın olmak isteyen oyuncular ve gönderdiğin istekler.",
+      "empty": "Açık istek yok. Biri seni eklediğinde istek burada görünür.",
+      "received": "Gelen",
+      "sent": "Giden",
+      "receivedAgo": "Alındı: {when}",
+      "sentAgo": "Gönderildi: {when}",
+      "decline": "Reddet",
+      "accept": "Kabul et",
+      "withdraw": "Geri çek"
+    },
+    "list": {
+      "title": "Arkadaşların",
+      "description": "Kimlerin çevrimiçi olduğunu ve ne oynadıklarını gör.",
+      "empty": "Henüz arkadaşın yok. Yukarıdan birini adıyla ekle; kabul ettiğinde burada görünür.",
+      "online": "Çevrimiçi",
+      "offline": "Çevrimdışı",
+      "playing": "{title} oynuyor",
+      "block": "Engelle",
+      "remove": "Çıkar"
+    },
+    "blocked": {
+      "title": "Engellenenler",
+      "description": "Engellenen oyuncular arkadaşlarından ve isteklerinden çıkarılır.",
+      "empty": "Kimseyi engellemedin. Gerektiğinde arkadaş listenden bir oyuncuyu engelleyebilirsin.",
+      "unblock": "Engeli kaldır"
+    },
+    "confirm": {
+      "blockTitle": "@{handle} engellensin mi?",
+      "removeTitle": "@{handle} arkadaşlıktan çıkarılsın mı?",
+      "blockText": "Artık arkadaş olmazsınız ve açık istekler silinir. Engeli istediğin zaman kaldırabilirsin.",
+      "removeText": "Birbirinizin çevrimiçi olup olmadığını görmezsiniz. Sonra yeni istek gönderebilirsin.",
+      "blockLabel": "Oyuncuyu engelle",
+      "removeLabel": "Arkadaşı çıkar"
+    }
+  },
+  "trophies": {
+    "title": "Kupalar",
+    "lead": "Oyunlarında kazandıkların. AnyPlay oyun ve derece başına sayıları tutar, kupa adlarını ya da görsellerini asla tutmaz.",
+    "totals": {
+      "title": "Toplam",
+      "description": "{games} oyunda toplam {total} kupa kazanıldı.",
+      "empty": "Henüz kupa yok. AnyPlay üzerinden bir oyun oyna, kazandıkların burada sayılır."
+    },
+    "byGame": {
+      "title": "Oyuna göre",
+      "description": "Oyunlar başlık kimliğine göre, en yenisi başta listelenir.",
+      "detail": "{earned} kupa · son kazanılan: {when}"
+    },
+    "grades": {
+      "platinum": "Platin",
+      "gold": "Altın",
+      "silver": "Gümüş",
+      "bronze": "Bronz"
+    }
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "lead": "Bir arkadaşın seni arkadaş olarak eklemek istediğinde, seni bir partiye davet ettiğinde ya da sana yazdığında bu cihazda bildirim al.",
+    "device": {
+      "title": "Bu cihaz",
+      "description": "Her tarayıcı ya da telefon ayrı ayarlanır. Bildirim almak istediğin yerde bunu aç.",
+      "notEnabled": "Bu bulut bildirim göndermiyor.",
+      "checking": "Bu cihaz kontrol ediliyor…",
+      "unsupported": "Bu tarayıcı bildirim alamıyor. Güncel bir Chrome, Edge, Firefox ya da Safari kullan.",
+      "needsInstall": "iPhone ve iPad’de bildirimler için AnyPlay’in Ana Ekran’da olması gerekir. Paylaş’a dokun, Ana Ekrana Ekle’yi seç, sonra AnyPlay’i oradan aç.",
+      "blocked": "Bu site için bildirimler engellenmiş. Tarayıcının site ayarlarından izin ver, sonra geri dön.",
+      "switch": "Bu cihaza bildirim gönder",
+      "others": "{count, plural, one {Başka bir cihaz da bildirim alıyor. Bildirimleri o cihazda kapat.} other {Başka # cihaz da bildirim alıyor. Bildirimleri o cihazlarda kapat.}}"
+    },
+    "kinds": {
+      "title": "Hangi bildirimler gelsin",
+      "description": "Yalnızca bu cihaz için.",
+      "friend_request": {
+        "label": "Arkadaşlık istekleri",
+        "detail": "Biri seninle arkadaş olmak istiyor."
+      },
+      "party_invite": {
+        "label": "Parti davetleri",
+        "detail": "Bir arkadaşın seni bir partiye davet ediyor."
+      },
+      "message": {
+        "label": "Mesajlar",
+        "detail": "Bir arkadaşın sana yazıyor. Mesajın kendisi bildirimde görünmez."
+      }
+    },
+    "errors": {
+      "timeout": "Tarayıcının bildirim hizmeti yanıt vermedi. Bağlantını kontrol edip tekrar dene.",
+      "noKey": "Bu bulutta bildirim göndermek için anahtar yok.",
+      "lostSubscription": "Bu tarayıcı aboneliğini kaybetti. Bildirimleri kapatıp yeniden aç.",
+      "notAllowed": "Bu tarayıcı bildirimlere izin vermedi. Gizli pencerede çalışmazlar; değilse site ayarlarına bak."
+    }
+  }
+}

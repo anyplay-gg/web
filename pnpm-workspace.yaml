@@ -14,3 +14,7 @@ blockExoticSubdeps: true
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # Pulled in by next-intl's message tooling, which this app does not run (no extraction, no file
+  # watching); their prebuilt binaries need no install script.
+  "@parcel/watcher": false
+  "@swc/core": false
