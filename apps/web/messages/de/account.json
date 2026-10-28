@@ -213,6 +213,18 @@
       "row": "Aktivität",
       "detail": "Freunde sehen sie in ihrem Feed. Fremde sehen keinen Feed. Wähle „{nobody}“, um zu verbergen, was dort steht, und neue Einträge zu stoppen."
     },
+    "scores": {
+      "title": "Ergebnisse",
+      "description": "Wer dein bestes Ergebnis auf der Bestenliste eines Spiels sieht. Dein eigenes siehst immer du.",
+      "row": "Ergebnisse in Bestenlisten",
+      "who": "Wer sieht: Ergebnisse in Bestenlisten",
+      "detail": "Dein Eintrag und dein Rang auf jeder Bestenliste, die ein Spiel meldet. Bei einer Blockierung sehen du und die andere Person einander nicht.",
+      "state": {
+        "friends": "Freunde sehen deinen Eintrag und deinen Rang.",
+        "everyone": "Alle sehen deinen Eintrag, auch Personen, die nicht angemeldet sind: Sie sehen deinen Namen, dein Ergebnis und das Datum auf der öffentlichen Seite der Bestenliste.",
+        "nobody": "Nur du siehst deinen Eintrag."
+      }
+    },
     "appearOffline": {
       "title": "Online-Status",
       "description": "Gilt für jeden Launcher und Browser, der bei deinem Konto angemeldet ist.",

@@ -210,6 +210,16 @@ describe("mock adapter", () => {
 		await expect(make({ scenario: "nosave" }).account.clearPlayedWith()).rejects.toMatchObject({ code: "internal" });
 	});
 
+	it("holds who sees the scores on its own, friends first, and fails to save in the nosave scenario", async () => {
+		const api = make();
+		expect(await api.account.scorePrivacy()).toBe("friends");
+		const before = await api.account.privacy();
+		expect(await api.account.setScorePrivacy("nobody")).toBe("nobody");
+		expect(await api.account.scorePrivacy()).toBe("nobody");
+		expect(await api.account.privacy()).toEqual(before);
+		await expect(make({ scenario: "nosave" }).account.setScorePrivacy("everyone")).rejects.toMatchObject({ code: "internal" });
+	});
+
 	it("keeps appear offline apart from privacy, and fails to save in the nosave scenario", async () => {
 		const api = make();
 		expect(await api.account.appearOffline()).toBe(false);

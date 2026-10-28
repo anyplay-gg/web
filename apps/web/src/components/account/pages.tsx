@@ -823,6 +823,67 @@ function AppearOfflineCard() {
 }
 
 /**
+ * Who sees the player's leaderboard scores: friends for a new account, everyone or nobody on
+ * request. Same optimistic save as the other privacy choices, and it goes back with the reason when
+ * the cloud says no. Choosing everyone says plainly that people who are not signed in can see it.
+ */
+function ScoresCard() {
+  const t = useTranslations("account.privacy.scores");
+  const tState = useTranslations("account.state");
+  const describeError = useDescribeError();
+  const { api } = useAccount();
+  const load = useCallback(() => api.account.scorePrivacy(), [api]);
+  const { data, error, reload, setData } = useLoad<Audience>(load);
+  const [problem, setProblem] = useState<string | null>(null);
+  const latest = useRef(0);
+  let body: ReactNode;
+  if (error) body = <Failed message={error} retry={reload} />;
+  else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">{tState("loading")}</span></span>;
+  else {
+    // The group stays enabled while saving, so the arrow keys keep working; the counter drops a stale answer.
+    const set = async (value: Audience) => {
+      const before = data;
+      const mine = ++latest.current;
+      setData(value);
+      setProblem(null);
+      try {
+        const saved = await api.account.setScorePrivacy(value);
+        if (mine === latest.current) setData(saved);
+      } catch (e) {
+        if (mine !== latest.current) return;
+        setData(before);
+        setProblem(describeError(e));
+      }
+    };
+    body = (
+      <>
+        <Rows>
+          <Row
+            title={t("row")}
+            detail={t("detail")}
+            trailing={<AudiencePicker label={t("who")} value={data} describedBy="scores-state" onChange={(a) => void set(a)} />}
+          />
+        </Rows>
+        {/* What the current choice means, said for each choice and announced when it changes. */}
+        <p id="scores-state" aria-live="polite" className="mt-4 text-[14px] leading-[1.55] text-ink-2 text-pretty">
+          {t(`state.${data}`)}
+        </p>
+        {problem && (
+          <div className="mt-4">
+            <FormError>{problem}</FormError>
+          </div>
+        )}
+      </>
+    );
+  }
+  return (
+    <Card title={t("title")} description={t("description")}>
+      {body}
+    </Card>
+  );
+}
+
+/**
  * The public profile: off for a new account. On, anyone with the link sees the player's level,
  * trophy counts and games played at /u/<handle>; nothing else changes. Same optimistic switch as
  * appearing offline.
@@ -1020,6 +1081,7 @@ export function PrivacyPage() {
           </div>
         )}
         </Card>
+        <ScoresCard />
         <PublicProfileCard />
         <AppearOfflineCard />
         <PlayedWithCard />

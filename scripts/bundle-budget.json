@@ -9,6 +9,7 @@
   "/account/profile": 1000000,
   "/account/security": 1000000,
   "/account/trophies": 1010000,
+  "/boards/[title]/[board]": 895000,
   "/compatibility": 905000,
   "/create": 1000000,
   "/download": 890000,

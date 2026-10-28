@@ -4,6 +4,7 @@ import { camelize, snakeize } from "./case";
 import { ApiError, asErrorCode } from "./errors";
 import type { PortalApi } from "./portal-api";
 import type {
+	Audience,
 	LinkedAccount,
 	AccountView,
 	BoardPage,
@@ -235,6 +236,9 @@ export function createHttpApi(options: HttpApiOptions = {}): PortalApi {
 						appear_offline: value,
 					})
 				).appearOffline,
+			scorePrivacy: async () => (await json<{ scores: Audience }>("GET", "/me/score-privacy")).scores,
+			setScorePrivacy: async (value) =>
+				(await json<{ scores: Audience }>("PUT", "/me/score-privacy", { scores: value })).scores,
 			publicProfile: async () =>
 				(await json<{ publicProfile: boolean }>("GET", "/me/public-profile")).publicProfile,
 			setPublicProfile: async (value) =>

@@ -213,6 +213,18 @@
       "row": "Activité",
       "detail": "Tes amis la voient dans leur fil. Les inconnus ne voient aucun fil. Choisis « {nobody} » pour masquer ce qui s’y trouve et arrêter les nouveaux éléments."
     },
+    "scores": {
+      "title": "Scores",
+      "description": "Qui voit ton meilleur score dans le classement d’un jeu. Tu vois toujours le tien.",
+      "row": "Scores du classement",
+      "who": "Qui voit : scores du classement",
+      "detail": "Ton entrée et ton rang dans chaque classement qu’un jeu transmet. Un blocage vous masque l’un à l’autre.",
+      "state": {
+        "friends": "Tes amis voient ton entrée et ton rang.",
+        "everyone": "Tout le monde voit ton entrée, y compris les personnes non connectées : elles voient ton nom, ton score et la date sur la page publique du classement.",
+        "nobody": "Toi seul vois ton entrée."
+      }
+    },
     "appearOffline": {
       "title": "Statut en ligne",
       "description": "S’applique à chaque launcher et navigateur connecté à ton compte.",
