@@ -151,6 +151,12 @@ const KEPT: Fact[] = [
     keep: "30 days after you last played together, and at most the latest 50 people. Deleted with either of the two accounts.",
   },
   {
+    what: "Leaderboard scores",
+    why: "When a game you play reports a score for one of its boards, we keep your best score on that board: the game's title ID, the board's number or name as the game gives it, the score, and when you reached it. We keep no history of earlier scores. Your friends see your entry and your rank on the board, unless you choose nobody; everyone includes people who are not signed in, who then see your handle, score and date on the board's public page. You always see your own entry. A block hides you and the other person from each other, and a banned account is not shown. A moderator can remove an entry and give a reason; the removal stays on the entry so the same score is not put back until a moderator restores it. We do not check the game: a score is what the game reports. The choice “Scores” starts at friends. It is part of your account, but the launcher and this website do not show a setting for it yet.",
+    basis: contract,
+    keep: "Until you delete your account.",
+  },
+  {
     what: "Profile, trophies and play time",
     why: "Your about text, favourite games, picture, play time per game and day, trophies (game, trophy number, grade, time, and whether it is secret), the level and points we work out from them, and the reports you send about how a game ran (verdict, system, version). Each part is shown to your friends only, unless you choose nobody or everyone. “Everyone” includes people who are not signed in. A player who may see your trophies can compare them with their own. Your trophies also count in the anonymous share of players who earned a trophy, once at least 10 players have the game, whatever you set. We resize every picture and drop its metadata. A picture has a web address that does not need a sign-in, and a browser or proxy may keep a copy for up to a year.",
     basis: contract,
@@ -374,7 +380,7 @@ export function PrivacyNotice() {
           <li>
             <Strong>Access and a copy.</Strong> On the <A href="/account/data">Your data</A> page you can download a file
             with your account, devices, passkeys, friends, requests and blocks, privacy choices, profile, picture,
-            trophies, play time, game reports, connected accounts, notification devices, party, feed items, the people you played with, conversations
+            trophies, play time, game reports, connected accounts, notification devices, party, feed items, the people you played with, your leaderboard scores and who may see them, conversations
             and your own messages and reactions, a list of the screenshots and clips you sent (not the files), your looking-for-group listings and requests, your reports, the actions against you and your consent record. It does not hold your
             presence, the list of games we saw you play, invitations, missed calls, your join code, the messages other
             people wrote to you, the old text of messages you edited or unsent, and the records about you that moderators keep. Write to us for those.
@@ -423,7 +429,7 @@ export function PrivacyNotice() {
         </P>
         <P>
           Deleting removes your account, devices, passkeys, friends, requests, blocks, presence, sessions, party, join
-          code, profile, picture, trophies, play time, game reports, feed items, the people you played with, connected accounts, notification devices,
+          code, profile, picture, trophies, play time, game reports, feed items, the people you played with, your leaderboard scores, connected accounts, notification devices,
           the messages you wrote with their old texts, your reactions, the screenshots and clips you sent, and your looking-for-group listings and requests. A
           direct conversation is deleted as a whole, with what the other person wrote in it. Group conversations keep what
           others wrote. A screenshot or clip that a report holds stays until the report is decided and its 6 months are over, or for up to 1 year if nobody decides.
