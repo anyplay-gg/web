@@ -109,10 +109,10 @@ export function Notice({ children, tone = "info" }: { children: ReactNode; tone?
 const AUDIENCES: Audience[] = ["everyone", "friends", "nobody"];
 
 /** Who sees something: three choices (or the ones in `only`) as one radio group, keyboard by arrows like any radio group. */
-export function AudiencePicker({ value, onChange, label, disabled, only }: { value: Audience; onChange: (a: Audience) => void; label: string; disabled?: boolean; only?: Audience[] }) {
+export function AudiencePicker({ value, onChange, label, disabled, only, describedBy }: { value: Audience; onChange: (a: Audience) => void; label: string; disabled?: boolean; only?: Audience[]; describedBy?: string }) {
   const t = useTranslations("account.ui.audience");
   return (
-    <fieldset disabled={disabled} className="inline-flex flex-wrap rounded-full bg-white/[0.04] p-1 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
+    <fieldset disabled={disabled} aria-describedby={describedBy} className="inline-flex flex-wrap rounded-full bg-white/[0.04] p-1 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]">
       <legend className="sr-only">{label}</legend>
       {AUDIENCES.filter((a) => !only || only.includes(a)).map((a) => (
         <label

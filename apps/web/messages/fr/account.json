@@ -218,8 +218,12 @@
       "description": "Qui voit ton meilleur score dans le classement d’un jeu. Tu vois toujours le tien.",
       "row": "Scores du classement",
       "who": "Qui voit : scores du classement",
-      "detail": "Tes amis voient ton entrée et ton rang. Choisis « {nobody} » pour la masquer. Un blocage vous masque l’un à l’autre.",
-      "everyone": "« {everyone} » inclut les personnes non connectées. Elles voient ton nom, ton score et la date sur la page publique du classement."
+      "detail": "Ton entrée et ton rang dans chaque classement qu’un jeu transmet. Un blocage vous masque l’un à l’autre.",
+      "state": {
+        "friends": "Tes amis voient ton entrée et ton rang.",
+        "everyone": "Tout le monde voit ton entrée, y compris les personnes non connectées : elles voient ton nom, ton score et la date sur la page publique du classement.",
+        "nobody": "Toi seul vois ton entrée."
+      }
     },
     "appearOffline": {
       "title": "Statut en ligne",

@@ -829,24 +829,22 @@ function AppearOfflineCard() {
  */
 function ScoresCard() {
   const t = useTranslations("account.privacy.scores");
-  const tAudience = useTranslations("account.ui.audience");
   const tState = useTranslations("account.state");
   const describeError = useDescribeError();
   const { api } = useAccount();
   const load = useCallback(() => api.account.scorePrivacy(), [api]);
   const { data, error, reload, setData } = useLoad<Audience>(load);
-  const [saving, setSaving] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const latest = useRef(0);
   let body: ReactNode;
   if (error) body = <Failed message={error} retry={reload} />;
   else if (data === null) body = <span aria-busy role="status" className="block h-14 animate-pulse rounded-[16px] bg-white/[0.04]"><span className="sr-only">{tState("loading")}</span></span>;
   else {
+    // The group stays enabled while saving, so the arrow keys keep working; the counter drops a stale answer.
     const set = async (value: Audience) => {
       const before = data;
       const mine = ++latest.current;
       setData(value);
-      setSaving(true);
       setProblem(null);
       try {
         const saved = await api.account.setScorePrivacy(value);
@@ -855,8 +853,6 @@ function ScoresCard() {
         if (mine !== latest.current) return;
         setData(before);
         setProblem(describeError(e));
-      } finally {
-        if (mine === latest.current) setSaving(false);
       }
     };
     body = (
@@ -864,11 +860,14 @@ function ScoresCard() {
         <Rows>
           <Row
             title={t("row")}
-            detail={t("detail", { nobody: tAudience("nobody") })}
-            trailing={<AudiencePicker label={t("who")} value={data} disabled={saving} onChange={(a) => void set(a)} />}
+            detail={t("detail")}
+            trailing={<AudiencePicker label={t("who")} value={data} describedBy="scores-state" onChange={(a) => void set(a)} />}
           />
         </Rows>
-        {data === "everyone" && <p className="mt-4 text-[14px] leading-[1.55] text-ink-2 text-pretty">{t("everyone", { everyone: tAudience("everyone") })}</p>}
+        {/* What the current choice means, said for each choice and announced when it changes. */}
+        <p id="scores-state" aria-live="polite" className="mt-4 text-[14px] leading-[1.55] text-ink-2 text-pretty">
+          {t(`state.${data}`)}
+        </p>
         {problem && (
           <div className="mt-4">
             <FormError>{problem}</FormError>

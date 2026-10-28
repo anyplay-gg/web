@@ -218,8 +218,12 @@
       "description": "Who sees your best score on a game’s leaderboard. You always see your own.",
       "row": "Leaderboard scores",
       "who": "Who sees: leaderboard scores",
-      "detail": "Friends see your entry and your rank by default. Choose “{nobody}” to hide it. A block hides you and the other person from each other.",
-      "everyone": "“{everyone}” includes people who are not signed in. They see your handle, score and date on the board’s public page."
+      "detail": "Your entry and your rank on each board a game reports. A block hides you and the other person from each other.",
+      "state": {
+        "friends": "Friends see your entry and your rank.",
+        "everyone": "Anyone sees your entry, including people who are not signed in: they see your handle, score and date on the board’s public page.",
+        "nobody": "Only you see your entry."
+      }
     },
     "appearOffline": {
       "title": "Online status",

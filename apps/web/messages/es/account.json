@@ -218,8 +218,12 @@
       "description": "Quién ve tu mejor puntuación en la clasificación de un juego. La tuya siempre la ves tú.",
       "row": "Puntuaciones de la clasificación",
       "who": "Quién ve: puntuaciones de la clasificación",
-      "detail": "Tus amigos ven tu entrada y tu posición. Elige «{nobody}» para ocultarla. Un bloqueo te oculta de la otra persona, y a ella de ti.",
-      "everyone": "«{everyone}» incluye a quien no ha iniciado sesión. Verá tu nombre de usuario, tu puntuación y la fecha en la página pública de la clasificación."
+      "detail": "Tu entrada y tu posición en cada clasificación que reporta un juego. Un bloqueo te oculta de la otra persona, y a ella de ti.",
+      "state": {
+        "friends": "Tus amigos ven tu entrada y tu posición.",
+        "everyone": "Todos ven tu entrada, también quien no ha iniciado sesión: ven tu nombre de usuario, tu puntuación y la fecha en la página pública de la clasificación.",
+        "nobody": "Solo tú ves tu entrada."
+      }
     },
     "appearOffline": {
       "title": "Estado en línea",

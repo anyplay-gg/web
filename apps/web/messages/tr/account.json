@@ -218,8 +218,12 @@
       "description": "Bir oyunun sıralama tablosundaki en iyi skorunu kimlerin gördüğü. Kendi skorunu her zaman sen görürsün.",
       "row": "Sıralama skorları",
       "who": "Kimler görür: sıralama skorları",
-      "detail": "Arkadaşların sıralamadaki kaydını ve yerini görür. Gizlemek için “{nobody}” seç. Engelleme, seni ve karşındakini birbirinden gizler.",
-      "everyone": "“{everyone}” giriş yapmamış kişileri de kapsar. Onlar kullanıcı adını, skorunu ve tarihini sıralama tablosunun herkese açık sayfasında görür."
+      "detail": "Bir oyunun bildirdiği her sıralama tablosundaki kaydın ve yerin. Engelleme, seni ve karşındakini birbirinden gizler.",
+      "state": {
+        "friends": "Arkadaşların kaydını ve yerini görür.",
+        "everyone": "Herkes kaydını görür, giriş yapmamış kişiler de: kullanıcı adını, skorunu ve tarihini sıralama tablosunun herkese açık sayfasında görürler.",
+        "nobody": "Kaydını yalnızca sen görürsün."
+      }
     },
     "appearOffline": {
       "title": "Çevrimiçi durumu",
