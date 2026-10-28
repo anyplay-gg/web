@@ -209,3 +209,23 @@ test.describe("/account/privacy leaderboard scores", () => {
     await shoot(page, "scores-save-error");
   });
 });
+
+test.describe("the audience picker's targets", () => {
+  test("every choice is at least 44 px high on touch and 24 px elsewhere, and none overlaps its neighbour", async ({ page }) => {
+    await page.goto("/account/privacy");
+    const coarse = await page.evaluate(() => matchMedia("(pointer: coarse)").matches);
+    const min = coarse ? 44 : 24;
+    const group = page.getByRole("group", { name: "Who sees: Trophies" });
+    await expect(group).toBeVisible();
+    const labels = group.locator("label");
+    expect(await labels.count()).toBe(3);
+    const boxes = [];
+    for (let i = 0; i < 3; i++) boxes.push((await labels.nth(i).boundingBox())!);
+    for (const b of boxes) {
+      expect(b.height).toBeGreaterThanOrEqual(min);
+      expect(b.width).toBeGreaterThanOrEqual(min);
+    }
+    for (let i = 1; i < 3; i++) expect(boxes[i]!.x).toBeGreaterThanOrEqual(boxes[i - 1]!.x + boxes[i - 1]!.width - 0.5);
+    await shoot(page, "picker-targets");
+  });
+});
