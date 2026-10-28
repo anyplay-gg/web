@@ -40,6 +40,8 @@ jobs:
         run: node scripts/gen-ramps.mjs --check
       - name: Build
         run: pnpm build
+      - name: Bundle budget
+        run: node scripts/check-bundle.mjs
 
   # The browser tests run against `next dev` on the in-memory mock (no cloud), at 375 and 1280 px.
   e2e:

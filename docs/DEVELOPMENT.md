@@ -27,6 +27,10 @@ In development the mock stands in for the cloud. Add `?mock=<scenario>` to a URL
 
 Before a pull request: `pnpm lint`, `pnpm typecheck` and `pnpm test`. CI (`.github/workflows/ci.yml`) runs those plus the check that the colour ramps are current (`node scripts/gen-ramps.mjs --check`; run it without `--check` after you change a ramp), the build, the Playwright suite and the shared rules on every pull request and on `main`. The browser tests (`pnpm --filter @anyplay/web e2e`, Playwright, on the mock at 375 and 1280 px) start their own dev server on port 4410; `SHOTS=<folder>` also saves screenshots.
 
+## Bundle budget
+
+`node scripts/check-bundle.mjs` (after `pnpm build`, and in CI) holds every route to the first-load JavaScript it is allowed, from `scripts/bundle-budget.json`. A new page has no budget and fails until `--update` writes one (8 % above the measured size) and the pull request says why that is the right number. Raising a budget is a reviewed change, never a reflex.
+
 ## Run it
 
 The `Dockerfile` builds the standalone server. A cloud runs it next to itself on the same host name with [`deploy/compose.web.yaml`](https://github.com/anyplaynet/cloud/blob/main/deploy/compose.web.yaml); the cloud's [deploy guide](https://github.com/anyplaynet/cloud/blob/main/docs/deploy.md#the-website) says how.
