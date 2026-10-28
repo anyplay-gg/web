@@ -16,5 +16,11 @@
     "rate_limited": "Trop d’essais. Attends un instant et réessaie.",
     "rate_limited_wait": "Trop d’essais. Attends {seconds, plural, one {# seconde} other {# secondes}} et réessaie.",
     "passkey_unsupported": "Ce navigateur ne gère pas les clés d’accès. Utilise plutôt le code reçu par e-mail."
+  },
+  "legal": {
+    "nav": "Informations légales",
+    "legal": "Mentions légales",
+    "privacy": "Avis de confidentialité",
+    "terms": "Conditions d’utilisation"
   }
 }

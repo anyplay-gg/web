@@ -16,5 +16,11 @@
     "rate_limited": "Muitas tentativas. Aguarde um momento e tente de novo.",
     "rate_limited_wait": "Muitas tentativas. Aguarde {seconds, plural, one {# segundo} other {# segundos}} e tente de novo.",
     "passkey_unsupported": "Este navegador não oferece suporte a passkeys. Use o código por e-mail."
+  },
+  "legal": {
+    "nav": "Legal",
+    "legal": "Aviso legal",
+    "privacy": "Aviso de privacidade",
+    "terms": "Termos de uso"
   }
 }

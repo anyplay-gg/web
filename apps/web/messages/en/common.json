@@ -16,5 +16,11 @@
     "rate_limited": "Too many tries. Wait a moment and try again.",
     "rate_limited_wait": "Too many tries. Wait {seconds, plural, one {# second} other {# seconds}} and try again.",
     "passkey_unsupported": "This browser can’t use passkeys. Use the e-mail code instead."
+  },
+  "legal": {
+    "nav": "Legal",
+    "legal": "Legal notice",
+    "privacy": "Privacy notice",
+    "terms": "Terms of use"
   }
 }

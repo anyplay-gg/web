@@ -151,9 +151,9 @@
       "detail": "{platform} · Último uso: {used}",
       "signOut": "Sair",
       "empty": "Nenhum launcher conectado ainda.",
-      "confirmTitle": "Desconectar este launcher?",
+      "confirmTitle": "Sair deste launcher?",
       "confirmDescription": "Ele fica offline até alguém entrar de novo nesse PC.",
-      "confirmLabel": "Desconectar launcher"
+      "confirmLabel": "Sair do launcher"
     },
     "browsers": {
       "title": "Navegadores",
@@ -164,7 +164,7 @@
       "detail": "Entrou {created} · Último uso: {used}",
       "signOut": "Sair",
       "confirmThisTitle": "Sair deste navegador?",
-      "confirmOtherTitle": "Desconectar aquele navegador?",
+      "confirmOtherTitle": "Sair daquele navegador?",
       "confirmThisDescription": "Você volta ao início e entra de novo na próxima vez.",
       "confirmOtherDescription": "Ele precisa entrar de novo para abrir sua conta.",
       "confirmLabel": "Sair"
@@ -174,7 +174,7 @@
       "description": "Todo launcher e todo navegador, este também. Use quando um dispositivo for perdido ou alguém mais puder ter entrado.",
       "button": "Sair em todos os lugares",
       "confirmTitle": "Sair em todos os lugares?",
-      "confirmDescription": "Todo launcher e navegador é desconectado de uma vez, este também.",
+      "confirmDescription": "Todo launcher e navegador sai de uma vez, este também.",
       "confirmLabel": "Sair em todos os lugares"
     }
   },
@@ -280,7 +280,7 @@
     },
     "confirm": {
       "title": "Excluir sua conta?",
-      "description": "Ela é excluída em 30 dias. Todo launcher e navegador é desconectado agora."
+      "description": "Ela é excluída em 30 dias. Todo launcher e navegador sai agora."
     }
   },
   "compare": {
@@ -341,9 +341,9 @@
     "editProfile": "Editar seu perfil",
     "blocked": "Bloqueado",
     "friends": "Amigos",
-    "requestSent": "Solicitação enviada",
+    "requestSent": "Pedido enviado",
     "accepting": "Aceitando…",
-    "accept": "Aceitar solicitação",
+    "accept": "Aceitar pedido",
     "sending": "Enviando…",
     "addFriend": "Adicionar amigo",
     "addInAnyPlay": "Adicionar amigo no AnyPlay",

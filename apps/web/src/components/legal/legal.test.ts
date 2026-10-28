@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Intl } from "@/i18n/test-utils";
 import { readSite } from "@/lib/site";
 import { LEGAL, readLegal } from "./meta";
 import { NOTICE_CONTENTS, LegalNotice, noticeContents } from "./notice";
@@ -31,9 +32,9 @@ function render(env: Record<string, string>) {
   for (const k of VARS) vi.stubEnv(k, "");
   for (const [k, v] of Object.entries(env)) vi.stubEnv(k, v);
   return {
-    legal: renderToStaticMarkup(createElement(LegalNotice)),
-    privacy: renderToStaticMarkup(createElement(PrivacyNotice)),
-    terms: renderToStaticMarkup(createElement(TermsOfUse)),
+    legal: renderToStaticMarkup(createElement(Intl, null, createElement(LegalNotice))),
+    privacy: renderToStaticMarkup(createElement(Intl, null, createElement(PrivacyNotice))),
+    terms: renderToStaticMarkup(createElement(Intl, null, createElement(TermsOfUse))),
   };
 }
 
