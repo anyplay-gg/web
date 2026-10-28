@@ -44,9 +44,17 @@ jobs:
         run: node scripts/check-bundle.mjs
 
   # The browser tests run against `next dev` on the in-memory mock (no cloud), at 375 and 1280 px.
-  e2e:
+  # One runner per Playwright project (phone, desktop) side by side: each runs the whole suite at its
+  # width, and the two together took 357 s on one runner. `e2e` below is the one check name the
+  # repository counts.
+  e2e-shard:
+    name: e2e-shard ${{ matrix.project }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [phone, desktop]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -62,13 +70,29 @@ jobs:
         run: pnpm --filter @anyplay/web exec playwright install --with-deps chromium
       - name: Playwright
         # One worker: the tests share one `next dev` server, which compiles each route on first hit.
-        run: pnpm --filter @anyplay/web exec playwright test --workers=1
+        env:
+          PROJECT: ${{ matrix.project }}
+        run: pnpm --filter @anyplay/web exec playwright test --workers=1 --project="$PROJECT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
-          name: playwright-traces
+          name: playwright-traces-${{ matrix.project }}
           path: apps/web/test-results
           if-no-files-found: ignore
+
+  # The check name the repository counts. Green only when both shards are.
+  e2e:
+    if: always()
+    needs: e2e-shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Every Playwright shard passed
+        env:
+          SHARDS: ${{ needs.e2e-shard.result }}
+        run: |
+          echo "shards: $SHARDS"
+          [ "$SHARDS" = success ]
 
   # Links, title IDs in code, licences and advisories: the rules every AnyPlay repository shares.
   rules:
